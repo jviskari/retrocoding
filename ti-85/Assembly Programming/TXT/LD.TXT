@@ -1,0 +1,126 @@
+
+
+
+TI-85 Assembler Programming - The LD instruction
+
+
+
+
+
+
+TI-85 Assembler Programming - The LD instruction
+
+
+Now that you know how data is stored in assembler, you can learn how to move it around. In assembler, you can't just assign any value to a memory location like you can with variables. Instead, you have to use the LD instruction. LD stands for Load. It loads data from one place into another. 
+
+
+There are several different ways to use the LD operation. The simplest one is loading a specific value into a register. Here is an example:
+
+     LD   A, 17
+
+This gives register A the value 17. We can do the same thing with any register and any value. The value can be hexadecimal if we want.
+
+     LD   B, 32
+     LD   C, $18
+     LD   H, 213
+
+We can do the same with any register pair:
+
+     LD   BC, 14238
+     LD   HL, $80DF
+
+
+
+
+Another way to use LD is to load data from one register to another:
+
+     LD   B, A
+
+This puts whatever value is in register A into register B. As you can see, with any use of LD, data is moved right to left - 17 into A or A into B or whatever. We can load any single register into any other register.
+
+
+More complicated uses of LD involve moving data between the memory and the registers. As you know, the memory is accessed through addresses. The LD instruction is used to load data between a register and a memory location specified by an address. This address can be a raw value:
+
+     LD   A, ($80DF)
+
+This will load the value stored at memory location $80DF and put it into register A. The parentheses around the number indicate the number is being used as an address, not as a value.
+
+
+In the previous example, loading a single register from memory using a specific address, we have to use register A. This means that we cannot load any other register directly from memory. Instead, we have to load from memory into A and then from A into the register:
+
+     LD   A, ($80DF)
+     LD   C, A
+   
+
+
+We can also load two bytes of data from memory at once:
+
+     LD   BC, ($80D3)
+
+This loads two bytes of data from ($80D3) into register pair BC. Actually, it loads from two memory locations - ($80D3) into B and ($80D4) into C. When loading a pair like this, we can use any pair we want.
+  
+
+Another method is to use the register pair HL to hold the address for us:
+
+     LD   HL, $80DF
+     LD   A, (HL)
+
+The first LD loads a value into HL. The second one uses that value in HL as an address, and loads data from that address into A. It has exactly the same effect as the previous LD example. Notice that $80DF does not have parentheses around it. In the first LD, $80DF is only a value, not an address. Only in the second LD is it an address, so we put parentheses around HL to show its value is an address. We can load from memory into any register, but we cannot load into a register pair or use any other register besides HL to hold the address. 
+
+
+
+Now let's move data from the registers back into memory. The simplest way is to use an immediate value for the address:
+
+     LD   ($80DF), A
+
+This loads the value in register A into memory location $80DF. When moving data from register into memory this way, we are restricted to using the A register. In other words, we can't load register C or any other directly into memory - we have to load the register into A, and then A into the memory. 
+
+
+We can also store a register pair into two memory locations:
+
+     LD   ($80DF), BC
+
+Again, this loads into two different memory locations. We can use any register pair here.
+
+
+As above, we can use a register pair to hold the address we are using:
+
+     LD   (HL), 123
+
+This loads the value 123 into the memory location whose address is stored in HL. We can only use HL for this.
+
+
+
+     LD   (HL), A
+     LD   (HL), E
+     LD   (BC), A
+
+Here are three examples of loading a register into memory whose address is not immediate. We can use HL to store the address and load from any register or we can use any register pair and load from A. We cannot do both, like:
+
+     LD   (BC), D     ; this is WRONG!!!!!
+
+We are stuck with either HL for the address or A for the data.
+
+
+Since there are so many different ways to move data between different registers, memory, and raw values, John Powers has created a table of legal LD uses. You should probably download it, print it out, and use it as a reference whenever you aren't sure whether your code will work. I know I'm never quite sure until I look it up.   
+
+
+In the next lesson, you will learn how to change data using the INC and DEC instructions.
+
+
+
+On to the next lesson: INC and DEC
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 12-27-95 by Greg Parker. Last update: 3-7-95
+
+ 
+

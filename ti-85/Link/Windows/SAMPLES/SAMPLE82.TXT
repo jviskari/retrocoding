@@ -1,0 +1,777 @@
+
+                              ****************
+                              * SAMPLE82.TXT *
+                              ****************
+
+To print this file from the DOS prompt to a parallel printer connected to
+LPT1 on your PC, enter: TYPE A:\SAMPLES\SAMPLE82.TXT >LPT1
+
+
+The directory \SAMPLES on the TI-GRAPH LINK disk contains a number of sample
+TI-82 and TI-85 programs and graph databases for your use/review.  Included
+in this file are descriptions of the TI-82 programs and graph databases that
+were created by the Graphics Team, as well as by some of the early users of
+the TI-82.  The TI-82 programs and graph databases are included on this
+disk to illustrate some of the uses and capabilities of the TI-82.
+
+You are free to use these programs as you see fit.  You may modify them in
+any way.  NOTE: These programs are not necessarily free of defects so YOU
+must take the responsibility of testing them prior to their use in any
+applications.
+
+The sample programs included are:
+
+      DBD     .82P   Days between dates game
+
+      FACTOR  .82P   Factor integers into prime components
+
+      FFT     .82G   Fast Fourier Transform
+
+      GAUSSIAN.82G   Gauss-Jordan elimination demonstrator
+
+      GOLF    .82G   Golf game
+
+      NELDER  .82G   Nonlinear minimization; group contains NELDER.82P,
+		     NELDSORT.82P, TESTNELD.82P (example), ORBIT.82P 
+                     (example), LOGISTIC.82P (example), FUNC.82P
+
+      NORMAL  .82P   Computes area under normal curve up to any Z-score
+
+      POLCONIC.82P   Polar mode plot of general conics
+
+      POLFRAC .82G   Polynomial and rational functions study
+
+      TILOGO  .82G   "Animated" reversal of pixels in any Pic file
+
+A brief description of each program and any user instructions that are
+necessary follows.
+
+
+			   *************************
+			   * DBD.82P for the TI-82 *
+			   *************************
+
+ACKNOWLEDGMENT
+
+DBD.82P was written by Ralph Payne of the TI Graphics Team and is
+released to the public domain.	You may copy and change this program.
+
+INTRODUCTION
+
+This program calculates the days between dates.
+
+HOW TO PLAY DBD
+
+This program, DBD, calculates the days between dates. The program prompts
+you for two dates.  After each date it displays the day of the week for that
+date. After the second date the number of days between the two dates is
+displayed. The number of days between dates is calculated such that there are
+365 days between 1/1/93 and 1/1/94. The algorithm logic recognizes that the 
+year 1900 was not a leap year and that the year 2000 is a leap year. This is
+because leap years are defined to be those years that are divisible by four 
+unless they are divisible by one hundred unless they are also divisible by 
+four hundred.
+
+
+			 ****************************
+			 * FACTOR.82P for the TI-82 *
+			 ****************************
+
+ACKNOWLEDGMENT
+
+FACTOR.82P was written by John Powers of the TI Graphics Team and is
+released to the public domain.	You may copy and change this program.
+
+INTRODUCTION
+
+This program produces a list of the prime factors of a given
+integer.  The list is displayed in the form of factor/power pairs.
+
+HOW TO USE FACTOR
+
+Execute FACTOR to begin the program.  A prompt for the integer to
+factor then appears:
+
+  N=?
+
+Enter an integer.  The integer's factors are then displayed.
+
+For example, to factor 1584:
+
+  prgmFACTOR
+  N=?1584
+    {2 4 3 2 11 1}
+
+The factors of 1584 are 2^4 * 3^2 * 11.
+
+
+			   *************************
+			   * FFT.82G for the TI-82 *
+			   *************************
+
+ACKNOWLEDGMENT
+
+FFT.82G is a group file containing the programs FFT.82P and XX.82P.  These
+programs were written by Ralph Payne of the TI Graphics Team and are released
+to the public domain.  You may copy and change these programs.
+
+INTRODUCTION
+
+This pair of "82" programs illustrate the use of the Fast Fourier Transform.
+The Fast Fourier Transform (FFT) is a clever implementation of the Discrete
+Fourier Transform and is well described in numerous publications. This
+particular code implements a simple radix two algorithm with coefficient
+recursion. It assumes that the real part of the time series is in L1 and
+that the imaginary part is in L2. The process is done in place and
+the positive frequencies are in the lower half of L1 and L2 and the negative
+frequencies are in the upper half. The maximum length is 64.
+
+HOW TO USE FFT
+
+A driver program, FFTDEMO, prompts for the length (N), two frequencies, and a
+noise amplitude. The program assumes that the transform length is one second,
+so if the frequency is greater than one half the length aliasing will occur.
+If the frequency is not an integer then scallop loss will occur, but may
+not be obvious because the display is automatically scaled. The frequency
+is of unit amplitude so the noise that is added is a multiple of one. This
+value can be varied to see how the FFT can "pull" a signal out of the noise
+The driver program sets the parametric mode and changes the window settings.
+It also stores new equations to the first two parametric equation pairs.
+Since the FFT expects input in L1 and L2 and operates in place, XX puts a
+time series in L1 and 0's in L2 and copies L1 to L5. Since the imaginary
+vector is 0, the transform will be symmetric. (If the input data is complex
+the transform will not, in general, be symmetric.)  The magnitudes are stored
+in L4. L4 and L5 are then scaled to fit on the Display. The upper half of the
+display is the time series and the lower half is the frequency domain.
+Program FFTDEMO, which calls FFT, takes about 25 seconds to execute a 32 
+length transform and about 50 seconds to execute a 64 length transform.
+
+
+                       ******************************
+                       * GAUSSIAN.82G for the TI-82 *
+                       ******************************
+
+ACKNOWLEDGMENT
+
+GAUSSIAN.82G is a group file containing the programs GAUSSIAN.82P,
+GAUSSNEW.82P, and GAUSSCLN.82P.  These programs were written by John Powers
+of the TI Graphics Team and are released to the public domain.  You may
+copy and change these programs.
+
+INTRODUCTION
+
+This program demonstrates the Gauss-Jordan elimination technique to solve
+a system of equations.  The action taken and the resulting matrix is
+displayed after each step.
+
+The SWAP step lists the numbers of the rows swapped and the result of the
+matrix after the rows are swapped.
+
+The DIVIDE step displays which row is being divided through by the pivot.
+
+Subsequent SUBTRACT steps indicate which row is being reduced by
+subtracting a multiple of the pivot row.
+
+HOW TO USE GAUSSIAN
+
+This program reduces matrix [A] in place.  Formulate a system of
+simultaneous linear equations as an Nx(N+1) matrix in variable [A].  Run
+GAUSSIAN to watch step-by-step Gauss-Jordan elimination.
+
+Example:
+  [[ 0  2  3  7]
+   [-5  3  7 -3] -> [A]
+   [ 3 -8  2  6]
+
+  prgmGAUSSIAN [ENTER]
+  SWAP
+             {1 2}              Swap rows 1 and 2
+    [[-5 3  7 -3]
+     [0  2  3 7 ]
+     [3  -8 2 6 ]]
+  DIVIDE                        Divide row 1 through by -5
+                 1
+  [[1 -3/5 -7/5 3...
+   [0 2    3    7...
+   [3 -8   2    6...
+  SUBTRACT                      Multiply row 1 by 0 and
+                 2              subtract from row 2
+  [[1 -3/5 -7/5 3...
+   [0 2    3    7...
+   [3 -8   2    6...
+  SUBTRACT                      Multiply row 1 by 3 and
+                 3              subtract from row 3
+  [[1 -3/5  -7/5 ...
+   [0 2     3    ...
+   [0 -31/5 31/5 ...
+  SWAP                          Swap rows 2 and 3
+             {2 3}
+  [[1 -3/5  -7/5 ...
+   [0 -31/5 31/5 ...
+   [0 2     3    ...
+  DIVIDE                        Divide row 2 by -31/5
+                 2
+  [[1 -3/5 -7/5 3...
+    0 1    -1   -...
+    0 2    3    7...
+  SUBTRACT                      Multiply row 2 by -3/5 and
+                 1              subtract from row 1
+  [[1 0 -2 6/31  ...
+   [0 1 -1 -21/31...
+   [0 2 3  7     ...
+  SUBTRACT                      Multiply row 2 by 2 and
+                 3              subtract from row 3
+  [[1 0 -2 6/31  ...
+   [0 1 -1 -21/31...
+   [0 0 5  259/31...
+  DIVIDE                        Divide row 3 by 5
+                 3
+  [[1 0 -2 6/31  ...
+   [0 1 -1 -21/31...
+   [0 0 1  259/15...
+  SUBTRACT                      Multiply row 3 by -2 and
+                 1              subtract from row 1
+  [[1 0 0  548/15...
+   [0 1 -1 -21/31...
+   [0 0 1  259/15...
+  SUBTRACT                      Multiply row 3 by -1 and
+                 2              subtract from row 2
+  [[1 0 0 548/155...
+   [0 1 0 154/155...
+   [0 0 1 259/155...
+                                Press right arrow [->] to see the
+...1 0 0 548/155]               right column of the matrix
+...0 1 0 154/155]
+...0 0 1 250/155]]
+                   Done
+  Answer, x=548/155, y=154/155, and z=259/155.
+
+The program pauses after each step to allow the user to scroll the
+resulting matrix.  Press [ENTER] to continue with the next step.
+
+Program GAUSSNEW generates a new matrix in variable [A].  It prompts for
+the number of matrix rows.  Type
+
+  prgmGAUSSNEW
+  prgmGAUSSIAN
+
+to generate a new random matrix, display it, then begin the elimination
+process.
+
+Auxiliary routine GAUSSCLN cleans up matrix entries which are close
+to zero.
+
+
+                         **************************
+                         * GOLF.82G for the TI-82 *
+                         **************************
+
+ACKNOWLEDGMENT
+
+GOLF.82G is a group file containing the programs G1.82P, SHOOT.82P, and
+V.82P.	These programs were written by Pat Milheron of the TI Graphics
+Team and are released to the public domain.  You may copy and change these
+programs.
+
+INTRODUCTION
+
+G1.82P is a golf game.
+
+HOW TO PLAY GOLF
+
+Run program G1.  The golf green is drawn, with the ball shown at the lefthand
+side of the screen (a small dot), along with the distance in yards that the
+ball is from the hole.	Press Enter to view your options.  The five options
+are:
+
+1) VIEW  - Press 1 to view the golf green.
+2) AIM   - Press 2 to aim the ball; use the up and down cursor keys to adjust
+           the aim.
+3) WIND  - Press 3 to view the direction of the wind.
+4) CLUB  - Press 4 to choose the golf club to use; press 1-5 to choose the
+           desired club. 
+5) SHOOT - Press 5 to take the shot.  Hit enter and a pixel at the bottom of
+	   the screen will move toward the bar on the bottom righthand side
+	   of the screen.  Hit enter again to stop the pixel from moving -
+	   the closer to the bar that the pixel stops the more power there
+	   will be behind the shot.  The pixel will then start moving back
+	   toward the lefthand side of the screen.  To stop the pixel, hit
+	   enter.  If the pixel stops to the right of the two colons, the
+	   shot will lose power and slice right; if the pixel stops to the
+	   left of the two colons, the shot will lose power and hook left;
+	   if the pixel stops in the center of the two colons, the shot
+	   will go straight.
+
+To return to the options menu, from any screen, press the Enter key.
+
+
+		     ******************************
+		     *	NELDER.82G for the TI-82  *
+		     ******************************
+
+ACKNOWLEDGEMENT
+
+NELDER.82G is a group file containing NELDER.82P, NELDSORT.82P, FUNC.82P, and
+the examples TESTNELD.82P, LOGISTIC.82P, and ORBIT.82P.  They were written by
+John Powers and C. B. Wilson of the TI Graphics Team and are released to the
+public domain.	You may copy and change these programs.  This version for the
+TI-82 is based on similar programs originally written for the TI-85 (also
+located in the SAMPLES directory of this disk).  Due to the more limited
+variables of the TI-82, the program is less obvious to read, so a mapping
+of variable names to the TI-85 program is provided later in this file.
+
+INTRODUCTION
+
+NELDER.82P and its associated subroutine NELDSORT.82P will minimize a
+non-linear (or linear) function with one or more parameters, using the
+Nelder-Mead simplex method.  Nonlinear optimization is a very valuable
+tool, especially for modeling and regression.  The Nelder-Mead method is
+one of the most robust and therefore very suitable for experimentation and
+use on a wide range of problems.  TESTNELD.82P, LOGISTIC.82P and ORBIT.82P
+are application examples for NELDER.82P.
+
+HOW TO USE NELDER
+
+You should provide a program named FUNC (this specific program name is
+required) which will compute a real value from your data and the current
+value of the parameters to be optimized and place this real value in
+variable F. Then execute NELDER, which will try to minimize the quantity
+returned in F.	The choice of function to minimize is up to you, but for
+example if you want least squares minimization you would compute the sum
+of the squares of the residuals in program FUNC.  You may store data in
+variable names of your choice, but the parameters to be optimized in
+your model must be in list L1.	Also NELDER uses the following variable
+names, which must not be used for other purposes:
+
+             REALS      LISTS                     MATRICES
+               N         L1 (for coefficients)      [D]
+               J         L5                         [E]
+               K         L6
+               L
+               T
+               F
+
+In addition to program FUNC, you may want to have a setup program which
+sets up data, stopping tolerance, etc., and then calls NELDER.  The example
+programs TESTNELD.82P, LOGISTIC.82P and ORBIT.82P are of this form.
+
+NELDER uses the value in variable T as a termination criterion.  The
+iterations stop when the "size" of the simplex (roughly the "distance"
+between vertices) is less than T.  At each iteration, NELDER displays
+the action taken on that iteration (REFLECT, EXPAND, CONTRACT or SHRINK),
+the loop count, a list representing the value of F at each vertex, and
+the value compared to T for termination.  There is no limit on loop
+count; you can break the program if it appears it is not going to converge.
+The most recent trial for L1 is averaged in [E](1,...) and the last actions
+stored in [E](5,...) for "reflection", [E](3,...) for "expansion",
+[E](2,...) for "contraction" and [E](4,...) for "shrink".  At the beginning
+of NELDER is a constant offset of 0.1 stored in L6(10).  This value is used
+to perturb your initial guess to form the simplex and initialize the
+process.  If you know your initial guess is much more accurate than 10%,
+you can prevent the program "opening up" the scale too much by reducing
+this value.  If you do this often, you can remove the assignment statement
+from NELDER and put it in a calling program.
+
+The example program TESTNELD.82P illustrates a simple use of NELDER. This
+example fits a series of Fibonacci numbers to an equation of the form F(n)=
+ae^(bn).  In the example program L1(1) is "a" and L1(2) is "b", the list L2
+is "n" and list L3 contains the exact Fibonacci sequence for the values of
+"n" in list L2.  The equation for F uses the sum of squared error as
+the minimization function.  To make the program FUNC more general, the
+model equation is stored in Y0.
+
+If you use L2={1,2,3,4,5,6,7,8,9,10}, L3={1,1,2,3,5,8,13,21,34,55} and 
+T=1e-5, you should get a least-squares error of .12339, L1(1)=.4480817 and
+L1(2)=.4810051.  This is a good example of why nonlinear minimization is
+required for accurate answers to tasks that are often treated in
+"linearized" form due to people not having tools like this NELDER program. 
+For instance, y=ae^(bx) can be linearized by ln(y)=ln(a) + bx and linear
+least-square methods used to obtain ln(a) (hence a) and b.  However, these
+values of a and b are biased by the fact that the sum of squares is
+minimized in ln(y) and not y. We can see this effect quickly in the TI-82
+by using exponential regression on the two lists above.  Since the
+exponential regression is y=ab^x (linearized as ln(y)=ln(a) + ln(b)*x), we
+just need to take the natural log of b as given by the TI-82 to have the a
+and b that we want.  For the data above, we obtain a=.488296 and b=.468948.
+Substituting these values for L1(1) and L1(2), we can run FUNC and look at
+F to see that the sum of squared error is 4.31 (vice 0.12). If we want an
+equation for calculating Fibonacci numbers: FIB=round(L1(1) e^(L1(2)*N),0),
+the coefficients we obtained using NELDER will return the correct integer
+values over the range of our data (and indeed up to N=14), while the
+coefficients from the linearized least squares approach only work up to
+N=8. In fact, if you try to fit the first 60 Fibonacci numbers with
+linearized least squares, your coefficients will result in a sum of squared
+error of 1.59e20.  Using these coefficients in the equation above only
+results in one additional correct Fibonacci number for N=9. But with
+NELDER, we can determine the coefficients L1(1)=.44721359550129 and
+L1(2)=.48121182505955, which result in a sum of squared error of 0.4407 and
+exact results for N from 1 to 60. (Note that to do this we will need to set
+the stopping tolerance T to 1E-11.)  The lesson here is that for accurate
+data modeling to nonlinear equations, you really have to use a nonlinear
+minimization tool.  While Nelder-Mead is not the fastest algorithm, it is
+very robust, doesn't need any derivative information, and isn't bothered too
+much by discontinuities or other messy function behavior.
+
+Note:  Just as an aside, it may be noted the ratio of successive
+Fibonacci numbers approaches the Golden mean (sqrt(5)-1)/2).  Based on this
+observation, we realize that the nth Fibonacci number should equal
+approximately  a*b^n; where a = 1/sqrt(5) and b = 2/(sqrt(5)-1).
+In the form we fit above therefore, L1(1)=1/sqrt(5) and
+L1(2)=ln(2/(sqrt(5)-1)).
+
+A second example LOGISTIC.82P, fits data on the time evolution of an
+algae sample taken in the Adriatic Sea to a logistic differential
+equation to model the dynamics of a one-species population in an
+environment with limited resources.  This example is taken from "Fitting
+a Logistic Curve to Data" in The College Mathematics Journal, Vol 24, No. 3,
+May 1993, pp 247-253. The model equation is m(t) = K / (1 + e^(-r(t - t0)),
+where m(t) is the biomass in square millimeters of surface covered by
+biomass in a microscope sample versus t in days.  The data are:
+
+    t      11     15     18     23    26   31   39    44   54   64    74
+  m(t) .00476  .0105  .0207  .0619  .337  .74  1.7  2.45  3.5  4.5  5.09
+
+We will assign coefficients: L1(1)=K, L1(2)=r, L1(3)=t0.  From a statplot,
+we note the curve asymtotically approaches an upper bound for large t, so
+we might guess K at 6.  We also note the curve has an inflection point near
+the center of the t range, so we might guess t0 at 40.	If we use these
+values in the equation at t=74, we can solve for r of about 0.05.  This
+gives us an initial guess of {6,.05,40}.  With T=.001, we get final
+coefficients of {5.095,.1213,45.775} and a sum of squared residuals of
+.23817.
+
+A third example, ORBIT.82P, fits data on variation in the period of pulsar
+PSR1257+12 over time.  This data is approximate and obtained from the graph
+shown in the announcement article, "A planetary system around the
+millisecond pulsar PSR1257+12", Nature, Vol. 355, 9 January 1992, pp
+145-147.  Another article covering this is "Pulsars, Planets and Pathos" in
+Sky & Telescope, May 1992, pp 493-495.  The data is contained within the
+program itself, as well as initial conditions for the optimization.  The
+program fits 7 parameters to an equation, which is the sum of two sinusoids
+and a constant.  Each sinusoid is described by an amplitude, a frequency
+and a phase.  The time data is in years (actual year - 1990) and the period
+data is in nanoseconds (actual period - 6,218,530 ns).  This problem is
+pretty complex for this method, which is better for five or less
+parameters, therefore the calculation time will be fairly long.  However,
+it is an example of a realistic scientific problem that students have not
+generally been equipped to solve.  From a sketch of the data points you can
+determine possible values for the amplitudes and periods.  For instance,
+one period seems to be about 0.2 year, so we would use 2*pi/0.2 = 31.4
+radians as a possible starting point.
+
+It is more difficult to make a close initial estimate of the phase angles
+and if we just start with arbitrary values, it may take several hundred
+iterations to get a result with tol=.001 or less.  Starting with the
+somewhat better initial estimate in the program {.94,35,-2,.67,23,3.2,3.4},
+setting the offset L6(10) in NELDER to 0.01 and tol=.01, you can get the
+following result in 49 iterations.
+
+               First term       Second term
+Amplitude        .93465           .66863
+Frequency      34.7047          23.0662
+Phase          -2.0036           3.2089
+Constant        3.3935
+
+Converting the two frequencies into days:
+  365.25 days * 2pi / 34.7047  =  66.1 days
+  365.25 days * 2pi / 23.0662  =  99.5 days
+
+As reported in the Nature article, it is believed that two planets are in
+orbit around this pulsar, having periods of 66.6 and 98.2 days. With
+assumptions about the mass of the pulsar and this data, calculations for
+the mass of these planets can also be made.
+
+If you want to see the equation and data together, one way is to do a
+Statplot with Xlist of L2 and Ylist of L3.  Use ZoomStat to get a window
+that covers the data.  Recall a copy of Y0 into another Y= equation and
+edit the two L2's into X's and graph this equation.
+
+References for the Nelder-Mead technique are:
+1. J. A. Nelder and R. Mead, "A Simplex method for function minimization",
+Computer Journal, vol. 7, pp 308-313, 1965.
+
+2. W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
+"Numerical Recipes, The Art of Scientific Computing", Cambridge University
+Press, 1987, pp 305-309.
+
+Appendix:  Variable name correspondence between NELDER.82P and NELDER.85P.
+
+TI-85 variable name        TI-82 variable name
+
+X                          L1
+fv                         L5
+vertex                     [D]
+vavg                       [E](1,n)  where n equals number of coefficients
+vcon                       [E](2,n)
+vexp                       [E](3,n)
+vk                         [E](4,n)
+vref                       [E](5,n)
+vtemp                      [E](6,n)
+xi                         [E](7,n)
+swap                       [E](8,n)
+fk                         L6(1)
+cnt                        L6(2)
+test                       L6(3)
+s                          L6(4)
+fref                       L6(5)
+fexp                       L6(6)
+ftemp                      L6(7)
+fcon                       L6(8)
+how                        L6(9)
+offset                     L6(10)
+n9                         N
+j9                         J
+k9                         K
+FX                         F
+-----                      L  (additional loop index)
+
+
+                       ****************************
+                       * NORMAL.82P for the TI-82 *
+                       ****************************
+
+ACKNOWLEDGMENT
+
+NORMAL.82P was written by Chuck Vonder Embse, a professor at Michigan State
+University, and is released to the public domain.  You may copy and change
+this program.
+
+INTRODUCTION
+
+This program gives the area under the normal curve up to any Z-score (one
+or two tails).  Graphics are optional.
+
+HOW TO USE NORMAL
+
+Set the calculator to Function graphing mode.  Type prgmNORMAL and enter to
+run the program.  The program first prompts you to enter 1 for 1 tail or
+2 for 2 tails.  You are then prompted to enter the Z value.  If you want to
+see the normal curve graphed and the region shaded, type 1 and enter;
+otherwise, type 2 and enter.  If you chose to graph the curve, hit enter
+when the graph is completed and the value for P(Z) is displayed.
+
+
+		       ******************************
+		       * POLCONIC.82P for the TI-82 *
+		       ******************************
+
+ACKNOWLEDGMENT
+
+POLCONIC.82P was written by John Powers of the TI Graphics Team and is
+released to the public domain.	You may copy and change this program.
+
+INTRODUCTION
+
+Given the coefficients of a general conic
+
+    Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+
+this program sketches the conic on the graph screen.
+
+This program plots dots of the given conic by picking N evenly spaced dots
+around the circle then converting from polar to rectangular.  The user may
+change the number of dots (N) in the graph by initializing K in the first 
+line of the program to 360/N. This program initializes K to 2 degrees to 
+draw 180 points.
+
+HOW TO USE POLCONIC
+
+Example:  To plot the conic 16x^2 + 25y^2 - 160x - 200y + 400 = 0
+
+Set graph window to X:[-15,15]  Y:[-10,10]
+
+prgmPOLCONIC [ENTER]
+A=?16
+B=?0
+C=?25
+D=?-160
+E=?-200
+F=?400
+
+An ellipse is drawn in the first quadrant.
+
+Change the coefficient of x^2 to 25.
+
+prgmPOLCONIC [ENTER]
+A=?25
+B=?B
+C=?C
+D=?D
+E=?E
+F=?F
+
+A circle is now drawn in the first quadrant. Note that coefficients B through F
+can be re-entered by typing the variable name since the program does not 
+change them while creating the graph.
+
+
+		       ******************************
+		       * POLFRAC.82G for the TI-82  *
+		       ******************************
+
+ACKNOWLEDGMENT
+
+POLFRAC.82G is a group file containing several programs written by Philippe
+Fortin of Nice, France and is released to the public domain.  You may copy
+and change these programs.							.
+
+INTRODUCTION
+
+This group of programs covers all the basic needs for polynomial and rational
+functions study :
+ - expanded form
+ - factoring
+ - derivative function
+ - roots
+ - sign study
+ - variations array
+ - simplification
+ - integration (polynomial function)
+ - asymptote (rational function)
+ 
+All these features are available from one single program, thanks to the
+'menu' TI-82 instruction.
+ 
+
+HOW TO USE POLFRAC
+
+The main program is AASTART
+ 
+All the other programs included in POLFRAC.82G are subprograms of AASTART:
+AAINI   initialize vars
+DEMO    demo program (you may use it alone,
+        or using the DEMO option of AASTART)
+POLxxxx progs are for P(x) study
+FRxxxx  progs are for P(x)/Q(x) study
+SPxxxx  progs are for displays of polynomials function, conversion to frac,
+        etc.
+PTxxxx  progs are used to display sign and variation arrays.
+ 
+1) DEMO
+ 
+First you may have a quick look at what may be done using the DEMO
+option of main program : You just need to run AASTART and choose 3:DEMO
+to do that.
+First you will get a study of P(x)=x^3-3x factorization and then
+a study of derivative function sign, and then array of variations.
+ 
+PAUSES IN PROGRAM
+ 
+ - Press ENTER each time you get a >>> display to go forward.
+ 
+ - When an array is displayed (variation array or sign array) you may
+ use cursor keys to move cursor on an interesting position of array to
+ get a more accurate value (variations array) or the expression of a
+ factor (sign array). When you have got all the info needed, just press
+ ENTER key to continue.
+ 
+ 
+2) POLYNOMIAL FUNCTIONS : run AASTART and select 1:P(X) option.
+ 
+This program mainly uses 3 polynomial functions P1, P2, P3.
+You may define P1 & P2 using DEF POLY option. You may also store results of
+polynomial computation (derivative, integral) in P1, P2 or P3.
+ 
+To define P1 or P2, there are two possibilities :
+ 
+- Input of degree and coef. using DEF P1 or DEF P2 options of DEF POLY menu
+ 
+- Expanding the polynomial expressions, stored in Y1 or Y2
+  BEFORE running AASTART, using Y1 -> P1 or Y2 -> P2 of DEF POLY menu.
+ 
+Let's look at two examples :
+ 
+EX. 1 : You want to get the derivative function of x^3-3x and then factor
+this derivative function.
+ 
+Run AASTART, select P(X), then select DEF POLY, and DEF P1. Enter degree (3)
+and coeff 1,0,-3, 0. Now you may use P1 !
+ 
+After the display of P1, you return to the polynomial main menu. Choose
+DERIVATIVE option, then polynomial P1, you will soon get the result.
+You may then store it in  P1, P2 or P3 using the STO menu.
+Let us choose P2.
+ 
+Back to the polynomial main menu you may now choose EQUATIONS, SIGN P2
+to get sign of derivative function.
+ 
+EX. 2 : Now you want to compute p(x)=(x-1)(x-2)-3x^2+3
+and then you want to study the variation of this function.
+ 
+Before running AASTART define this function in Y1 using [Y=] key.
+Y1=(X-1)(X-2)-3X^2+3
+Then run AASTART, choose P(X), DEF POLY, Y1 -> P1 and program start
+P(x) expanding. You will get P(X)=-2X^2-3X+5 and you will return to
+polynomial main menu. Then you may ask for function variation study using
+STUDY option. (You will get the derivative function, the sign of derivative,
+and the array of variation).
+ 
+3) RATIONAL FUNCTIONS : run AASTART and choose P(X)/Q(X)
+ 
+First you must define P and Q using DEF P, Q option. (You will have to
+enter degree and coeff).
+ 
+Then choose one of the other options of Rational functions main menu :
+SIGN	 : sign study of P/Q.
+DERIVE	 : compute the numerator P'Q-PQ' of derivative function. (denominator
+	   is Q^2, so no computation is needed).
+SIMPLIFY : for instance (x^2-1)/(x^2+x-2) simplifies to (x+1)/(x+2).
+VALUE	 : rational value in one point.
+STUDY	 : definition set, simplification, derivative, sign of derivative,
+           array of variation, asymptote.
+ 
+4) Conditions of use
+ 
+These programs are for educational use. They give a step by step
+solution of problems, using same methods as teachers and students :
+ 
+- Solving polynomial equation of degree 1 and 2
+ 
+- Solving polynomial equation of degree 4 without terms in X and X^3 :
+  ax^4+bx^2+c=0
+ 
+- Solving polynomial equations of degree 3, 4, 5, 6 when it is possible
+to get a solution A and then to factor (X-A) in P(X) in order to get
+a lower degree equation. In these cases, as students do, program will search
+for an obvious solution (-2,-1,0,1,2) and then, if not found, try to
+get one solution between -10 and 10 using numerical methods. It is the only
+part of these programs where numerical methods are used.
+ 
+You may use polynomial functions of degree less than or equal to 6.
+ 
+For P(x)/Q(x) you must make sure that the degree of intermediate results
+when computing derivative function will not exceed 6, so deg(P)+deg(Q) must
+be less than or equal to 7.
+ 
+In fact, we may say these programs are able to solve most of the problems
+that a student is suppose to solve with symbolic computation using
+real numbers.
+ 
+The only exception is the case of very tricky factoring process for high
+degree polynomial functions.
+
+
+		       ******************************
+		       * TILOGO.82G for the TI-82 *
+		       ******************************
+
+ACKNOWLEDGMENT
+
+TILOGO.82G is a group file containing the program TILOGO.82P and picture
+PIC1.82I.  This program was was written by Pat Hatcher of the TI Graphics 
+Team and is released to the public domain.  You may copy and change this
+program.
+
+INTRODUCTION
+
+This program uses the RecallPic command to display a picture. The short 
+program creates a clear screen, displays Pic1, and then reverses each pixel 
+from the left side of the display to the right.  Pic1 in TILOGO.82G is the 
+TI logo.  You may either replace this Pic1 with your own picture or 
+change "Pic1" in the line "RecallPic Pic1" to a different Pic number.
+
+HOW TO USE TILOGO
+
+Execute TILOGO to begin the program.  Press [ON] <QUIT> to stop execution 
+and return to the Home screen.
+

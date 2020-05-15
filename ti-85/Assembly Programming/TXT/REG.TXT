@@ -1,0 +1,57 @@
+
+
+
+TI-85 Assembler Programming - Data and Registers
+
+
+
+
+
+
+TI-85 Assembler Programming - Data and Registers
+
+In the previous lesson, you learned about the memory, where nearly all data is stored. Unfortunately, memory access is relatively slow for the processor. So, when we want the processor to manipulate data, like add two numbers together, we don't want to do it in the memory. Instead, we load the data into special high-speed memory locations inside the processor itself called registers.  
+
+
+In the Z80 chip there are 14 registers. They have names instead of addresses, and are called A, F, B, C, D, E, H, L, PC, SP, IX, IY, I, and R. The one-letter ones are each one byte, and the two-letter ones are each two bytes. 
+
+
+For programmers, the most important register is the A register. A is also called the Accumulator. A is the focus point for nearly all data operations. For example, when we add two numbers together, one of them is stored in A, and the final answer is also stored in A. 
+
+
+B, C, D, E are used for temporary data, like holding the second number when adding. They are grouped in two-byte pairs - BC and DE - when we need to store larger numbers, like memory addresses.  
+
+
+H and L are separate registers, but they are almost always used as the two-byte pair HL and should always be used to store addresses when moving data between the memory and the registers. 
+
+
+The rest of the registers are unimportant for now. Some of them are used by the chip and not us. PC is the Program Counter. It stores which instruction is being executed. SP is the Stack Pointer. It is the memory address of the top of the stack. We will use the stack later, but we never actually change SP ourselves. I is the Interrupt Vector, which I won't even try to explain. The R register is the Refresh register. I won't explain it because I have no idea what it does! 
+
+
+F is the Flags byte. Each of its bits mean something different. For example, the Zero flag bit tells us whether the last instruction generated a zero result. The Carry bit tells us whether the last math operation required a carry. We will use those two flags later. The other flags aren't used very often by us.  
+
+
+IX is used for special purpose memory access, which we might do later. IY is used internally by the TI-85. 
+
+
+That's how data is stored and used on the TI-85. The addressed memory contains numbered one-byte chunks and is where data is stored. The registers are high-speed named memory locations where data can be manipulated. In the next lesson, you will learn the LD instruction, which is used to move data between registers and memory and from register to register.
+
+
+
+On to the next lesson: The LD instruction.
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 12-27-95 by Greg Parker. Last update: never
+
+
+
+

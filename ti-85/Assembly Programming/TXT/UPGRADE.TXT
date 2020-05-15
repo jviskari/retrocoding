@@ -1,0 +1,38 @@
+Upgrading your programs for ZShell 4.0
+======================================
+
+Upgrading your programs for ZShell 4.0 should be really easy.
+If you have any problems after you have read these instructions
+several times, don't hesitate to mail us.
+First, replace EVERY instance of TI-85.H you have with the new
+one, since it contains some IMPORTANT changes.
+After that, replace all your CALL_ROM's with ROM_CALL's.
+NOTE! ROM_CALL may _NOT_ be used with ANY other values than
+those defined in TI-85.H. If you do, the calculator will SURELY HANG!
+After that, find any calls to the FindPixel routine (located at
+address $6c9a in ROM 3.0A, on page 4), and replace them with a
+ROM_CALL(FIND_PIXEL). Note that you still HAVE to switch the ROM page
+to 4 yourself. This is required to improve performance, since it will
+only have to be done once. To do it, do like this:
+   ld a,4
+   out (5),a
+Check through your code for ANY calls that are NOT defined in TI-85.H,
+but rather uses direct addresses. If you find any, your program is
+unfortunately NOT compatible with ZShell 4.0 on all ROM's. What you can
+do is:
+   1) Add a note to your program, saying that it only works on
+      certain ROM(s). Check CAREFULLY, so you don't mislead anybody.
+   2) Mail the ZShell developers with information about the routine
+      you want to use. We will included it in ZShell. If it is an
+      important routine, we will probably release a maintenance
+      version containing just that upgrade, otherwise it will be included
+      as soon as possible (which is probably the same)...
+
+Or alternatively re-write you code so it doesn't use the ROM call. This
+option isn't that difficult for many of the ROM calls not supported by
+ZShell 4.0.
+
+
+
+The ZShell Development Team
+Magnus Hagander, e95_mha@e.kth.se

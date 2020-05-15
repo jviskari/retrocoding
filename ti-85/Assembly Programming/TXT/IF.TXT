@@ -1,0 +1,61 @@
+
+
+
+TI-85 Assembler Programming - "IF" statements
+
+
+
+
+
+
+TI-85 Assembler Programming - "IF" statements
+
+If statements are not simple in assembler. In fact, the code never actually says "if". Instead, you use JP or JR or CALL with a condition. The conditions aren't simple, either. For example, you can't just say jump if A = B. Instead, you have to subtract A from B and see if the answer if 0. Luckily, there are a few things that make it a little bit easier. 
+
+
+One thing that helps us is the Flag register. It stores, among other things, whether the last result was zero or positive, and also the carry and parity of the answer. The other thing us is the CP instruction. CP stands for Compare. It subtracts a register from A and throws away the answer. The use of this is that it still changes the flags. So, if you wanted to see if A = B, you would compare A and B and see if the Zero flag is set. The conditions used with JP, JR and CALL all check the flags. 
+
+
+Here it is in assembler code:
+
+          ; check if 17 = 23     
+     LD   A, 17     ; load one number
+     LD   B, 23     ; load other number
+     CP   B         ; compare A with B
+     JR   Z, Equal  ; jump to Equal if zero result
+
+CP B compares B with A by subtracting them. If the two numbers are equal, the subtraction is zero, so the Zero flag is set. The Z next to JR is a condition. Z stands for Zero. JR Z, label only jumps if the Zero flag is set. If the two numbers were equal, the condition would be true, and the jump would occur. Otherwise, the program keeps going straight ahead.
+
+ 
+
+CP always compares something to A by subtracting it from A. The flags are changed but A is not. It can compare raw values, any register, or memory by using HL to hold the address.
+
+ 
+There are 8 different conditions that check 4 flags. They are Z and NZ, which check for zero and non-zero; C and NC, which check for carry and no carry; PO and PE, which check for parity odd and parity even; P and M, which check for positive and negative (plus and minus). The only ones I have used are Z and NZ, for checking equality. I have heard that C and NC are useful for greater and less than, but I have not used those. If anyone knows uses for PO/PE and P/M, let me know.
+
+
+To put it simply, "CP B   JR Z, label" can be translated as "if B = A, then goto label". Changing the Z to NZ makes it "if B ­ A..."
+
+
+The most common usage of if statements is probably the construction of rudimentary loops. You will learn how to create these loops in the next lesson.
+       
+
+
+On to the next lesson:  Loops using "if" statements.
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 1-5-96 by Greg Parker. Last update: 2-4-96
+
+ 
+       
+
+

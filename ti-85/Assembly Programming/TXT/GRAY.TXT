@@ -1,0 +1,17 @@
+Heres' the code and 85s of an 8 level grayscale viewer. Its very 
+simple at the moment. It displays the file 'GrayPic.85s', which has 
+the format:
+offset - data
+00 - $00 (to stop it being RCL'd)
+01 - $7F (ID- Grayscale Pic)
+02 - 1024 bytes of screen data for Most Significant Bit
+$402 - 1024 bytes of screen data for middle bit
+$802 - 1024 bytes of screen data for Least Significant Bit.
+
+Also attached should be a demo picture. 
+
+Rob Taylor MAIL - mailto:rtaylor@rtaylor.u-net.com 
+           WEB  - http://www.u-net.com/~rtaylor/    
+
+
+

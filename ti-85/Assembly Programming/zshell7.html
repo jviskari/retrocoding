@@ -1,0 +1,667 @@
+<HTML>
+
+<HEAD>
+<TITLE>The ZShell school - Lesson #7</TITLE>
+</HEAD>
+
+<!--
+
+  This homepage was written in a plain texteditor
+
+-->
+
+<BODY BGCOLOR="#000000" TEXT="CC4400" LINK="#FFC000" VLINK="#806000" ALINK="#FF00FF">
+
+<CENTER>
+
+<A HREF="index.html">   <IMG BORDER=0 SRC="buttons/home.gif" ALT="Home"></A>
+<A HREF="aboutme.html"> <IMG BORDER=0 SRC="buttons/aboutme.gif" ALT="About me"></A>
+<A HREF="pc.html">      <IMG BORDER=0 SRC="buttons/pc.gif" ALT="PC"></A>
+<A HREF="ticalcs.html"> <IMG BORDER=0 SRC="buttons/ticalcs.gif" ALT="TI-Calcs"></A>
+<A HREF="music.html">   <IMG BORDER=0 SRC="buttons/music.gif" ALT="Music"></A>
+<A HREF="guestb.html">  <IMG BORDER=0 SRC="buttons/guestb.gif" ALT="Guestbook"></A>
+<A HREF="news.html">    <IMG BORDER=0 SRC="buttons/news.gif" ALT="News"></A>
+
+<BR>
+<IMG ALIGN=TOP SRC="pics/smyrnlgo.gif"><BR>
+<A HREF="zshell.html"><IMG BORDER=0 ALIGN=TOP SRC="pics/lzshell.gif"></A>
+</CENTER>
+
+<TABLE ALIGN=CENTER BORDER=0 WIDTH=540><TR><TD>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>ESSON</FONT></FONT>
+<FONT SIZE=5>#7</FONT>
+</FONT><BR>
+</P>
+
+<P>Welcome to lesson #7 of the online ZShell school! At this stage you should
+know most of the instructions the Z80 processor can handle, and a summary of all
+instructions would be quite handy, don't you think? I've zipped together two textfiles
+with a short summary over the official Z80 instruction set - press
+<A HREF="bin/z80sum.zip">here</A> to get it.</P>
+
+<UL>
+<LI><A HREF="#grayscale">More about grayscale graphics</A>
+<LI><A HREF="#input">Input routine</A>
+<LI><A HREF="#ports">Introduction to ports</A>
+<LI><A HREF="#mulkeys">Read multiple keys</A>
+</UL>
+
+<BR>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="grayscale"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>M</FONT><FONT SIZE=4>ORE </FONT>
+<FONT SIZE=5>A</FONT><FONT SIZE=4>BOUT </FONT>
+<FONT SIZE=5>G</FONT><FONT SIZE=4>RAYSCALE </FONT>
+<FONT SIZE=5>G</FONT><FONT SIZE=4>RAPHICS</FONT>
+</FONT>
+</P>
+
+<P>The previous lesson was just an introduction to grayscale, explaining how it worked. In this
+lesson some useful routines are presented. It should be very easy to understand if you understood
+what I meant about layers and two video memories in the previous lesson. If not, you should reread
+that section.</P>
+
+<P>We start with something simple: a putpixel routine, lets call it PutPixelG. Input arguments
+should be coordinates and the color of the pixel; 0 being white and 3 black. The routine should
+check on which layers the pixel should be put. If the pixel is black it should be put at both
+layers. Here's the code, with comments: </P>
+
+<FONT COLOR="#808080"><PRE>
+PutPixelG:            ; B,C = x,y coordinates
+                      ; D = color (0-white, 3-black)
+ ld a,63              ; Convert the y coordinate so
+ sub c                ; y=0 is the top row, not the bottom row
+ ld c,a               ; (FIND_PIXEL) works that way
+ ROM_CALL(FIND_PIXEL) ; Get the offset to the pixel to be put
+ push hl              ; Store the offset on the stack
+ ld e,a               ; Store the value of bit to change
+ ld bc,$FC00          ; Address to layer 1
+ add hl,bc            ; Add with offset to get pixel location
+ or (hl)              ; Put pixel
+ bit 1,d              ; Check if D=2 or D=3
+ jr nz,PPG1           ; If the bit is set, don't remove pixel!
+ xor e                ; Remove the pixel.
+PPG1:
+ ld (hl),a            ; Make the update in the video memory
+ pop hl               ; Restore the pixeloffset
+ ld a,e               ; Plus the bit value
+ ld bc,(Page2Addr)    ; Page2Addr points to 2nd layer
+ add hl,bc            ; Add with offset to get pixel location
+ or (hl)              ; Put the pixel
+ bit 0,d              ; Check if D=1 or D=3 (then bit 0 is set)
+ jr nz,PPG2           ; Skip the removing part if bit 0 is set
+ xor e                ; Remove the pixel
+PPG2:
+ ld (hl),a            ; Update the second layer
+ ret                  ; End of routine
+</PRE></FONT>
+
+<P>When the routine returns to where it was called, all registers are changed. If you don't like this,
+put in pushes and pops at the beginning and the end of the routine. Also, don't forget ld a,4 \
+out (5),a at the beginning of the program! Else the program will crash when FIND_PIXEL is
+executed.</P>
+
+<P>The routine uses quite a lot of logical operators and bit instructions. I also think I missed some
+instructions in lesson #4 (the one about bits and logical operators) , one of them used in the routine
+above: BIT. BIT checks if a certain bit is set in an 8 bit register.
+If the bit is set, the zero flag is cleared. If it's not set, the zero flag is set. Similiar instructions
+are SET and RES. Both have the same arguments as the BIT instructions, but SET sets a bit in
+an 8 bit register and RES removes the bit. One sad thing about these instructions are that the bit
+must be a constant. You can't use a register for the first argument. Example: BIT A,B isn't possible.
+If the instruction did exist, some routines could be optimized in both speed and size.</P>
+
+<P>Back to the routine above... there is a little trap in it. If you want to put a pixel in color
+(darkgray), a pixel should be lit at the first layer. But it's very important to clear the bit at the
+second layer! If it was set before calling the routine, you would end up with a black pixel instead.
+The routine above actually first always puts the pixel, then removes it if it should be removed.
+The instruction used to put a pixel is OR and to remove it I used XOR. You could remove the pixel
+with the AND instruction also, but it would require more bytes (and it wouldn't be faster) to write
+such a routine.</P>
+
+<P>Note also that you can use this routine to remove pixels, although you could make a routine
+that only removed pixels (would be slightly faster). If you want fast graphic routines, you shouldn't
+use a putpixel routine every time you want to put a pixel (I'm thinking of line routines and sprite
+routines) because it would be slow since you must call FIND_PIXEL every time which is very
+unnecessary.</P>
+
+<FONT COLOR="#FF8000"><H3>Grayscale sprite routine</H3></FONT>
+
+<P>One very easy way to do a grayscale sprite routine is to use an ordinary PutSprite routine
+twice and just change the address to the layer... that's what I'm going to do in this section.
+I'm going to use my own PutSprite routine (found <A HREF="zshell5.html#sprites">here</A>), but
+you should be able to do the modification quite easily on any sprite routine.</P>
+
+<FONT COLOR="#808080"><PRE>
+PutSpriteG:           ; HL = pointer to sprite,
+ push bc              ; B,C = x,y coordinates
+ push de
+ push hl
+ ld d,(hl)            ; D = xsize of sprite
+ inc hl
+ ld e,(hl)            ; E = ysize of sprite
+ inc hl
+ push de              ; Store the sprite dimensions
+ push de              ; on the stack twice...
+ push de              ; many times :-)
+ pop ix               ; IX = DE
+ ld de,$FC00          ; Address to layer 1
+ CALL_(PutSprite)     ; Put the sprite
+ pop ix               ; Restore the sprite dimension
+ pop de
+ ld d,0
+ add hl,de            ; HL=HL+<no rows in sprite>
+ ld de,(Page2Addr)    ; Load DE with the address to layer 2
+ CALL_(PutSprite)     ; And put that layer
+ pop hl
+ pop de
+ pop bc
+ ret
+</PRE></FONT>
+
+<P>You must also change this section in the PutSprite routine:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ld de,$FC00    ; Remove this row!
+ add hl,de
+ ex de,hl
+ pop hl
+ ld b,(hl)      ; Change these four rows
+ inc hl         ; |
+ ld c,(hl)      ; |
+ inc hl         ; |
+</PRE></FONT>
+
+<P>into</P>
+
+<FONT COLOR="#808080"><PRE>
+ add hl,de
+ ex de,hl
+ pop hl
+ push ix
+ pop bc
+</PRE></FONT>
+
+<P>If you want to use the PutSprite routine to put ordinary black&white sprites, you must change
+the input registers so DE points to the video memory ($FC00) and IX are the x and y dimensions
+of the sprite. HL should also point to the spritedata, not the coordinates. It's easier though make
+another small routine that fixes this:</P>
+
+<FONT COLOR="#808080"><PRE>
+PutSpriteBW:
+ push bc
+ push de
+ push hl
+ ld d,(hl)
+ inc hl
+ ld e,(hl)
+ inc hl
+ push de
+ pop ix
+ ld de,$FC00
+ CALL_(PutSprite)
+ pop hl
+ pop de
+ pop bc
+ ret
+</PRE></FONT>
+
+<P>If you for some reason want both black&white and grayscale sprites in the same program you
+should use the routines above. PutSpriteBW works exactly the same way as the unmodified
+version of PutSprite. Both PutSpriteG and PutSpriteBW uses the modified version of PutSprite.
+I made a file containing those three routines with how-to-use instructions. Press
+<A HREF="zsfiles/sprlib.h">here</A> to get it.</P>
+
+<P>You must also know how to store grayscale sprites. To get it to work in my grayscale sprite
+routine, and in all other grayscale sprite routines available, you must store the layers after each
+other! It's therefore hard to see what the sprite really is if you just look at the .db:s. When drawing
+the sprite, draw it on a piece of paper (or a drawing program) first, then divide the layers.</P>
+
+<P>Example:</P>
+
+<FONT COLOR="#808080"><PRE>
+Sprite:
+ .db 8,8
+ .db %11111111
+ .db %11111111
+ .db %00000000
+ .db %00000000
+ .db %00000000
+ .db %00000000
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %00000000
+ .db %00000000
+ .db %00000000
+ .db %00000000
+</PRE></FONT>
+
+<P>The sprite looks like four horitonzal rows with the colors black, light gray, white, and last
+darkgray. The first 8 rows (or 6 rows if the ysize is 6) contains the first layer and the last 8
+rows the second layer. A black pixel should have a pixel set on both layers, a white on none.</P>
+
+<P>That was all about grayscale for this time. If you want a grayscale line routine for example,
+try change the b&w line routine the way I changed the PutSprite routine above.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="input"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>I</FONT><FONT SIZE=4>NPUT </FONT>
+<FONT SIZE=5>R</FONT><FONT SIZE=4>OUTINE</FONT>
+</FONT>
+</P>
+
+<P>Input routines are very seldom used in ZShell applications so far. One reason is that in most
+applications it hasn't been necessary. But the most important reason is probably because input
+routines aren't that easy to write. It's much easier (and takes less memory) to write a routine
+where you change the letters with the arrowkeys.</P>
+
+<P>How can an input routine be hard? Well, you have to read each char seperately, and if you
+want a backspace feature it becomes even harder. But adding a blinking cursor after the last char
+is MUCH easier. How can that be!? Well, the blinking cursor is cheating really... the ROM does
+everything for you. You just have to turn the cursor on with one simple instruction and turn it
+off when done. It's not THAT easy, but almost.</P>
+
+<P>Before showing the routine a new set of instructions must be explained: CPI, CPIR, CPD and
+CPDR. It's the same kind of instructions as LDIR and those, and the difference between them is
+the same.</P>
+
+<P>CPI compares the A register with the byte at (HL). After that HL is increased and BC is 
+decreased. The Zero flag is set if A=(HL), else it's cleared. CPIR repeats CPI until either
+the Zero flag is set or BC becomes 0. CPD and CPDR does the same thing except that HL
+is decreased instead of increased.</P>
+
+<P>These instructions are extremly helpful if you want to check where in an array a certain
+value is stored. For example, let A=5, BC=10 and HL point to an one-dimensional array. Then
+you make a CPIR. If after the instruction the Zero flag is NOT set, none of the 10 bytes in the
+array was equal to 5. If the Zero flag was set and BC has become 7, the 2nd (10-7-1) position in the
+array is equal to 5. The reason it's the 2nd position (not the third) is that BC is decrease even
+if A = (HL).</P>
+
+<P>How can this be used in an input routine? If you check the TI-85.H file you see that the 
+keycodes to the alphabet are in very disorder: A = $2E, B = $26, C = $1E, ... ok, there is
+a pattern, but to convert it to ascii chars makes the routine bigger than if you use CPIR.</P>
+
+<P>As you saw in the example above, BC becomes backwards. If BC=0 (and the Zero flag is
+set) it's the last byte in the array that was equal to A. If the array contained the alphabet
+in alphabetic order and the A register contained the keycode to Z, BC would be 0. Then you
+had to do a subtraction with 90 (the ascii code for Z) followed by a NEG instruction. We could
+save one byte by reversing the alphabet. Instead of subtracting and negatating, only one addition
+is needed (with 65, ascii code for A).</P>
+
+<P>Now you should understand the input routine. The rows with an explanation starting with a star
+(*) can be removed if you don't want a blinking cursor. Read the explanation before the routine
+so you know how to use it and some traps. The letters you enter will be in textmode (menustyle
+is MUCH harder since the size of the letters are different). Backspace (left arrow) is also supported.
+</P>
+
+<FONT COLOR="#808080"><PRE>
+; Input routine  - made by Jimmy M&aring;rdell 97-03-05
+;
+; Reads a sentence entered from the keyboard. Only uppercase
+; letters and space are allowed. Left arrowkey = backspace.
+;
+; When calling, HL should point to where the string should
+; be stored and A should hold the maximum length of the
+; string. Be sure there are enough space (A+1) to store the
+; nullterminated string at HL! ($800C) should hold the screen
+; position where the string starts.
+;
+; This input routine will also have a flashing cursor. If you
+; don't like it, remove all rows where the explanation starts
+; with a *.
+;
+; IMPORTANT: The input must NOT wrap to a new row! Then it
+; will not work properly. The last char on a row should not
+; be used either (if cursorcol=0 when calling, the maximum char
+; length is 20). If you have a cursor, the two last chars should
+; not be used (max length 19 if the screen location starts to
+; the far left).
+;
+; The routine requires one temporary variable, noLet.
+
+Input:
+ push bc
+ push de
+ push hl
+ set 2,(iy+12)         ; * Turn cursor blinking on
+ ld (noLet),a          ; Store the maximum lenght of the string
+ ld e,0                ; E = numbers of letters written so far
+WaK:
+ ld a,32
+ ld ($800E),a          ; * Set "character under cursor" to space
+ push hl               ; * Save HL since GET_KEY destroys HL
+ call GET_KEY
+ cp $02                ; $02 = left key
+ jr z,BackSpace
+ cp $09                ; $09 = enter
+ jr z,NameDone
+ cp $11                ; $11 = space
+ jr nz,CheckLetter
+ ld a,32               ; Space is ascii char 32
+ pop hl
+ jr PutLetter          ; Put the letter on screen and in memory
+CheckLetter:
+ ld hl,Letters
+ ld bc,(PROGRAM_ADDR)
+ add hl,bc             ; HL -> letter table
+ ld bc,26              ; 26 letters to check
+ cpir                  ; Compare A with each letter until match
+ ld d,c                ; Then C = the letter. Store in D
+ pop hl                ; HL -> current position in string
+ jr nz,WaK             ; Wait until valid keystroke
+ ld a,65               ; 65 = ascii char for A
+ add a,d               ; Now A=ASCII char for the letter pressed
+PutLetter:
+ ld c,a
+ ld a,(noLet)          ; A = max letters
+ cp e                  ; Check if max size is reached
+ jr z,WaK              ; If so, wait for a new key
+ ld (hl),c             ; If not, store the key entered
+ inc hl                ; Point to the next byte in the string
+ inc e                 ; And increase the letter counter
+ ld a,c
+ ROM_CALL(TX_CHARPUT)  ; Show the chars pressed on the screen
+ jr WaK                ; And jump back and wait for a new key
+BackSpace:
+ pop hl                ; HL -> current position in string
+ ld a,e
+ or a                  ; Check if string size = 0
+ jr z,WaK              ; If so, backspace not allowed - repeat
+ res 2,(iy+12)         ; * Stopp cursor blinking
+ dec e                 ; Decrease string size
+ dec hl                ; And string pointer
+ push hl
+ ld hl,$800D           ; HL -> x cursor position
+ dec (hl)              ; Decrease it
+ ld a,32               ; Overwrite the last letter with a space
+ ROM_CALL(TX_CHARPUT)  ; Put the space over the chars
+ ROM_CALL(TX_CHARPUT)  ; * And over the blinking cursor
+ dec (hl)              ; * Decrease the x coordinate twice
+ dec (hl)              ;
+ pop hl
+ set 2,(iy+12)         ; * Stopp cursor blinking
+ jr WaK                ; Wait for a key
+NameDone:
+ pop hl                ; HL -> current position in string
+ ld (hl),0             ; Put a terminating zero at end of string
+ res 2,(iy+12)         ; * Stopp cursor blinking
+ pop hl
+ pop de
+ pop bc
+ ret
+
+; The keycodes of the letters A-Z stored backways
+
+Letters:
+ .db $19,$21,$0A,$12,$1A,$22,$0B,$13,$1B,$23,$2B
+ .db $0C,$14,$1C,$24,$2C,$0D,$15,$1D,$25,$2D,$0E
+ .db $16,$1E,$26,$2E
+</PRE></FONT>
+
+<P>Press <A HREF="zsfiles/input.h">here</A> to get the routine above as plain text file. I've also made a
+small program to test it (<A HREF="zsfiles/inputtst.asm">inputtst.asm</A>).</P>
+
+<P>Another useful inputroutine is when you want to enter numbers. I've also made a routine that
+does this. Press <A HREF="zsfiles/addtwo.asm">here</A> to get it. A test program is also included
+(which lets you enter two number and the result is displayed).</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="ports"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>I</FONT><FONT SIZE=4>NTRODUCTION </FONT>
+<FONT SIZE=5>T</FONT><FONT SIZE=4>O </FONT>
+<FONT SIZE=5>P</FONT><FONT SIZE=4>ORTS</FONT>
+</FONT>
+</P>
+
+<P>If there were no such things as ports, a microprocessor would just do invisible calculation. 
+Ports communicate between the processor and hardware stuff such as the keyboard and the
+linkport. Assembly is low level language, but programming with ports is <I>really</I> low level.
+To read a key in ZShell, you most often use GET_KEY. But how does GET_KEY work? It reads
+a byte in the RAM (probably the one stored at $8006 - LAST_KEY or $8000 - KEY_0). That byte
+read is the key scancode. But how did it get there? To understand that you must know a bit of
+what interrupts are. At a frequence of about 200 Hz (depends on the batteries) certain routines
+are called in the ROM. These routines (interrupthandlers) are called whatever the processor
+is doing; in the middle of a calculation, waiting for the user to press a key, or running a ZShell
+game - the only exception are if the interrupts have been disabled. The interupthandlers are
+quite small though, and they never disturb the program in any way (no change in registers or
+flags or anything). But they do change some things in the RAM memory - among them the
+address where GET_KEY gets the key scancode from. One interrupt handler reads from a port 
+which key is currently pressed down and converts that information into a scancode which is
+stores in the RAM memory, ready for GET_KEY to pick up.</P>
+
+<P>On the TI-85 there are 8 ports, numbered from 0-7. Some are unused, some have known
+functions and some are unknown. You can both send and receive stuff from ports though some ports are read only and some are write only. Port 1 is used by the keyboard and port 7 by the
+linkport.</P>
+
+<P>The instructions used to communicate through ports are mainly OUT and IN. OUT sends a
+byte trough a port and IN receives a byte from a port. The syntax for OUT is either</P>
+
+<FONT COLOR="#808080"><PRE>out (n),A</PRE></FONT>
+
+<P>where n is the port and A is the accumulator, or</P>
+
+<FONT COLOR="#808080"><PRE>out (C),r</PRE></FONT>
+
+<P>which sends an 8 bit register r through the port stored in register C. The syntax for IN is the 
+same, except that the arguments are swapped (the destination register comes first, then the 
+port).</P>
+
+<P>Some other instructions connected to ports are OUTI, OUTD, OTIR, OTDR, INI, IND, INIR
+and INDR. All of them works as the other string instructions, ie they can send or receive many
+bytes at once. When programming the TI-85 though, they seem <I>very</I> useless since ports
+aren't used often.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="mulkeys"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>M</FONT><FONT SIZE=4>ULTIPLE </FONT>
+<FONT SIZE=5>K</FONT><FONT SIZE=4>EYS</FONT>
+</FONT>
+</P>
+
+<P>Now that you know what ports are, you may wonder how you can use them in your programs.
+More important maybe, is why? To communicate with the linkport is one reason of course, but
+quite often you also want to use port 1 to read whichs keys are held down. Why? Because
+GET_KEY has one, big, disadvantage: it can't read multiple keys. If you hold down more than one
+key, it acts as if no key has been pressed down (I think). In this section I will explain how you to
+use port 1. It will require that you have understood lesson #4 because when working with ports,
+it's at "bit level".</P>
+
+<P>It's kind of hard to explain in detail exactly why you should do this and that, so try to live
+with it :-). To check if some keys are held down, you should first send a mask to port 1 and
+after that receive a byte from port 1 telling which keys are held down, according to the mask.</P>
+
+<P>The keys on the TI-85 are made up by an 2-dimensional array shown below</P>
+
+<TABLE WIDTH="100%" BORDER=1>
+
+<TR>
+<TH COLSPAN=2><FONT COLOR="#FF8000">Bit number</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">0</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">1</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">2</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">3</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">4</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">5</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">6</FONT></TH>
+<TH WIDTH=11%><FONT COLOR="#FF8000">7</FONT></TH>
+</TR>
+
+<TR>
+<TH ROWSPAN=7><FONT COLOR="#FF8000"><H2>M<BR>a<BR>s<BR>k</H2></FONT></TH>
+<TH><FONT COLOR="#FF8000">$FE</FONT></TH>
+<TD ALIGN=CENTER>Down</TD><TD ALIGN=CENTER>Left</TD>
+<TD ALIGN=CENTER>Right</TD><TD ALIGN=CENTER>Up</TD>
+<TD ALIGN=CENTER><I>Unused</I></TD><TD ALIGN=CENTER><I>Unused</I></TD>
+<TD ALIGN=CENTER><I>Unused</I></TD><TD ALIGN=CENTER><I>Unused</I></TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">$FD</FONT></TH>
+<TD ALIGN=CENTER>Enter</TD><TD ALIGN=CENTER>+</TD>
+<TD ALIGN=CENTER>-</TD><TD ALIGN=CENTER>*</TD>
+<TD ALIGN=CENTER>/</TD><TD ALIGN=CENTER>^</TD>
+<TD ALIGN=CENTER>Clear</TD><TD ALIGN=CENTER><I>Unused</I></TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">$FB</FONT></TH>
+<TD ALIGN=CENTER>(-)</TD><TD ALIGN=CENTER>3</TD>
+<TD ALIGN=CENTER>6</TD><TD ALIGN=CENTER>9</TD>
+<TD ALIGN=CENTER>)</TD><TD ALIGN=CENTER>Tan</TD>
+<TD ALIGN=CENTER>Custom</TD><TD ALIGN=CENTER><I>Unused</I></TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">$F7</FONT></TH>
+<TD ALIGN=CENTER>.</TD><TD ALIGN=CENTER>2</TD>
+<TD ALIGN=CENTER>5</TD><TD ALIGN=CENTER>8</TD>
+<TD ALIGN=CENTER>(</TD><TD ALIGN=CENTER>Cos</TD>
+<TD ALIGN=CENTER>Prgm</TD><TD ALIGN=CENTER>Del</TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">$EF</FONT></TH>
+<TD ALIGN=CENTER>0</TD><TD ALIGN=CENTER>1</TD>
+<TD ALIGN=CENTER>4</TD><TD ALIGN=CENTER>7</TD>
+<TD ALIGN=CENTER>EE</TD><TD ALIGN=CENTER>Sin</TD>
+<TD ALIGN=CENTER>Stat</TD><TD ALIGN=CENTER>x-Var</TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">$DF</FONT></TH>
+<TD ALIGN=CENTER><I>Unused</I></TD><TD ALIGN=CENTER>Sto-></TD>
+<TD ALIGN=CENTER>,</TD><TD ALIGN=CENTER>x²</TD>
+<TD ALIGN=CENTER>Ln</TD><TD ALIGN=CENTER>Log</TD>
+<TD ALIGN=CENTER>Graph</TD><TD ALIGN=CENTER>Alpha</TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">$BF</FONT></TH>
+<TD ALIGN=CENTER>F5</TD><TD ALIGN=CENTER>F4</TD>
+<TD ALIGN=CENTER>F3</TD><TD ALIGN=CENTER>F2</TD>
+<TD ALIGN=CENTER>F1</TD><TD ALIGN=CENTER>2nd</TD>
+<TD ALIGN=CENTER>Exit</TD><TD ALIGN=CENTER>More</TD>
+</TR>
+
+</TABLE>
+<BR>
+
+<P>You should read the table like this: If you want to know if Cos is pressed down at
+the moment, you should first send the mask $F7 through port 1, then receive a byte
+and check if bit 5 is cleared. If it's cleared, then Cos is held down. Code:</P>
+
+<FONT COLOR="#808080"><PRE>
+ld a,$F7
+out (1),a
+in a,(1)
+bit 5,a
+jr z,Cos_Is_Held_Down
+</PRE></FONT>
+
+<P>How does the mask work? What happens if I use other masks than the ones in the table?
+If you convert any of the masks above into binary, you'll find that all bits except one are set.
+For example, $F7 = %11110111. Bit 3 is cleared, which means that the returned value is an
+indicator for the third row (with row 0 as the first row). If you send a mask with more than
+one bit cleared, for example $F3 = %11110011, the returned byte would be an indicator for
+both row 2 and 3. If we found that bit 5 on the returned byte is cleared, it means that either
+Cos or Tan is pressed, there is no way of knowing which (both may be pressed also of course). 
+That means it's often pretty dumb to send such a mask.</P>
+
+<P>There are only seven rows in the table, meaning one of the bits isn't used (the most significant
+bit). The last bit in the mask is therefore not important (doesn't mean anything) and there is no
+difference if you use the mask $F7 or $77 ($77 = %01110111).</P>
+
+<P>The reason the table looks the way it looks is how the keys are wired to each other. One
+consequence of this is that if you hold down three keys so they form three corners in a rectangle it
+will result in that the fourth key in the rectangle will act as if pressed down. For example, if you
+press down EE, Ln and Stat and send the mask $DF, you'll find that the resulting byte will have
+both bit 4 and 6 are cleared. There is no way around this (if you don't want to rewire the keys
+somehow...) so don't choose key combinations that may cause this!</P>
+
+<P>You may also have noticed that the ON key isn't in the table above. That's because the ON
+key works a bit different - when you press down ON an interrupt occur (even if the interrupts
+are disabled). There is a way to check if the ON key is pressed down though. If the third bit
+of a received byte from port 3 is cleared, then ON is held down:</P>
+
+<FONT COLOR="#808080"><PRE>
+in a,(3)
+bit 3,a
+jr z,ON_Is_Held_Down
+</PRE></FONT>
+
+<P>One important thing when using port is that ports only detects keys currently held down.
+If you manage to press down and release a key between two port checks, that press will go
+unnoticed, so be sure to check the keys quite often so you don't have to hold down the key
+half a second before it's noticed. 200 times per second is maybe not necessar, but at least
+10 times/second, else the game control will not be perfect.</P>
+
+<P>I've made a program so you can check if the table above is correct. It shows the table
+above, except that if a key is NOT held down, a black square is shown in it's place, else
+it's empty. You can also experiment with pressing down three keys so they form the
+cornors of a rectangle, and then you'll see that the fourth key is indicated as held down.
+Press <A HREF="zsfiles/mkeytest.asm">here</A> to get the source.</P>
+
+<P>When using multikeys, it's most often the arrows keys you're interested in. Diagonal
+movement is often good. The other keys (such as Exit, 2nd) can often be checked with
+either GET_KEY or reading from the RAM memory. If not, you have to make to seperate
+checks. One alternative is sending the mask $BD through the port. The drawback with
+this is that the keys F2-F5 can be used as arrowskeys :-)</P>
+
+<P>Here's an example code:</P>
+
+<FONT COLOR="#808080"><PRE>
+MainLoop:
+ ld a,$FE          ; Check the arrow keys
+ out (1),a
+ in a,(1)
+ bit 0,a
+ CALL_Z(MoveDown)  ; The routines called must preserve A!!
+ bit 1,a
+ CALL_Z(MoveLeft) 
+ bit 2,a
+ CALL_Z(MoveRight)
+ bit 3,a
+ CALL_Z(MoveUp)
+ ld a,$BF          ; Check F1-F5, 2nd, Exit, More
+ out (1),a
+ in a,(1)
+ bit 5,a
+ CALL_Z(Fire)
+ bit 6,a
+ jr nz,MainLoop
+ call GET_KEY      ; Clear the keybuffer
+ ret
+</PRE></FONT>
+
+<P>When you check keys through the port, the key buffer is not cleared. The interrupt handler
+will still store the last key pressed down, and GET_KEY will find the last key pressed even if
+you did your keyscans through ports. If you exit the program with Exit, you'll end up in TI-OS
+because when returning to ZShell, the Exit key will still be in the keybuffer. To avoid that,
+clear the keybuffer by a simple call GET_KEY (since the size of the buffer is just one single 
+byte).</P>
+
+<P>That was the end of this lesson! Happy ZShell coding!</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P><I>Return to the <A HREF="zshell.html">ZShell school</A></I></P>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

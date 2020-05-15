@@ -1,0 +1,528 @@
+<HTML>
+
+<HEAD>
+<TITLE>The ZShell school - Lesson #5</TITLE>
+</HEAD>
+
+<!--
+
+  This homepage was written in a plain texteditor
+
+-->
+
+<BODY BGCOLOR="#000000" TEXT="CC4400" LINK="#FFC000" VLINK="#806000" ALINK="#FF00FF">
+
+<CENTER>
+
+<A HREF="index.html">   <IMG BORDER=0 SRC="buttons/home.gif" ALT="Home"></A>
+<A HREF="aboutme.html"> <IMG BORDER=0 SRC="buttons/aboutme.gif" ALT="About me"></A>
+<A HREF="pc.html">      <IMG BORDER=0 SRC="buttons/pc.gif" ALT="PC"></A>
+<A HREF="ticalcs.html"> <IMG BORDER=0 SRC="buttons/ticalcs.gif" ALT="TI-Calcs"></A>
+<A HREF="music.html">   <IMG BORDER=0 SRC="buttons/music.gif" ALT="Music"></A>
+<A HREF="guestb.html">  <IMG BORDER=0 SRC="buttons/guestb.gif" ALT="Guestbook"></A>
+<A HREF="news.html">    <IMG BORDER=0 SRC="buttons/news.gif" ALT="News"></A>
+
+<BR>
+<IMG ALIGN=TOP SRC="pics/smyrnlgo.gif"><BR>
+<A HREF="zshell.html"><IMG BORDER=0 ALIGN=TOP SRC="pics/lzshell.gif"></A>
+</CENTER>
+
+<TABLE ALIGN=CENTER BORDER=0 WIDTH=540><TR><TD>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>ESSON</FONT></FONT>
+<FONT SIZE=5>#5</FONT>
+</FONT><BR>
+</P>
+
+<UL>
+<LI><A HREF="#stack">The stack</A>
+<LI><A HREF="#pushpop">PUSH and POP</A>
+<LI><A HREF="#videomem">The video memory</A>
+<LI><A HREF="#plotting">Plotting pixels</A>
+<LI><A HREF="#putimage">Putting images</A>
+<LI><A HREF="#sprites">Sprites</A>
+<LI><A HREF="#other">Other graphic routines</A>
+</UL>
+
+<BR>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="stack"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>S<FONT SIZE=4>TACK</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>The stack is one of the most important things you must know when programming. Think of the stack
+as a deck of cards. When you put a card on the deck, it will be the top card. Then you put another card,
+then another. When you remove the cards, you remove them backwards, the last card first and so on.
+The stack works the same way, you put <I>(push)</I> words (addresses or register pairs) on the stack and
+then remove <I>(pop)</I> them backwards. That's called LIFO, <I>Last In First Out</I>.</P>
+
+<P>The Z80 uses a 16 bit register to know where the stack top is, and that register is called SP. <I>You
+should NOT change that register with Inc, Dec or something else if you don't know what you're doing!</I></P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="pushpop"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>P<FONT SIZE=4>USH</FONT></FONT>
+<FONT SIZE=5>& P<FONT SIZE=4>OP</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>As you may have guessed, <I>push</I> and <I>pop</I> is used to push things on the stack and then
+take them off. When you push something, the stack counter will decrease with 2 (the stack "grows" down,
+from higher addresses to lower, but you usually don't have to bother about that) and then the register pair
+is loaded into the stack. When you pop, the register pair is first lifted of the stack, and then SP increases with
+2.</P>
+
+<P>You can push (and pop) all register pairs: BC, DE, HL and AF. When you pop AF, remember that all
+flags may be changed. You can't push an immediate value. If you want, you'll have to load a register pair
+with the value and then push it. Perhaps it's worth noting that when you push something, the contents
+of the registers will still be the same; they won't be erased or something. Also, if you push de, you can
+pop it back as hl (you don't have to pop it back to the same register where you got it from).</P>
+
+<P>Actually, the stack is also updated when you call and return from subroutines. The PC (program counter
+which points at the current instruction being executed) is pushed to the stack and the calling address
+is loaded into PC. When returning, PC is popped from the stack.</P>
+
+<P>So, when is this useful? It's almost always used when you call subroutines. For example, you have an
+often used value stored in HL. You have to call a subroutine that you know will destroy HL (with destroy
+I mean that HL will be changed to another value, which you perhaps don't know). Instead of first saving
+HL in a memory location and then loading it back after the subroutine you can push HL before calling
+and directly after the calling pop it back. Of course, it's often better to use the pushes and pops inside
+the subroutine. All registers you know will be changed are often pushed in the beginning of a subroutine
+and then popped at the end, in reverse order! Don't forget - last in first out. Of course you shouldn't pop
+back a register whos contents you're intersted in. If you call a routine to get a value that will be stored
+in B, you should not push and pop bc since then B would have the same value as you had before
+you called the routine.</P>
+
+<P>If you want to only push one 8 bit register, you still have to push it's "friend". Therefore, be aware
+that if you want to store away D with pushing and popping, remember that E will also be changed back
+to what it was before. In those cases (if you don't want that to happen you should try first to change
+register (try to store the information in E in another register if you can) or else you have to store it in
+a temporary variable.</P>
+
+<P>Before executing a program, you should keep track of your pushes and pops, since they are responsible
+for 99% of all calculator crashes! For example, if you push HL and then forget to pop it back, the next
+RET instruction will cause a jump to HL, which can be anywhere in the ROM/RAM and the calculator
+will crash. That's also a way to jump to the location stored in HL, but then you should use JP (HL), which
+does the same thing.</P>
+
+<P>Push and pop doesn't change any flags, so you can use them between a compare and a relative
+jump depending on a condition, which is often very useful. I should also add that you can almost always use
+SP when you can use BC or DE.</P>
+
+<P>Now I think you know everything about the stack. I don't know exactly how much you can push (after
+a while SP will point to someplace in the RAM where variables are stored, which will corrupt the memory).
+If anyone figures that out (can't be so hard I guess), I would be interested in knowing. </P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="videomem"></A>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>T</FONT><FONT SIZE=4>HE</FONT>
+<FONT SIZE=5>V</FONT><FONT SIZE=4>IDEO</FONT>
+<FONT SIZE=5>M</FONT><FONT SIZE=4>EMORY</FONT>
+</FONT>
+</P>
+
+<P>The video memory is stored last in the RAM memory on the TI-85, at address $FC00 - $FFFF. A quick
+counting tells us $400 bytes = 1024 bytes. Lets see, the display is 128x64 = 8192 byte. And you can
+store 8 pixels in one byte (since the pixels are either white or black; 0 or 1; and we fit 8 bits in one byte) which
+gives us 8192/8 = 1024. No problem with that.</P>
+
+<P>The top left corner is at $FC00. One row fits in 16 byte = $10, so that would make it easy. Row 0 starts
+at $FC00, row 1 at $FC10, row 2 at $FC20 and so on. A simple formula would tell us where in the graph
+mem we would change if we want to change one pixel: $FC00 + y * $10 + x DIV 8.. But we also have to
+know where in the byte, which bit, we should change! The bits are numbered 0-7, and bit 0 is the rightmost
+column in the byte. An ascii picture gives you an overview.</P>
+
+<UL><PRE>
+           0        1        2        3        4
+$FC0x |7......0|7......0|7......0|7......0|7......0| ...
+$FC1x |7......0|7......0|7......0|7......0|7......0| ...
+$FC2x |7......0|7......0|7......0|7......0|7......0| ...
+</PRE></UL>
+
+<P>We could very easily write a routine that determinates which bit and which address we should change (try
+it, it's good practice), but there exist already such a routine in the ROM, so why reinvent the wheel? It's fast
+(you can make a faster one, but it's not worth it), but it has one stupid "feature": the origin is at the bottom left
+corner, not the top left. Now that's easy to change, just take y=63-y and that's done with. Before using
+the routine (called FIND_PIXEL) you also have to swap ROM page to ROM page 4. You only have to do
+that once in the program (in the beginning) and it looks like this:
+
+<FONT COLOR="#808080"><UL><PRE>
+ld a,4
+out (5),a
+</PRE></UL></FONT>
+
+Put these two rows in the beginning of the program if you use FIND_PIXEL. Now you should ask what
+input values FIND_PIXEL uses and what registers it will change. You store the x location in B and the
+y register in C before calling FIND_PIXEL (and it's a ROM_CALL, because it's on different places in
+the ROM depending on your ROM version) and it'll returin the address in HL (but you have to add
+$FC00 to it) and the bit^2 in A. It's good that the bit is raised to 2, because if you want to set bit A,
+you can't SET A,(HL) because the first value must be known! Instead, you use logical operators.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="plotting"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>P</FONT><FONT SIZE=4>LOTTING </FONT>
+<FONT SIZE=5>P</FONT><FONT SIZE=4>IXELS</FONT>
+</FONT>
+</P>
+
+<P>Here are four routines for putting a pixel, removing a pixel, changing a pixel, and checking to see
+if a pixel is lit.</P>
+
+<FONT COLOR="#808080"><UL><PRE>
+PutPixel:              ; Puts a pixel at B,C
+ ROM_CALL(FIND_PIXEL)
+ ld de,$FC00
+ add hl,de
+ or (hl)
+ ld (hl),a
+ ret
+ 
+RemovePixel:           ; Removes a pixel at B,C
+ ROM_CALL(FIND_PIXEL)
+ ld de,$FC00
+ add hl,de
+ cpl
+ and (hl)
+ ld (hl),a
+ ret
+ 
+ChangePixel:           ; Changes the pixel at B,C
+ ROM_CALL(FIND_PIXEL)
+ ld de,$FC00
+ add hl,de
+ xor (hl)
+ ld (hl),a
+ ret
+ 
+TestPixel:             ; Tests the pixel at B,C.
+ ROM_CALL(FIND_PIXEL)  
+ ld de,$FC00
+ add hl,de
+ and (hl)              ; Zero flag set if no pixel
+ ret
+</PRE></UL></FONT>
+
+<P>All these routines will destroy A, DE and HL, so you should push and pop these if you don't want
+too loose those values. These routines also shows you that all logical operators are useful.</P>
+
+<P>All routines starts with with three identical rows, which make HL point to the right address and
+A will be the byte you should "do something with". In PutPixel, we OR A with (HL) and then we
+put the result (which will be stored in A) back in (HL), since it's in the video location we want
+the change made. When removing, we changes all bits in A with CPL, and then we <I>mask out</I>
+the bit to remove. Since A in the beginning only have one bit set (I really hope you get that), A will
+know have 7 bits set, and the bit that isn't set is the one that will disappear, since AND requires
+both bits to be set.</P>
+
+<P>The third example is simple, XOR changes the pixel. Since seven bits are unset, those seven
+location won't change, and the one bit that is set will make a change. The fourth example
+masks out the tested bit, and if A is zero, there were no pixel and the zero flag will be set (AND
+sets the zero flag if the result is 0).</P>
+
+<P>It's <I>very</I> important that you understand this section to 100%, else you'll get in big
+trouble later on. Try rereading it if you don't understand, and experiment by yourself and try
+to change some instructions and understand what the result should be.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="putimage"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>P</FONT><FONT SIZE=4>UT </FONT>
+<FONT SIZE=5>I</FONT><FONT SIZE=4>MAGES</FONT>
+</FONT>
+</P>
+
+<P>Now when you know how to put pixels, you could also put images. But putting them pixel
+by pixel is a stupid way to do it. First, if you use FIND_PIXEL for every pixel, it will be slow and
+it's really simple to do it another way.</P>
+
+<P>Now I'll show you a simple way to put images that you'll just use as background. As you've
+seen of how the graphic memory works, it's a lot easier to make aligned pictures, that is, you
+change all bits in one byte. That's the reason why many games have the same GUI with sprites
+that are 8 pixels wide. That's because you don't have to bother about bits, and it's much faster
+too.</P>
+
+<P>The image putting routing below always starts on first bit (bit 7, since bit 7 is the leftmost bit
+in a byte) since that makes it much easier. You just copy 8 pixels at the same time from the
+data at the end of the program straight into the videomem. Simple! Then you go to the next
+byte and do the same until the whole picture is created.</P>
+
+<P>This is how I do it. Comments below.</P>
+
+<FONT COLOR="#808080"><UL><PRE>
+PutImage:    ; Puts the image stored at (HL).  { 28 bytes }
+ ld e,(hl)
+ inc hl
+ ld d,(hl)
+ inc hl
+ ld b,(hl)
+ inc hl
+ ld c,(hl)
+ inc hl
+PI_NewRow:
+ push bc
+ push de
+PI_NewCol:
+ ld a,(hl)
+ inc hl
+ ld (de),a
+ inc de
+ djnz PI_NewCol
+ pop de
+ ld bc,16
+ ex de,hl
+ add hl,bc
+ ex de,hl
+ pop bc
+ dec c
+ jr nz,PI_NewRow
+ ret
+</PRE></UL></FONT>
+
+<P>And here is how the image is stored in the end of the program:</P>
+
+<FONT COLOR="#808080"><UL><PRE> 
+Image:
+ .dw $FC24
+ .db 2,16
+ .db %00000111,%11100000
+ .db %00011000,%00011000
+ .db %00100000,%00000100
+ .db %01000000,%00000010
+ .db %01000000,%00000010
+ .db %10000000,%00000001
+ .db %10000001,%10000001
+ .db %10000010,%01000001
+ .db %10000010,%01000001
+ .db %10000001,%10000001
+ .db %10000000,%00000001
+ .db %01000000,%00000010
+ .db %01000000,%00000010
+ .db %00100000,%00000100
+ .db %00011000,%00011000
+ .db %00000111,%11100000
+</PRE></UL></FONT>
+
+<P>Let us first look at how the image is stored. First we have defined a word (.dw) with
+the address. Since these kind of pictures won't move we can calculate the address in
+the head so we don't have to waste unnecessary bytes in the program to do that. If you
+want it to move, you could change the routine in the beginning by using a FIND_PIXEL.
+</P>
+
+<P>On the second row, I've defined first the x width in bytes, that is, how many bytes
+wide it is, not how many bits!. The second byte is the y width, which is the number
+of rows. After that the image is stored. I've used % (that means that the value is in
+binary) so you can see how the sprite will look like easier.</P>
+
+<P>Now let us look at the PutImage routine. The first 8 rows loads DE with the address
+(note that E is first read, then D. The reason for that is that the LSB is stored first when
+you define a word, or store a word for that matter), and then loads B with the x size
+in bytes and C with the y size. Then we push BC because we will return here
+again, and then we want B to be the same and we push DE so we can pop it back
+at the end of routine and add 16 (16 = exactly one row down) to it later.</P>
+
+<P>After the label NewCol we just load A with the first byte of the image (HL is
+after four increases in the beginning now pointing at the image itself) and then we
+store it at (DE), which is the address in the video memory. See, we changes 8 pixels
+at once, without caring about the bits! They'll just fall into place! We also increase
+HL so it points to the next byte in the image and DE so it points to the next byte
+in the video memory. Then we repeat NewCol B times (B was the x size, which
+is the number of times we want it to be repeated).</P>
+
+<P>When one row has been put on the screen, we pop DE to get the address
+where it was on the beginning of the line, because then we can easily get to the
+next row by adding 16 to DE. If we don't push and pop DE in that way, we have
+to add DE with 16-xsize, and to calculate that takes a few more bytes. But
+how do we add to DE? Only HL is allowed in 16 bit addition. It's time for a new,
+very useful instruction, when you deal with 16 bit registers, EX DE,HL. It's
+really simple, it swaps the contents of DE and HL. This instruction is special,
+because it doesn't work on any other common registers (it works on some
+other register, more about that in a later lesson).</P>
+
+<P>Anyway, we just change DE with HL, then add 16 to HL, and then change
+back. A easy way to do it. Note that we have to load BC with 16, because
+you can't add with an immediate value. Luckily, the contents of BC doesn't
+matter for the moment, so we don't have to push it. As you see, we pop it
+back the next instruction, and then BC will contain the x size and y size once again.
+Now we decrease the y size, and if it's not zero, we'll jump back and start with
+a new row. This time when we push BC, the y size will be one less, which is
+exaclty what we wanted.</P>
+
+<P>Puh... that was a long explanation of how to put an image... Now we're getting
+to how to put non aligned sprites (that is, we put sprites, images, between two
+video memory bytes).</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="sprites"></A>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>S</FONT><FONT SIZE=4>PRITES</FONT>
+</FONT>
+</P>
+
+<P>There already exists one good sprite routine for this, NASR. And it's the WARP
+version you should use, because 2.1 gives awful spaces to the left and to the right
+of the sprite if it doesn't cover a whole byte. But NASR is big, 171 bytes + 6 bytes
+if you want to push and pop BC, DE and HL because they're destroyed in the
+routine. I haven't really studied the source to NASR, but I'm pretty sure that NASR
+is only good if you have big sprites, like 32x32 or something. Most often, you don't
+have so big sprites. 8x8 or 6x6 is most common I think, so I wanted to test my
+simple, but fast, sprite routine with NASRWARP, and look at the result!</P>
+
+<CENTER><TABLE WIDTH=50% BORDER=1>
+<CAPTION ALIGN=bottom><I>Spriteputs per second</I></CAPTION>
+<TR><TH>Routine</TH><TH>6x6</TH><TH>8x8</TH></TR>
+<TR><TD>NASRWARP</TD><TD ALIGN=CENTER>473</TD><TD ALIGN=CENTER>375</TD></TR>
+<TR><TD>PutSprite</TD><TD ALIGN=CENTER>1036</TD><TD ALIGN=CENTER>674</TD></TR>
+</TABLE></CENTER>
+
+<P>PutSprite (I haven't given my routine any name) is about twice as fast as NASR! I didn't believe
+it first when I tested (hey, >1000 sprites per second on a Z80!?). You also see that smaller sprites
+are more faster with PutSprite than with NASR. And PutSprite is only 67 bytes big, including pushing
+and popping three register pairs!</P>
+
+<P>There is one sad thing though, and that is that PutSprite can only handly sprites with a width of
+8 pixels. That shouldn't be a problem, since most sprites are. I could change that (I'll do it another
+time) but then it may be a bit slower, though still not much, but NASR would probably be faster on
+bigger sprites, because it uses a totally another algorithm for the putting.</P>
+
+<P>Here is the routine. I'll explain below on how it works, but not instruction for instruction.</P>
+
+<FONT COLOR="#808080"><UL><PRE>
+PutSprite: ; Puts a sprite pointed to by HL at B,C
+ push bc
+ push de
+ ld a,63
+ sub c
+ ld c,a
+ push hl
+ push hl
+ ROM_CALL(FIND_PIXEL)
+ ld de,$FC00
+ add hl,de
+ ex de,hl
+ pop hl
+ ld b,(hl)
+ inc hl
+ ld c,(hl)
+ inc hl
+ push hl
+ pop ix
+ ex de,hl
+PS_NewRow:
+ push bc
+ ld d,(ix)
+ inc ix
+ push af
+ push hl
+PS_NewCol:
+ rl d
+ ld e,a
+ jr nc,PS_NoPixel
+ or (hl)
+ jr PS_NextPixel
+PS_NoPixel:
+ cpl
+ and (hl) 
+PS_NextPixel:
+ ld (hl),a
+ ld a,e
+ rrca
+ jr nc,PS_SameByte
+ inc hl
+PS_SameByte:
+ djnz PS_NewCol
+ pop hl
+ pop af
+ ld de,16
+ add hl,de
+ pop bc
+ dec c
+ jr nz,PS_NewRow
+ pop hl
+ pop de
+ pop bc
+ ret
+</PRE></UL></FONT>
+
+<P>The sprite is stored like this:</P>
+
+<FONT COLOR="#808080"><UL><PRE>
+.db 6,6 ; x- and y-width in pixels
+.db %110011
+.db %100001
+.db %000000
+.db %000000
+.db %100001
+.db %110011
+</PRE></UL></FONT>
+
+<P>Note that PutSprite reverses the y value, so (0,0) will be the top left corner.</P>
+
+<P>In short, it first locates the top left address of the sprite, then puts the sprite pixel by pixel. In the
+beginning of each row, D is loaded with the 8 pixels of the sprite, and for each column repeat,
+D is rotated to the left which pushes out the leftmost pixel in the carry flag. If the carry flag
+then is set, an ordinay PutPixel will be made, else a RemovePixel will be made.</P>
+
+<P>The problem with making this routines is that you have so few registers to work with. As you see,
+a new registers, IX, is used. More about that register later, but it works as HL. In the routine,
+HL points to the videomem, DE to the spirte, A is the bit to be put/removed and BC contains
+the x and y width. You also have to minimize pushes and pops because it's faster to store
+an 8 bit register in another 8 bit register and then fetch it back instead of pushing and then
+popping it back, but you can't always do that.</P>
+
+<P>You could also change this routine so it ORs the sprite on the screen. If a pixel on the
+sprite is 0, the pixel in the videomemory won't be removed, it will be the same as before.
+To do that change, change jr nc,PS_NoPixel to jr nc,PS_NextPixel and erase the three
+rows after PS_NoPixel. The routine will be even faster now.</P>
+
+<P>You can also XOR the sprite on the screen. That's a good way to remove the sprite.
+If you first put out the sprite at one location with XORing, and then put it at the same place
+again, you'll remove the sprite! That's a cool way to create fast animation, but it will
+flicker slightly. A better way to avoid flickering is to store everything you draw in the graph
+memory (NOT the video memory) and then move the whole graphmem to the videomem.
+That will slow the game down, but as you saw, PutSprite isn't a routine that'll slow down the
+game... How to do that (temporary storage in graph mem and then copy it over to the
+video mem) will be discussed in a later lesson.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="other"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>O</FONT><FONT SIZE=4>THER</FONT>
+<FONT SIZE=5>G</FONT><FONT SIZE=4>RAPHIC</FONT>
+<FONT SIZE=5>R</FONT><FONT SIZE=4>OUTINES</FONT>
+</FONT>
+</P>
+
+<P>Not much to say here. In the TI-85 source archive at <A HREF="http://www.ticalc.org">ticalc.org</A>
+you can probably find what you're looking for; line routines, circles etc.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P><I>Return to the <A HREF="zshell.html">ZShell school</A></I></P>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

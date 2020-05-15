@@ -1,0 +1,142 @@
+
+
+
+TI-85 Assembler Programming - Using TASM
+
+
+
+
+
+
+TI-85 Assembler Programming - Using TASM
+
+TASM (Table Assembler) is a program that we use to turn the text files we type into binary numbers that the calculator can understand. In this lesson you will learn how to make your code TASM-friendly and how to use TASM to assemble your code.
+
+
+TASM requires that you add a few commands into your code. Most of them aren't seen by the calculator - they're just directions for TASM. They include lists of other code files, the name of the program, the beginning and the end of the program, etc. Below is a small program that uses most of these things:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hello.asm
+;; The programmer's greeting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Include TI function definitions
+
+#include "TI-85.h"
+
+
+
+;; Title of program
+
+.org 0
+.db  "Hello", 0
+
+
+;; Main program
+
+     
+    ROM_CALL(CLEARLCD)      ; clear screen
+ 
+    ld   HL, 3              ; set text cursor position
+    ld   (CURSOR_ROW), HL
+    ld   HL, 3
+    ld   (CURSOR_COL), HL
+
+    ld   HL, (PROGRAM_ADDR) ; get program's memory address
+    ld   DE, Message        ; get difference between address of program, string
+    add  HL, DE             ; add to get address of string
+    ROM_CALL(D_ZT_STR)      ; print the string
+
+
+GetLoop:                    ; wait for keypress
+    call GET_KEY
+    or   A
+    jr   z, GetLoop         ; if no key, try again
+
+    ret                     ; key pressed - end program
+
+
+;; String data
+
+Message: 
+    .db "Hello, world", 0
+
+ 
+
+;; Mark the end of the file for TASM
+
+.end               
+
+
+
+
+Now for the explanation of the TASM stuff here. The first thing to note is all of the semicolons. When the code is being assembled, everything after a semicolon on that line is ignored. We can (and should) put notes to ourselves and others explaining what the program does at each point.
+
+
+The '#include "TI-85.h"' statement tells TASM to add all of the code in TI-85.h to the top of the program. The rest of our program can then use anything which is in TI-85.h. This is useful because we don't have to retype the contents of TI-85.h at the top of every program. It's like a big copy-and-paste done just before the code is assembled. 
+
+
+'.org 0' and '.db "Hello", 0' are header information about the program. ".org 0" tells TASM that this is the start of the real code. The .db statement tells TASM to put data directly into this location of the program. '.db "Hello", 0' puts the string "Hello" at this point of the program followed by a zero. In ZShell, this string is the internal program name, on the right side of the ZShell menu. The zero marks the end of the string data and the beginning of normal code again. 
+
+
+Near the end of the program comes more unusual stuff. At the bottom is the traditional place for storing strings that the program uses while it runs. They are created with the same .db statement used in the title, but these ones are marked with labels so we can access them. 
+
+
+At the very end of the program comes the .end statement, which tells TASM that the program is done.
+
+
+Using TASM to assemble code is a time-consuming process if you have to type it in by hand. Most people set up a batch file instead. A batch file, make85s.bat is available from the Unofficial IT-Calculator Home Page. I'll describe here what needs to happen, in case you want to make your own batch file or need to modify make85s.bat. 
+
+
+First, you need to run TASM. The command line looks like this:
+
+tasm -80 -g3 -r12 myfile.asm
+
+The -80 means assemble Z80 code. -g3 means create a binary file. -r12 sets some memory thing that someone told me needed to be set. myfile.asm is the source code file to be assembled. 
+
+
+TASM creates two files - myfile.obj and myfile.lst. If everything worked OK, then myfile.obj is the assembled code and myfile.lst is a listing of the code and can be thrown away. If something went wrong, then myfile.obj will be a bad file and should be deleted immediately, and myfile.lst is a copy of the source code with the error messages listed inside. Looking at this file usually tells you what was wrong with your code. 
+
+
+Once you have a good .obj file, you need to rename it so you can run string85 to create a .85s string file which can be read by the calculator. The myfile.obj fild should be renamed simply myfile (without any extension). Then the command line for string85 looks like this:
+
+string85 myfile
+        
+This creates the myfile.85s file, which is ready to be sent to the calculator. The old myfile file can be deleted after this. 
+
+
+After assembly is complete, only two myfile.anythings should exist - myfile.asm and myfile.85s. All the others can be deleted.
+
+
+Now you know everything you need to write small TI-85 assembly programs. Run this small program; make a few changes to it. Also run the sample program, which is listed in the next lesson. It does stuff with variables in memory and has more complex key input operations besides "press any key to continue." 
+
+
+One last but important note - ALWAYS back up your calculator's memory to a computer before running any assembly program. If a program crashes, pressing the ON key will NOT halt the program. The only way to halt a bad assembly program is to take out the batteries, which will erase everything in the memory.
+  
+
+
+ 
+
+
+
+
+
+On to the next lesson: A sample program
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 3-7-96 by Greg Parker. Last update: never
+
+
+
+
+
+

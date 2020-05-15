@@ -1,0 +1,137 @@
+
+
+
+TI-85 Assembler Programming - Using CAZ
+
+
+
+
+
+
+TI-85 Assembler Programming - Using CAZ
+
+CAZ is the Mac program that we use to turn the text files we type into binary numbers that the calculator can understand. In this lesson you will learn how to make your code CAZ-friendly and how to use CAZ to assemble your code. If you use a IBM PC, you need to see the lesson about TASM.
+
+
+CAZ requires that you add a few extra commands into your code. Most of them aren't seen by the calculator - they're just directions for CAZ. They include lists of other code files, the name of the program, the beginning and the end of the program, etc. Below is a small program that uses most of these things:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hello.asm
+;; The programmer's greeting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Include TI function definitions
+
+INCLUDE TI-85.H
+
+
+
+;; Title of program
+
+ORG 0
+DEFM 'Hello', 0
+
+
+;; Main program
+
+    CALL ROM_CALL
+    DEFW CLEARLCD           ; clear screen
+ 
+    LD   HL, 3              ; set text cursor position
+    LD   (CURSOR_ROW), HL
+    LD   HL, 3
+    LD   (CURSOR_COL), HL
+
+    LD   HL, (PROGRAM_ADDR) ; get program's memory address
+    LD   DE, MESSAGE        ; get difference between address of program, string
+    ADD  HL, DE             ; add to get address of string
+    CALL ROM_CALL
+    DEFW D_ZT_STR           ; print the string
+
+
+GETLOOP:                    ; wait for keypress
+    CALL ROM_CALL
+    DEFW GET_KEY
+    OR   A
+    JR   Z, GETLOOP         ; if no key, try again
+
+    RET                     ; key pressed - end program
+
+
+;; String data
+
+MESSAGE: 
+    DEFM 'Hello, world', 0
+
+ 
+
+;; Mark the end of the file for TASM
+
+END               
+
+
+
+
+Now for the explanation of the CAZ stuff here. The first thing to note is all of the semicolons. When the code is being assembled, everything after a semicolon on that line is ignored. We can (and should) put notes to ourselves and others explaining what the program does at each point.
+
+
+The INCLUDE TI-85.H statement tells CAZ to add all of the code in TI-85.h to the top of the program. The rest of our program can then use anything which is in TI-85.h. This is useful because we don't have to retype the contents of TI-85.h at the top of every program. It's like a big copy-and-paste done just before the code is assembled. 
+
+
+ORG 0 and DEFM 'Hello',0  are header information about the program. ORG 0 tells CAZ that this is the start of the real code. The DEFM statement tells CAZ to put data directly into this location of the program. DEFM 'Hello',0  puts the string "Hello" at this point of the program followed by a zero. In ZShell, this string is the long program name, on the right side of the ZShell menu. The zero marks the end of the string data and the beginning of normal code again. 
+
+
+Near the end of the program comes more unusual stuff. At the bottom is the traditional place for storing strings that the program uses while it runs. They are created with the same DEFM statement used in the title, but these ones are marked with labels so we can access them. 
+
+
+At the very end of the program comes the END statement, which tells CAZ that the program is done.
+
+
+If you look closely, you'll notice several important differences between the CAZ sample program and the rest of the sample code. This is because I have no Mac-TI link cable, so I write my code on my PC using TASM, which has different rules than the ones listed above. Here are the differences:
+
+All "mnemonics" must be capitalized in CAZ. This includes things like LD, DEFINE, your own variables, labels, etc. Basically, capitalize everything except lowercase strings to be printed.
+Instead of #include "myfile.h", CAZ uses INCLUDE MYFILE.H
+Instead of .org and .end, CAZ uses ORG and END.
+Instead of ROM_CALL(MyRomRoutine), CAZ uses CALL ROM_CALL     DEFW MyRomRoutine
+Instead of .db to insert data into the program, CAZ uses DEFB for a byte of data, DEFW for a word (two bytes) of data, and DEFM for more data, like strings.
+Use single quotes in CAZ instead of double quotes.
+Use EQU instead of =. Example: VAR EQU 6 instead of var =6.
+ 
+Keep these in mind when you look at other people's code, including mine. It would be nice if someone could write a CAZÜ-ÝTASM file converter (anyone? please?) but until then, a search and replace function should work fine. 
+
+
+Once you have written your code in your favorite text editor you can assemble it into a TI-85 program. First, make sure that mac-caz and Mac String85 are in the same folder as your code. Run mac-caz. For the command line add the name of your file after "caz ". Leave the rest the same and click OK. If there aren't any bugs in your code, the caz console window will come up and say "Parse 1   Parse 2". If there are problems, they will be listed here. Go back to your text editor, fix them, and start again. If caz is successful, you now have a file called "a.out". Rename this file to whatever your final program is to be called. Then run Mac String85. For the argument type in the name of the renamed file. Leave the rest the same again. If everything worked, the console window should say "Converting myfile -> myfile.85s". Now you have file.85s, a usable TI-85 string variable. Move it to your calculator and run it with ZShell!
+   
+
+Now you know everything you need to write small TI-85 assembly programs. Run this small program; make a few changes to it. Also run the sample program, which is listed in the next lesson. It does stuff with variables in memory and has more complex key input operations besides "press any key to continue." 
+
+
+One last but important note - ALWAYS back up your calculator's memory to a computer before running any assembly program. If a program crashes, pressing the ON key will NOT halt the program. The only way to halt a bad assembly program is to take out the batteries, which will erase everything in the memory.
+  
+
+
+ 
+
+
+
+
+
+On to the next lesson: A sample program
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 3-7-96 by Greg Parker. Last update: never
+
+
+
+
+
+

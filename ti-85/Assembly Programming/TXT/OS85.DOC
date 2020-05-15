@@ -1,0 +1,187 @@
+                ‹ﬂ‹ﬂ ﬂ ﬂ ﬂ ﬂ ﬂ‹ﬂ‹ﬂ‹ﬂ‹ﬂ ﬂ ﬂ ﬂ ﬂ ﬂ‹ﬂ‹ﬂ‹ﬂ‹ﬂ‹ﬂ
+              ‹ﬂ‹ﬂ ‹ﬂﬂ‹ ‹ﬂﬂﬂ ﬂ‹ﬂ ﬂ ﬂ‹ ‹ﬂﬂ‹ €ﬂﬂﬂ ‹ﬂ‹ﬂ‹ﬂ‹ﬂ
+            ‹ﬂ‹ﬂ‹ﬂ €  €  ﬂﬂ‹ ﬂ‹ €€ ﬂ‹ ‹ﬂﬂ‹ ﬂﬂﬂ‹ ‹ﬂ‹ﬂ‹ﬂ   VERSION 3.1
+          ‹ﬂ‹ﬂ‹ﬂ‹ﬂ ﬂ‹‹ﬂ ﬂ‹‹ﬂ ﬂ‹ ‹ ‹ﬂ‹ ﬂ‹‹ﬂ ‹‹‹ﬂ ‹ﬂ‹ﬂ
+        ‹ﬂ‹ﬂ‹ﬂ‹ﬂ‹ﬂ‹ ‹ ‹ﬂ‹ ‹ ‹ﬂ‹ﬂ‹ﬂ‹ﬂ‹ ‹ ‹ ‹ ‹ ‹ﬂ‹ﬂ       FOR THE TI-85
+
+                DOCUMENTATION by Jason Todd <toddlers@erinet.com>
+                Read WHATSNEW.TXT to see all improvements over v2.0
+
+=============================================================================
+        INTRODUCTION
+=============================================================================
+Welcome to OS-85, an exciting new operating system for the Texas Instruments
+TI-85 graphing calculator.  Similar to ZShell, this OS lets you run powerful
+assembly language programs written for the Z80 microprocessor.  Programs
+written exclusively for OS-85 will fit seamlessly into the environment, as if
+they were part of OS-85.  To install this operating system on your TI-85,
+just send the backup file (OS85V15.85B) to your calculator through a link
+cable.  Or, get the backup from another TI-85.
+
+Notes: OS-85 3.1 is compatible with ZShell 4.0, and can run anything and
+                everything written for ZShell.  Only programs which reference
+                undocumented memory addresses specific to ZShell will not
+                work right under OS-85.  I've only seen one such program,
+                noted below.
+       There is one small "catch" I think I should mention:  Do not try to
+                run a copy of Insane Game version 2.5 and earlier from OS-85,
+                because it will cause your calculator to crash when it tries
+                to exit.  Instead, run a newer version of the game, and it
+                will work just fine.  To make things easier, I've included a
+                copy of Insane Game version 2.7 in the original OS-85 3.1
+                release ZIP file.
+       Version 3.1 and later now have checksum support.  Warp out is still
+                not supported, and there's a chance it probably won't ever be
+                included in OS-85.  The checksum support contains a little
+                feature I think all shells should have:  You can tell OS-85
+                to correct a bad checksum if you think the string will still
+                run correctly, and you can choose to run a string with a bad
+                checksum, without correcting it.
+
+
+=============================================================================
+        REQUIREMENTS
+=============================================================================
+OS-85 version 3.1 requires a TI-85 with ROM version 3.0A, 4.0, 5.0, 6.0, 8.0,
+9.0, or 10.0.  The program string itself takes under 4K of free RAM.  Before
+installing OS-85, you should check which ROM version is on your calculator.
+To do so from the home screen press [2nd], [MODE], [ALPHA], [S].  You will
+see 'Enter self test?' and a number below it.  DO NOT PRESS ENTER!  If you
+press ENTER, your memory will be cleared.  The number you see is your ROM
+version number.
+
+
+=============================================================================
+        GETTING STARTED & USING OS-85
+=============================================================================
+To run OS-85, press [CUSTOM], then [F1].  Depending on your setup, you will
+either see the "OS-85 Home Screen" or one of your OS-85 programs executing.
+If you've just received OS-85, you'll probably be at the OS-85 Home Screen.
+
+Some special keys to remember in OS-85 are:
+        [F1]    Toggles between the main menu and the OS-85 Home Screen
+        [EXIT]  Lets you back out of an area within OS-85, or completely exit
+                if you are at the OS-85 Home Screen.
+
+* Version 3.1 is basically version 3.0, without interrupt support.  I have
+        received reports of OS-85 3.0 crashing people's calculators, and they
+        have led me to believe the OS-85 native interrupt is causing the
+        problems.  On my personal TI-85, under various torture tests, I have
+        had no problems, but I believe they exist from witnessing some of my
+        local friends' calculators faint.
+
+Remember you can (re)name your favorite program string as LOADSTR and it will
+        load after you press [CUSTOM] [F1] before OS-85 loads.
+
+That's all for now, enjoy version 3.1!
+
+Jason Todd
+President/Creator/Founder/Chairman/Chief Programmer/Programming Staff
+Alphasoft
+
+
+=============================================================================
+        REVISION HISTORY
+=============================================================================
+1.0     I was just fooling around after learning Z80 assembly language, and
+        created version 1.0, which was originally titled "Windows 85," but I
+        didn't want any trouble from anyone over copyrights and such, so that
+        name didn't stick around very long.  This ran under ZShell.
+1.1     A few minor changes to 1.0, also ran under ZShell
+1.5     My first full-fledged, stand-alone beta release.  It took up 4,795
+        bytes of RAM, and had a lot of features that were somewhat pointless
+        or annoying.
+2.0     I reduced/reused/recycled the code throughout OS-85, and made it a
+        little more user-friendly.  Through these optimizations, I was able
+        to bring it down to 3,749 bytes.  That's a decrease of 22% its
+        original size!  New: LOADSTR feature--if you name a string LOADSTR,
+        it will automatically execute BEFORE OS-85 loads.
+3.0     Released 05/01/97.  Many, many, many improvements were made.  Size is
+        now 3,347 (11% smaller than version 2.0).  Added better checksum
+        support than exists in ZShell 4.0.  Added interrupt functions to
+        break back to OS-85 if a program acts up, or turn off calculator
+        while in the middle of ANY program.  Several improvements to Software
+        menu.  Added 4 new OS_ calls for OS-85 programs.
+3.1     Released 05/09/97.  Same as 3.0, but without the interrupt functions.
+        Also changed a few minor things that didn't affect OS-85's operation.
+        Amazingly, the size dropped to a mere 2724.  FYI, that's a whopping
+        43% smaller than version 1.5!  It's 27% smaller than 2.0, and 19%
+        smaller than version 3.0.  This is a nice trend to follow, especially
+        for a "full-fledged" operating system!
+
+
+=============================================================================
+        PROGRAMMING FOR OS-85
+=============================================================================
+Programming for OS-85 is the same as programming for ZShell, with a few handy
+additions to the TI-85.H include file.  These additions are described in
+detail below.
+
+MEMORY LOCATIONS:
+        (OS_VER) = ($8C41) = OS-85 Version number.  $31 = 3.1
+        (CURSORCHAR) = ($8C42) = Character for the OS-85 cursor (used for
+                OS_GETKEY).  If you set this to a value other than 00, than
+                that character will appear at the cursor position ($800C)
+                when OS_GETKEY is called.
+
+CALL ADDRESSES:         Use CALL to use these.  Ex:  CALL OS_INPSTR
+        OS_GETKEY:  Waits for and returns a scancode.
+                        INPUT:  None
+                        OUTPUT:  A = Scancode
+        OS_DRAWSCREEN:  Redraws the screen (background PIC and menu bar)
+                        INPUT:  None
+                        OUTPUT:  HL,BC,DE are changed
+        OS_MENUBAR:  Clears the screen and draws the menu bar
+                        INPUT:  None
+                        OUTPUT:  HL,BC,DE are changed
+        OS_INPSTR:  Inputs a line of text up to 20 characters long, all
+                uppercase letters.  Text is stored as a length-terminated
+                string in the DELc buffer ($800F).
+                        INPUT:  Set ($800C) to the screen row of input
+                        OUTPUT:  ($800F) is length-terminated string
+        OS_INFOWINDOW:  Displays an information window.  To call, point HL to
+                an information data area, as follows:
+                        (HL)    Width of title string / 8
+                        (HL+1)  ASCIIZ title string
+                         :  :   ASCIIZ Text line 1
+                         :  :   ASCIIZ Text line X  (5 text lines maximum)
+                         :  :   00  <- End of data area
+                HL will be incremented to the next byte after the data area
+        OS_FKEYWINDOW:  This is similar to OS_INFOWINDOW, but this displays a
+                menu for [F1]-[F5].  The calling method is the same for
+                OS_INFOWINDOW, but an Fkey for each text line will appear.
+        OS_POWERDOWN:  This will shut off the calculator.  Pressing ON will
+                turn it back on.
+                        INPUT:  None
+                        OUTPUT:  None
+        OS_PAUSE:  This will wait for the [ENTER] key to be pressed.
+                        INPUT:  None
+                        OUTPUT:  A = 9, for [ENTER]
+        OS_MENUCORSOR:  The same routine the main menu and Software menu use.
+                Before using, draw your menu (text and box if you want).
+                        INPUT:  HL = Starting video mem byte ($FC00...$FFFF)
+                                B = Width in bytes (3-15)
+                                C = Number of options on the menu (1-9)
+                        OUTPUT:  A = # of option selected, or 00 if [EXIT]
+        OS_DISPHEX:  A simple routine to show the value of A in hex notation
+                in normal size font.  The cursor is updated.
+                        INPUT:  A = Byte
+                        OUTPUT:  None
+        OS_DRAWBOX:  Draw a simple box on the screen.
+                        INPUT:  HL = Starting video mem byte ($FC00-$FFFF)
+                                B = Width in bytes (3-15)
+                                C = Length in rows or pixels (1-61)
+                        OUTPUT:  None
+        OS_SMALLBMP:  This is a routine that provides an easy way to save
+                memory when storing visual bitmaps.  It will load the bitmap
+                to the screen when given its size in BC.
+                        INPUT:  HL = Location of bitmap in memory
+                                DE = Destination on screen ($FC00-$FFFF)
+                                B = Length (pixels)
+                                C = Width (bytes)
+                        OUTPUT:  None
+
+VERY IMPORTANT:  It is a good idea to check (OS_VER), to make sure OS-85 is
+        in fact running.  If you try to call an OS_ procedure under ZShell,
+        the results would be unpredictable (the TI-85 will probably just
+        crash).

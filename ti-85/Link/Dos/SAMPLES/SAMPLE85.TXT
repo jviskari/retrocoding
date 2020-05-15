@@ -1,0 +1,1095 @@
+
+                              ****************
+                              * SAMPLE85.TXT *
+                              ****************
+
+To print this file from the DOS prompt to a parallel printer connected to
+LPT1 on your PC, enter: TYPE A:\SAMPLES\SAMPLE85.TXT >LPT1
+
+
+The directory \SAMPLES on the TI-GRAPH LINK disk contains a number of sample
+TI-85 and TI-82 programs and graph databases for your use/review.  Included
+in this file are descriptions of the TI-85 programs and graph databases that
+were created by the Graphics Team, as well as by actual users of the TI-85.
+The TI-85 programs and graph databases are included on this disk to 
+illustrate some of the uses and capabilities of the TI-85. 
+
+You are free to use these programs as you see fit.  You may modify them in
+any way.  NOTE: These programs are not necessarily free of defects so YOU
+must take the responsibility of testing them prior to their use in any
+applications.
+
+The sample programs included are:
+
+  BEAMHEAD.85P  Compute ham radio beam heading and distance.
+
+  BOX	  .85P	Pre-calculus Box problem
+
+  BRKOUT  .85G  Video game; group contains CASSE.85P, \LC-alpha\BITMAP.85P,
+                \LC-alpha\PAUSE2.85P
+
+  CALENDAR.85G  A calendar game
+
+  CONTOUR .85G	Contour map grapher for the TI-85.
+
+  CONV2STR.85G  Data type conversion subroutines; group includes
+                CPLX2STR.85P, LIST2STR.85P, REAL2STR.85P
+
+  DIST    .85P  Some standard statistical distributions
+
+  FACTOR  .85P  Factor integers into prime components.
+
+  GR3D    .85G  Graph 3D program ,demo, and instructions
+
+  GTEXT   .85P  Draws text and arrows on graphs
+
+  IMPLGRAF.85P  Creates a graph of an implicit function of X and Y.
+
+  IVT3	  .85P	Helps visualize the Intermediate Value Theorem.
+
+  MANDLBRT.85G  Draw Mandlebrot set on TI-85 graph screen.
+
+  MVT     .85P  This program helps visualize the Mean Value Theorem.
+
+  NELDER  .85G  Nonlinear minimization; group contains NELDER.85P,
+                NELDSORT.85P, TESTNELD.85P (example), ORBIT.85P (example)
+
+  POLCONIC.85P  Polar mode plot of general conics
+
+  PROJ    .85P  Graphs path of baseball with air resistance.
+
+  RSP	  .85P	Rock, Scissors, Paper game
+
+  SAVER   .85G  Saves and restores your graph settings and tolerances;
+                group contains SAVER.85P, RESTORE.85P
+
+  SQRTM   .85P  Compute square root of a matrix.
+
+  SYNDIV  .85P  Synthetic division of a polygon
+
+  TAYLOR  .85G  Taylor series; group contains TAYLOR.85P, mSERIES.85L
+  
+  TILOGO  .85G  "Animated" reversal of pixels in any Pic file
+
+
+A brief description of each program and any user instructions that are
+necessary follows.
+
+
+                   ******************************
+                   * BEAMHEAD.85P for the TI-85 *
+                   ******************************
+
+ACKNOWLEDGMENT
+
+BEAMHEAD.85P was written by John Powers of the TI Graphics Team and
+is released to the public domain.  You may copy and change this program
+as you wish.
+
+INTRODUCTION
+
+This program computes the direction to point your ham radio antenna
+to get best reception of a distant ham radio.
+
+HOW TO USE BEAMHEAD
+
+Given your longitude and latitude and the longitude and latitude of
+another location, this program computes the compass direction and
+distance in miles of the distant location.
+
+Answer the program's prompts for latitude and longitude as a pair of
+numbers in parentheses.  For example, the latitude and longitude of
+Fairbanks, Alaska (65 degrees north, 147 degrees west) would be
+entered as (65,147).  Southern latitudes and eastern longitudes are
+entered as negative angles.
+
+Store the latitudes and longitudes in variables to build up a data
+base of city, country, and ham radio call sign locations.  For
+example:
+
+   (33,97)->Dallas
+   (65,147)->Fairbank
+   (47,71)->Quebec
+
+The variable name of the location may then be entered at the prompt
+for a location.
+
+Example:  Compute the direction and distance from Dallas, Texas to
+Fairbanks, Alaska.
+
+  BEAMHEAD
+  Origin (lat,long): Dallas       --Use [VARS] <CPLX> to quickly
+  Dest (lat,long): Fairbank       --look up and enter the city names.
+  Dist=
+          3026.08610281
+  Bearing=
+          332o7'36.687"
+
+The great circle distance from Dallas to Fairbanks is 3026 miles with
+a bearing of 332 degrees.
+
+
+		       *************************
+		       * BOX.85P for the TI-85 *
+		       *************************
+
+ACKNOWLEDGMENT
+
+BOX.85P was written by Charlie Reno, a teacher at Euclid High School in
+Euclid, Ohio, and is released to the public domain.  You may copy and
+change this program.
+
+DESCRIPTION
+
+This program helps visualize a pre-calculus version of the problem that
+finds the maximum volume of a box made from cutting squares from the corner
+of a given rectangle and then folding up the sides to form the open topped
+box.
+
+
+
+                       ****************************
+                       * BRKOUT.85G for the TI-85 *
+                       ****************************
+
+ACKNOWLEDGMENT
+
+CASSE.85P, \LC-alpha\BITMAP.85P, and \LC-alpha\PAUSE2.85P (in group 
+BRKOUT.85G) were written by Vincent Bastide of the TI Graphics Team
+and are released to the public domain.  You may copy and change these 
+programs as you wish.
+
+INTRODUCTION
+
+CASSE.85P is a version of the break-out video game for the TI-85 and has
+been included just for fun and as an example of using the getKy programming
+function.
+
+HOW TO PLAY CASSE
+
+The object of the game CASSE.85P is to "hit" all the "bricks" in the
+display with the bouncing ball.  The user has control of the paddle along
+the bottom of the screen and can move the paddle left and right with the
+left and right cursor keys.  The game has 9 different levels of difficulty. 
+After all the "bricks" are knocked out of one screen, the next level starts
+automatically.  The user has four paddles before the game ends.
+
+The program sets many "odd" modes.  It is suggested that you reset default
+settings after you complete the game (or lose).  (You also can use the SAVER
+and RESTORE programs, described later in SAMPLES.TXT.)
+
+
+		   ******************************
+		   * CALENDAR.85G for the TI-85 *
+		   ******************************
+
+ACKNOWLEDGMENT
+
+CALENDAR.85G is a grouped file containing the program CALENDAR.85P and the
+matrix CMAT.85M.  The program was written by W.B. Harvick of Western Hills
+High School in Fort Worth, TX and is released to the public domain.  You
+may copy and change this program.
+
+INTRODUCTION
+
+CALENDAR.85P is a game in which you enter a month and a year, and the
+calendar month for that date is displayed.
+
+HOW TO PLAY CALENDAR
+
+At the MONTH #: prompt, enter the number of the month you want to look at
+(1-12).  At the YEAR #: prompt, enter the last two digits of the year if it
+is in 1900 or all four digits of the year if it is before or after 1900.
+
+
+                      *****************************
+		      * CONTOUR.85G for the TI-85 *
+                      *****************************
+
+ACKNOWLEDGMENT
+
+CONTOUR.85G is a group file containing CONTOUR.85P, an equation, and a
+picture.  CONTOUR was written by John Powers of the TI Graphics Team and
+is released to the public domain.  You may copy and change this program.
+
+INTRODUCTION
+
+Contour map grapher for the TI-85.  This program graphs a contour map
+of an implicit function of X and Y.
+
+HOW TO USE CONTOUR.85P
+
+Define equation variable FXY with the implicit function before
+running this program.
+
+Modify the assignment to variable BAND in the first line of program
+CONTOUR to adjust the Z axis width of each contour band.  Band is set
+to .1 in the distributed version of CONTOUR.  This causes alternating
+bands of black and white for a Z scale of .1
+
+Run program CONTOUR.  Depending on the complexity of the definition
+of FXY, the graph will be completed around 10 minutes.
+
+Example:
+   Graph the function F(X,Y) = exp(-sqrt((X-1)^2+Y^2)) +
+                               exp(-sqrt((X+1)^2+Y^2)
+
+   Enter on the home screen
+      FXY=e^-abs(X-1,Y)+e^-abs(X+1,Y) [ENTER]
+
+   Set the graph range to x: [-2,2], y: [-2,2] for a better view of
+   this function.
+
+   Run the program
+      CONTOUR [ENTER]
+
+   A contour map demonstrating two peaks at (-1,0) and (1,0) is then
+   drawn.
+
+This program uses a brute force test of pixels on the screen to
+determine if the pixel should be turn on.  The program makes two
+passes over the screen filling in a quarter of the pixels each time. 
+You get a good idea of how the function looks after the first pass
+and may stop the program from filling in detail on the second pass.
+
+Included in the UUE section of this distribution is CONTOUR.85G, a
+grouped TI-85 file containing CONTOUR (the contour plotting program),
+FXY.85E (FXY as defined in the above example), and EXP2CON.85I (the
+resulting contour map picture of FXY).
+
+
+                  ******************************
+                  * CONV2STR.85G for the TI-85 *
+                  ******************************
+
+ACKNOWLEDGMENT
+
+CONV2STR.85G is a group file containing REAL2STR.85P, CPLX2STR.85P, and
+LIST2STR.85P.  These programs were written by Pat Milheron of the TI
+Graphics Team and are released to the public domain.  You may copy and
+change these programs.
+
+INTRODUCTION
+
+These three programs are utilities for converting real numbers to strings,
+complex numbers to strings, and lists of real or complex numbers to
+strings.
+
+HOW TO USE REAL2STR.85P, CPLX2STR.85P, LIST2STR.85P
+
+Each program assumes that the argument (real, cplx, or list) to be 
+converted to a string is currently in Ans.  Each program loads the string 
+result into Ans.  By using Ans to "pass" the data to and from these 
+programs, they can easily be used as generic subroutines for larger 
+application programs.  Below is an example of how to use Ans with REAL2STR:
+
+    PROGRAM: MAIN
+    : ...
+    : 123.456 -> VAR1   (Ans is updated with the contents of VAR1)
+    : REAL2STR
+    : Ans -> STRING1    (Ans has the return string from REAL2STR)
+    : ...
+
+The REAL2STR.85P program is used as a subroutine call by CPLX2STR and
+LIST2STR, and CPLX2STR is also a subroutine call for LIST2STR, so all 
+three programs need to be resident in the TI-85.
+
+
+                        **************************
+                        * DIST.85P for the TI-85 *
+                        **************************
+
+ACKNOWLEDGMENT
+
+DIST.85P was written by S. S. Millwright of the TI Graphics Team and is
+released to the public domain.  You may copy and change this program.
+
+INTRODUCTION
+
+Many teachers have indicated to us that they want to have some common
+statistical distributions available on calculators.  This TI-85 program is
+an attempt to provide some common distributions for your use.  The program
+provides calculations in the Standard-unit Normal, t, Chi-Square, F, Weibull,
+binomial, Poisson, and hypergeometric distributions.  DIST is an
+abbreviation for distributions.
+
+HOW TO USE DIST.85P
+
+DIST requires almost 7K bytes of memory.  When you run DIST, you must first
+select the distribution you want from the menu.
+
+                              ------------<-------
+                             |                    |
+                             v                    |
+     -------------------------------------        |
+     | norm |  t  | chi^2 | more |  esc  |        |
+     -------------------------------------        |
+                             |                    |
+                             v                    |
+     -------------------------------------        |
+     | F    | weib|       | more |  esc  |        ^ 
+     -------------------------------------        |
+                             |                    |
+                             v                    |
+     -------------------------------------        |
+     |binom |poiss| hgeom | more |  esc  |        |
+     -------------------------------------        |
+                             |                    |
+                             v                    |
+                             |                    |
+                              ----------------->--
+After selecting the distribution, you are prompted for the necessary
+parameters for that distribution, and then the resulting probability is
+displayed.  You will then see the menu:
+
+     -------------------------------------         
+    | f(x) | plot |  old  | new  |  esc  |         
+     -------------------------------------         
+       |                     |                                    
+       v                     v 
+     discrete only         optional for some distributions
+
+
+
+f(x)  Steps through the density function by pressing ENTER each time.
+
+PLOT  allows you to specify a domain and see the distribution plotted.  If
+      the distribution is continuous, the area that was calculated
+      is also shaded.
+
+OLD   allows you to continue calculating in the existing distribution with
+      the previous parameters defined.
+
+NEW   keeps you in the existing distribution, but will prompt for new
+      parameter values.
+
+ESC   takes you back to the first menu to select a new distribution.
+
+
+                       ****************************
+                       * FACTOR.85P for the TI-85 *
+                       ****************************
+
+ACKNOWLEDGMENT
+
+FACTOR.85P was written by John Powers of the TI Graphics Team and is 
+released to the public domain.  You may copy and change this program.
+
+INTRODUCTION
+
+This program produces a list of the prime factors of a given
+integer.  The list is displayed in the form of factor/power pairs. 
+
+HOW TO USE FACTOR
+
+Execute FACTOR to begin the program.  A prompt for the integer to
+factor then appears:
+
+  N=?
+
+Enter an integer.  The integer's factors are then displayed.
+
+For example, to factor 1584:
+
+  FACTOR
+  N=?1584
+   {(2,4) (3,2) (11,1)}
+
+The factors of 1584 are 2^4 * 3^2 * 11.
+
+
+                         **************************
+                         * GR3D.85G for the TI-85 *
+                         **************************
+
+ACKNOWLEDGMENT
+
+GR3D.85G is a group file containing the programs DEMO.85P and GR3D.85P, 
+along with several picture files (.85I).  They were written by GRAPH-TI 
+member Ravi Prasad and are released to the public domain.  You may copy 
+and change these programs and pictures.
+
+INTRODUCTION
+
+GRAPH 3D FEATURES:
+
+1)    Left and right handed coordinate systems.
+2)    Cartesian, spherical, and cylindrical coordinate systems.
+3)    All equations in 2 may be entered as Z squared, Rho squared,...
+4)    Zoom sqr, Zoom fit, Zoom in, Zoom out options included.
+5)    Tilt X or Y axis at -135, -45, +45, -90, or user input custom tilt.
+6)    Rotate the image about the XY plane at any specified rotation angle.
+7)    Program automatically detects and adjusts for cylinders &
+      planes if any variables are missing in the equation.
+8)    Totally menu drive.
+9)    View the graph with new option or zoom options without re-
+      keying in the equation over and over again.
+10)   Accuracy and speed (resolution) controlled by setting
+      appropriate axis size and increments.
+11)   All angular values entered are in radians unless otherwise
+      stated by program.
+12)   Standard (default) increment or custom increment for
+      specified range values included.
+13)   Requires 4.4K for entire program will complete features. 
+      Any one module may be written in about 400 byes.
+
+GRAPH 3D FILES:
+
+      1) D1, D2, D3..., D20
+         These are the demo picture files used by the DEMO program.
+         These files need to be loaded only if you wish to run
+         the DEMO program.
+
+      2) DEMO.85P
+         This is the DEMO program that uses the above picture files.
+
+      3) GR3D.85P
+         This is the full featured graph 3D program.
+
+
+HOW TO USE GR3D
+
+1) Type "GR3D" and "ENTER" or press the "PRGM" key followed by
+   the "F1" key and then selecting the appropriate menu function key
+   designating the "GR3D" program.
+
+2) If you wish to continue with the previous range settings from
+   an earlier session, select "NO" at the "NEW CONFIGURATION"
+   prompt.  For a new session with new range settings, select "YES"
+
+3) Press "F1" key for a right handed coordinate setup of "F5" for
+   a left handed coordinate setup.
+
+4) If a right handed coordinate setup is selected (F1), you are
+   prompted to select a tilt angle for the X axis.  If a left handed
+   coordinate setup is selected (F5), a tilt for the Y axis is to be
+   selected.  The tilt angle is customarily -135 degrees (zero
+   degrees representing due east), although any tilt angle may be
+   selected by the appropriate menu function keys.  The CUSTM key
+   lets you enter any desired tilt angle.
+
+5) Select a scaling option.  "SQR" is the standard scaling option
+   which provides a one to one ratio for all axis.  The "FIT" option
+   is more time consuming but gives a best view (enlarged and
+   stretched) of the graph to fit on the screen.
+
+6) Select "YES" or "NO" by pressing the appropriate menu function
+   keys at the option to display the coordinate axis.  Note however,
+   in the "FIT" option, the axis will be tilted with respect to the
+   best fit view and may not APPEAR to be accurate.  The graph and
+   axis displayed are however, accurately shown.
+
+7) Select a working coordinate system at the "COORDINATE SYSTEM"
+   prompt.  Valid choices are "F1" for Cartesian coordinates, "F3"
+   for spherical coordinates, and "F5" for cylindrical coordinates.
+
+8) Select the minimum and maximum values for the variables to be
+   used in graphing the equation.  The increment may be defaulted by
+   entering the number ZERO for this option.  By carefully
+   incrementing the variables, speed and accuracy may be controlled.
+   Incrementing a variable allows the program to successively choose
+   new values for the variables and compute the values for the
+   defined equation.  The default increment results in a total of 20
+   traces to be plotted.
+
+9) Enter the equation as you would normally write them.  Keep in
+   mind however, that the variables X Y Z must be in uppercase.  The
+   option "Z..." will the plot the function Z as is.  The function
+   "Z=+-" will plot the functions Z and -Z.  This way, if you have a
+   function such as Z=+- sqrt (X^2+y^2), you need not enter them as
+   two separate equations.
+
+10) Select an image rotation angle.  By selecting a rotation
+    angle other than zero means to spin the image by actually
+    spinning the Z axis the angle desired.  By rotating an image, you
+    can examine parts of a graph that may not be visible in the tilt
+    axis given.  For example, a paraboloid opening on the positive X
+    axis in a right handed coordinate system (X axis tilted at -135
+    degrees) rotated 90 degrees would now open on the positive Y
+    axis.  Enter zero for no rotation.
+
+11) Select the XYZ axis size.  The equation will not be plotted
+    beyond the XYZ axis size unless a FIT graph was chosen.
+
+12) After the equation is graphed, you may Zoom In, Zoom Out,
+    perform a Zoom Fit or Zoom Sqr function.  The "Menu" option
+    always returns to the main menu shown at the end of graphing an
+    equation.  The "View" option simply eliminates the menu
+    temporarily.  Press "ENTER", to return to the menu options.  The
+    "REcfg" option lets you re-plot the equation with new range
+    values along with other appropriate settings.  The "Graph" option
+    will restart another graphing session.  The "Exit" option
+    terminates the graphing session.
+
+Note:  At the end of a graphing session, any equation plotted
+       remains in view and may be stored to memory for later retrieval
+       by pressing the "GRAPH" key, followed by the "STPic" menu
+       function key and an appropriate file name.  Also, Greek symbols
+       may be incorporated into equations for cylindrical and spherical
+       formats by pressing "2nd" followed by the "CHAR" key, followed in
+       turn by the "GREEK" menu key.  The program is case sensitive and
+       thus requires the usage of "XYZ" versus "xyz".
+
+
+                        ***************************
+                        * GTEXT.85P for the TI-85 *
+                        ***************************
+
+ACKNOWLEDGMENT
+
+GTEXT.85P was written by Pat Milheron of the TI Graphics Team and is
+released to the public domain.  You may copy and change this program.
+
+INTRODUCTION
+
+Many teachers around the country want a way of annotating graphs for
+incorporation into a document via an .EPS or .TIF file.  GTEXT is an
+abbreviation for "graph text".  The program allows the user to add text or
+arrows to any graphical display.
+
+HOW TO USE GTEXT
+
+GTEXT works in any of the graph modes with any RANGE settings. Enter any
+equations in the graph equation editor that you want to overlay text onto.
+You can either graph it before running GTEXT or let the program graph it
+for you.  The program (using "Smart Graph") will display a graph 
+automatically at the start of execution.
+
+Once the graph has been drawn, the main menu for GTEXT is displayed:
+
+     -----------------------------------
+    | QUIT |     | GRAPH | ARROW | TEXT |
+     -----------------------------------
+
+The general flow to using the program is:
+
+1) Position the cursor using the GRAPH option from GTEXT main menu.
+2) Choose either the ARROW or TEXT menu option.
+   * If you have chosen ARROW, select the direction from which the arrow
+     should point (8 choices).
+   * If you have chosen TEXT, enter the text you want to display, followed
+     by [ENTER].
+3) The graph is updated with either an arrow or the text.
+4) You can continue to add text or arrows by returning to step 1.
+
+QUIT   Exits from program and saves graph in the picture variable NEWGRAPH.
+
+       Note: If you use the ON key to "break" out of the program, the graph
+       will not be saved in a picture variable.
+
+GRAPH  Puts the graph into the screen with a free-moving cursor at the
+       center of the screen.
+
+       Move the cursor to the position on the graph where you want your
+       text to start, or where you want the point of an arrow to be
+       located.  For text, the cursor location will be the upper left
+       location of the text to be written. All text is 5 pixels high and
+       up to 5 pixels wide.  A pixel space is inserted between characters.
+
+       Once the cursor location is chosen, press ENTER to "select" the
+       location and return to the main menu.
+
+ARROW  Allows you to draw an arrow with the point being located at the
+       current cursor position. There are 8 different arrows that can be
+       drawn, they differ only by their direction. Select the type of arrow
+       from the arrow sub menus:
+
+                           ^       |
+                           |       |
+         <----   ---->     |       v
+        --------------------------------------
+       |  LEFT | RIGHT |   UP  | DOWN  | MORE |
+        --------------------------------------
+                                          ^
+                                          |
+                                          v
+        --------------------------------------
+       | 1ST Q | 2ND Q | 3RD Q | 4TH Q | MORE |
+        --------------------------------------
+           /     \         ^      ^
+          /       \       /        \ 
+         v         v     /          \
+
+       Note: Q is quadrant from which the arrow points at a 45 degree
+       angle; v or ^ is the arrow head.
+
+TEXT   Prompts you for text to be written on top of the graph.
+
+       Text is normally written left to right from the current cursor
+       position. Text can be written downward from the current cursor
+       position by starting your text with the Greek letter lambda, which
+       is located under the CHAR GREEK menu.
+
+       The characters that can be written on the graph are limited in
+       number in order to keep the size of this program to a minimum.  Any
+       character not in the valid character set will just be skipped over.
+       Lowercase letters are output as uppercase except x, y, r, and t.
+
+VALID CHARACTER SET:
+  Lowercase alphabet: (only x, y, r, and t are output as lowercase)
+  Uppercase alphabet: A-Z
+  Space
+  Greek letters: theta,pi
+  Numbers:  0-9
+  Math operators: +  -  *  /  ^ =  negate (-)
+  Brackets:  (  )  [  ]  {  }
+  Punctuation:  .  ,  '  :
+
+
+                          ******************************
+                          * IMPLGRAF.85P for the TI-85 *
+                          ******************************
+
+ACKNOWLEDGMENT
+
+IMPLGRAF.85P was written by John Powers of the TI Graphics Team and is
+released to the public domain.  You may copy and change this program.
+
+INTRODUCTION
+
+This program graphs an implicit function of X and Y formulated as an
+inequality.
+
+HOW TO USE IMPLGRAF
+
+Define equation variable FXY with the implicit function before
+running this program.  FXY should contain an inequality using
+variables X and Y.
+
+Run program IMPLGRAF.  Depending on the complexity of the definition
+of FXY, the graph will be completed in 3-1/2 minutes (or more).
+
+Example:
+   Graph the inequality 16X^2 + 25Y^2 - 160X - 200Y + 400 < 0
+
+   Enter on the home screen
+      FXY=16X^2+25Y^2-160X-200Y+400<0 [ENTER]
+
+   Set the graph range to x: [-2,12], y: [-2,12] for a better view of
+   this conic.
+
+   Run the program
+      IMPLGRAF [ENTER]
+
+   A filled-in ellipse is then drawn in the first quadrant.
+
+This program uses a brute force test of (nearly) each pixel on the
+screen to determine if the pixel should be turn on.  The program
+makes two passes over the screen filling in a quarter of the pixels
+each time.  You get a good idea of how the function looks after the
+first pass and may stop the program from filling in detail on the
+second pass.
+
+
+			**************************
+			* IVT3.85P for the TI-85 *
+			**************************
+
+ACKNOWLEDGMENT
+
+IVT3.85P was written by Charlie Reno, a teacher at Euclid High School in
+Euclid, Ohio, and is released to the public domain.  You may copy and
+change this program.
+
+INTRODUCTION
+
+This program helps visualize the Intermediate Value Theorem.
+
+HOW TO USE IVT3
+
+A function is entered along with closed interval [a,b].  Then,
+the graph is seen along with the rectangle on [a,b] with the
+same "area" as fnInt(f(x),x,a,b). Finally, the claimed to exist,
+special number c on (a,b) is shown.
+
+
+                     ******************************
+                     * MANDLBRT.85G for the TI-85 *
+                     ******************************
+
+ACKNOWLEDGMENT
+
+MANDLBRT.85G is a group file containing the program MANDLSET.85P and the
+PIC file MANDLPIC.85I.  They were written by John Powers of the TI Graphics
+Team and are released to the public domain.  You may copy and change this
+program and PIC.
+
+INTRODUCTION
+
+This program draws the Mandlebrot set.
+
+HOW TO USE MANDLBRT
+
+MANDLESET draws the Mandlebrot set.  It takes quit a while.  If
+you don't want to wait for the program to finish, just RCPIC
+MANDLPIC.
+
+Change the statements in the program which set xMin, xMax, yMin, and
+yMax to zoom in on different parts of the Mandlebrot set.
+
+
+                        *************************
+                        * MVT.85P for the TI-85 *
+                        *************************
+
+ACKNOWLEDGMENT
+
+MVT.85P was written by Charlie Reno of Euclid High School in Euclid, Ohio,
+and is released to the public domain.  You may copy and change this program.
+
+INTRODUCTION
+
+This program helps visualize the Mean Value Theorem.
+
+HOW TO USE MVT
+
+A function is entered along with closed interval [a,b].  Then,
+the graph is seen along with the secant determined by a & b.
+Finally, the tangent line parallel to the secant is shown.
+
+
+                   ****************************
+                   * NELDER.85G for the TI-85 *
+                   ****************************
+
+ACKNOWLEDGMENT
+
+NELDER.85G is a group file containing NELDER.85P, NELDSORT.85P, and the
+examples TESTNELD.85P and ORBIT.85P.  They were written by John Powers
+and C. B. Wilson of the TI Graphics Team and are released to the public
+domain.  You may copy and change these programs.
+
+INTRODUCTION
+
+NELDER.85P and its associated subroutine NELDSORT.85P provide a nonlinear
+minimization of a function with one or more parameters, using the
+Nelder-Mead simplex method.  Nonlinear optimization is a very valuable
+tool, especially for modeling and regression.  The Nelder-Mead method is
+one of the most robust and therefore very suitable for experimentation and
+use on a wide range of problems.  TESTNELD.85P and ORBIT.85P are
+application examples for NELDER.85P.
+
+HOW TO USE NELDER
+
+NELDER should be called from a short program that sets up your problem. 
+NELDER assumes that the variables to be minimized are in a vector X and
+that you have a equation variable FX that computes the function that you
+want to minimize.  The vector X must be initialized to a best guess for the
+variables to be minimized.
+
+NELDER uses the TI-85 system variable "tol" as a termination criterion. 
+The iterations stop when the "size" of the simplex (roughly the "distance"
+between vertices) is less than "tol".  At each iteration, NELDER displays
+the action taken on that iteration (REFLECT, EXPAND, CONTRACT or SHRINK),
+the loop count, a vector representing the value of FX at each vertex, and
+the value compared to "tol" for termination.  There is no limit on loop
+count; you can break the program if it appears it is not going to converge.
+The most recent trial for X is averaged in "vavg" and the last actions
+stored in "vref", "vexp" ,"vcon" and "vk".  At the beginning of NELDER is a
+constant "offset", which is set to 0.1. This value is used to perturb your
+initial guess to form the simplex and initialize the process.  If you know
+your initial guess is much more accurate than 10%, you can prevent the
+program "opening up" the scale too much by reducing "offset".  If you do
+this often, you can remove the assignment statement from NELDER and put it
+in your calling programs.
+
+The example program TESTNELD.85P illustrates a simple use of NELDER. This
+example fits a series of Fibonacci numbers to an equation of the form F(n)=
+ae^(bn).  In the example program X(1) is "a" and X(2) is "b", the list NL
+is "n" and list FN contains the exact Fibonacci sequence for the values of
+"n" in list NL.  The equation for FX uses the sum of squares of error as
+the minimization function.
+
+If you use NL={1,2,3,4,5,6,7,8,9,10}, FN={1,1,2,3,5,8,13,21,34,55} and tol
+= 1e-5, you should get a least-squares error of .12339, X(1)=.4488077 and
+X(2)=.4810062.  This is a good example of why nonlinear minimization is
+required for accurate answers to tasks that are often treated in
+"linearized" form due to people not having tools like this NELDER program. 
+For instance, y=ae^(bx) can be linearized by ln(y)=ln(a) + bx and linear
+least-square methods used to obtain ln(a) (hence a) and b.  However, these
+values of a and b are biased by the fact that the sum of squares is
+minimized in ln(y) and not y. We can see this effect quickly in the TI-85
+by using exponential regression on the two lists above.  Since the
+exponential regression is y=ab^x (linearized as ln(y)=ln(a) + ln(b)*x), we
+just need to take the natural log of b as given by the TI-85 to have the a
+and b that we want.  For the data above, we obtain a=.488296 and b=.468948.
+Substituting these values for X(1) and X(2), we can evaluate FX to see that
+the sum of squares error is 4.31 (vice 0.12).  If we want an equation for
+calculating Fibonacci numbers: FIB=round(X(1) e^(X(2)*N),0), the
+coefficients we obtained using NELDER will return the correct integer
+values over the range of our data (and indeed up to N=14), while the
+coefficients from the linearized least squares approach only work up to
+N=8. In fact, if you try to fit the first 60 Fibonacci numbers with
+linearized least squares, your coefficients will result in a sum of squared
+error of 1.59e20.  Using these coefficients in the equation above only
+results in one additional correct Fibonacci number for N=9. But with
+NELDER, we can determine the coefficients X(1)=.44721359549739 and
+X(2)=.4812118250597, which result in a sum of squared error of 0.299 and
+exact results for N from 1 to 60.  The lesson here is that for accurate
+data modeling to nonlinear equations, you really have to use a nonlinear
+minimization tool.  While Nelder-Mead is not the fastest algorithm, it is
+very robust, doesn't need any derivative information and isn't bothered too
+much by discontinuities or other messy function behavior.
+
+A second example, ORBIT.85P, fits data on variation in the period of pulsar
+PSR1257+12 over time.  This data is approximate and obtained from the graph
+shown in the announcement article, "A planetary system around the
+millisecond pulsar PSR1257+12", Nature, Vol. 355, 9 January 1992, pp
+145-147.  Another article covering this is "Pulsars, Planets and Pathos" in
+Sky & Telescope, May 1992, pp 493-495.  The data is contained within the
+program itself, as well as initial conditions for the optimization.  The
+program fits 7 parameters to an equation, which is the sum of two sinusoids
+and a constant.  Each sinusoid is described by an amplitude, a frequency
+and a phase.  The time data is in years (actual year - 1990) and the period
+data is in nanoseconds (actual period - 6,218,530 ns).  This problem is
+pretty complex for this method, which is better for five or less
+parameters, therefore the calculation time will be fairly long.  However,
+it is an example of a realistic scientific problem that students have not
+generally been equipped to solve.  From a sketch of the data points you can
+determine possible values for the amplitudes and periods.  For instance,
+one period seems to be about 0.2 year, so we would use 2*pi/0.2 = 31.4
+radians as a possible starting point.
+
+It is more difficult to make a close initial estimate of the phase angles
+and if we just start with arbitrary values, it may take several hundred
+iterations to get a result with tol=.001 or less.  Starting with the
+somewhat better initial estimate in the program, setting "offset" in NELDER
+to 0.01 and tol=.001, you can get the following result in 83 iterations.  A
+comparable result with tol=.01 takes 59 iterations.
+
+               First term       Second term
+Amplitude        .0094215          .0067196
+Frequency      34.7072           23.0665
+Phase          -2.0107            3.2039
+Constant        1.9339
+
+Converting the two frequencies into days:
+  365.25 days * 2ã / 34.7072  =  66.1 days
+  365.25 days * 2ã / 23.0665  =  99.5 days
+
+As reported in the Nature article, it is believed that two planets are in
+orbit around this pulsar, having periods of 66.6 and 98.2 days. With
+assumptions about the mass of the pulsar and this data, calculations for
+the mass of these planets can also be made.
+
+References for the Nelder-Mead technique are:
+1. J. A. Nelder and R. Mead, "A Simplex method for function minimization",
+Computer Journal, vol. 7, pp 308-313, 1965.
+
+2. W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
+"Numerical Recipes, The Art of Scientific Computing", Cambridge University
+Press, 1987, pp 305-309.
+
+
+                      ******************************
+                      * POLCONIC.85P for the TI-85 *
+                      ******************************
+
+ACKNOWLEDGMENT
+
+POLCONIC.85P was written by John Powers of the TI Graphics Team and is
+released to the public domain.  You may copy and change this program.
+
+DESCRIPTION
+
+Given the coefficients of a general conic
+
+    Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+
+this program sketches the conic on the graph screen.
+
+Once the program has been run, the user may store different
+coefficients to variables A through F and change the graph range
+settings on the RANGE screen.  Press [GRAPH] <GRAPH> to sketch the
+new conic.
+
+This program uses dot mode of the grapher to draw conics.  The user
+may change the number of dots (N) in the graph by setting thetaStep
+on the RANGE screen to 360/N.  This program initializes thetaStep to
+9 degrees to draw forty points.
+
+Example:  To plot the conic 16x^2 + 25y^2 - 160x - 200y + 400 = 0
+
+POLCONIC [ENTER]
+A=?16
+B=?0
+C=?25
+D=?-160
+E=?-200
+F=400
+
+An ellipse is drawn in the first quadrant.  Press [F5] (QUIT) to
+terminate the program.
+
+Change the coefficient of x^2 to 25 and regraph.
+
+25->A [ENTER]
+[GRAPH] <GRAPH>
+
+A circle is now drawn in the first quadrant.
+
+
+                        **************************
+                        * PROJ.85P for the TI-85 *
+                        **************************
+
+ACKNOWLEDGMENT
+
+PROJ.85P was written by Charlie Reno and is released to the public
+domain.  You may copy and change this program.
+
+DESCRIPTION
+
+PROJ.85P is a program that graphs the path of a projectile
+with air resistance accurate for a baseball.  There are two graphs
+drawn.  The first one is the projectile's path WITHOUT air
+resistance and the second one is the projectile's path WITH air
+resistance.
+
+
+			*************************
+			* RSP.85P for the TI-85 *
+			*************************
+
+ACKNOWLEDGMENT
+
+RSP.85P was written by Charlie Reno and is released to the public
+domain.  You may copy and change this program.
+
+DESCRIPTION
+
+RSP.85P is a program that simulates the age-old Rock, Scissors, Paper game.
+
+
+                       ***************************
+                       * SAVER.85G for the TI-85 *
+                       ***************************
+
+ACKNOWLEDGMENT
+
+SAVER.85G is a group file containing SAVER.85P and RESTORE.85P.  These
+programs were written by Pat Hatcher of the TI Graphics Team and are
+released to the public domain.  You may copy and change them.
+
+INTRODUCTION
+
+SAVER.85P and RESTORE.85P are in the group SAVER.85G.  Many programs, such
+as those on this disk, change the values of the RANGE variables and other
+system variables, use common graphing equations, such as y1 and y2, or make
+use of nondefault MODE and FORMT settings.  SAVER and RESTORE are an easy 
+way to save all current graph databases and the user zoom and tolerance
+variable values and then restore them and reset the MODE settings to the 
+defaults.
+
+HOW TO USE SAVER AND RESTORE
+
+Run SAVER before running a program.
+
+Run RESTORE after you have finished examining the results of a program,
+such as a graph.
+
+Note: You may include SAVER as a subroutine by typing the name as the 
+first line of a program, but if you do, remember to run RESTORE before
+running the program again or you will be saving the settings from the 
+program instead.
+
+The programs work by saving a graph database for each graphing mode,
+and then restoring each.  It also saves the user zoom values and the
+values of delta and tol and resets all modes to the defaults.  If you
+normally use a nondefault mode, such as Degree or Fix 2, simply edit
+RESTORE for your preferences.  All items created by SAVER begin
+with "my" to make them easy to delete to free up memory later.
+
+
+                           ***************************
+                           * SQRTM.85P for the TI-85 *
+                           ***************************
+
+ACKNOWLEDGMENT
+
+SQRTM.85P was written by John Powers of the TI Graphics Team and is released
+to the public domain.  You may copy and change this program.
+
+INTRODUCTION
+
+Compute square root of a matrix.
+
+HOW TO USE SQRTM
+
+Program SQRTM first prompts for the name of a square matrix.  The
+program computes and displays a square root of the given matrix.
+
+The computed square root is displayed and stored in FMA.
+
+
+                        ****************************
+                        * SYNDIV.85P for the TI-85 *
+                        ****************************
+
+ACKNOWLEDGMENT
+
+SYNDIV.85P was written by Bill Ague and is released to the public
+domain.  You may copy and change this program.
+
+DESCRIPTION
+
+SYNDIV.85P prompts for the degree of the polynomial and then prompts for
+the coefficients and the divisor.  The first line of the output is the
+coefficients input by the user, the second line is the dividend and the
+third line is the remainder.
+
+
+                       ****************************
+                       * TAYLOR.85G for the TI-85 *
+                       ****************************
+
+ACKNOWLEDGMENT
+
+TAYLOR.85P was written by Dave Stone and Mike Hosea of the TI Graphics 
+Team and is released to the public domain.  You may copy and change it.
+
+INTRODUCTION
+
+TAYLOR is from Applications Chapter of the TI-85 Guidebook.  A slightly
+altered version is included here to demonstrate transferring data with
+programs for storage or sharing (see FREEWARE.TXT in \FREEWARE). In this
+version, mSERIES is an existing list, rather than created by a subroutine,
+as it was in the TI-85 Guidebook.  You must have both TAYLOR and mSERIES
+in the TI-85 to run TAYLOR.
+
+TAYLOR numerically calculates the Taylor polynomial of a function at a 
+specified point.
+
+HOW TO USE TAYLOR
+
+TAYLOR prompts the user for a function, the order of the polynomial, and
+the center point.  After calculating the polynomial, the original function
+and the Taylor approximate polynomial are plotted in the standard window
+([-10,10,1],[-10,10,1]).  The user can TRACE on both functions for
+comparison of the error in the Taylor polynomial.
+
+
+		       ******************************
+		       * TILOGO.85G for the TI-85 *
+		       ******************************
+
+ACKNOWLEDGMENT
+
+TILOGO.85G is a group file containing the program TILOGO.85P and picture
+PIC1.85I.  This program was written by Pat Hatcher of the TI Graphics 
+Team and is released to the public domain.  You may copy and change this 
+program.
+
+INTRODUCTION
+
+This program uses the RcPic command to display a picture. The short 
+program creates a clear screen, displays Pic1, and then reverses each pixel 
+from the left side of the display to the right.  Pic1 in TILOGO.85G is the 
+TI logo.  You may either replace this Pic1 with your own picture or 
+change "Pic1" in the line "RecallPic Pic1" to a different Pic number.
+
+HOW TO USE TILOGO
+
+Execute TILOGO to begin the program.  Press [ON] <QUIT> to stop execution and 
+return to the Home screen.
+

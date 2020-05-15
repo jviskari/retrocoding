@@ -1,0 +1,296 @@
+<HTML>
+
+<HEAD>
+<TITLE>The ZShell school - Lesson #2</TITLE>
+</HEAD>
+
+<!--
+
+  This homepage was written in a plain texteditor
+
+-->
+
+<BODY BGCOLOR="#000000" TEXT="CC4400" LINK="#FFC000" VLINK="#806000" ALINK="#FF00FF">
+
+<CENTER>
+
+<A HREF="index.html">   <IMG BORDER=0 SRC="buttons/home.gif" ALT="Home"></A>
+<A HREF="aboutme.html"> <IMG BORDER=0 SRC="buttons/aboutme.gif" ALT="About me"></A>
+<A HREF="pc.html">      <IMG BORDER=0 SRC="buttons/pc.gif" ALT="PC"></A>
+<A HREF="ticalcs.html"> <IMG BORDER=0 SRC="buttons/ticalcs.gif" ALT="TI-Calcs"></A>
+<A HREF="music.html">   <IMG BORDER=0 SRC="buttons/music.gif" ALT="Music"></A>
+<A HREF="guestb.html">  <IMG BORDER=0 SRC="buttons/guestb.gif" ALT="Guestbook"></A>
+<A HREF="news.html">    <IMG BORDER=0 SRC="buttons/news.gif" ALT="News"></A>
+
+<BR>
+<IMG ALIGN=TOP SRC="pics/smyrnlgo.gif"><BR>
+<A HREF="zshell.html"><IMG BORDER=0 ALIGN=TOP SRC="pics/lzshell.gif"></A>
+</CENTER>
+
+<TABLE ALIGN=CENTER BORDER=0 WIDTH=540><TR><TD>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>ESSON</FONT></FONT>
+<FONT SIZE=5>#2</FONT>
+</FONT><BR>
+
+Welcome to the second lesson of the online ZShell School! Today you'll learn
+a little about registers and how to store bytes, words and strings in the
+memory. You'll also learn some common instructions so you will understand
+the "Hello world!" program you wrote in the last lesson a bit better.</P>
+
+<P><UL>
+<LI><A HREF="#registers">Registers</A>
+<LI><A HREF="#ld">LD, the most common instruction</A>
+<LI><A HREF="#instr">Some other instructions</A>
+<LI><A HREF="#helloworld">Back to the "Hello world!" program</A>
+</UL></P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="registers"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>R<FONT SIZE=4>EGISTERS</FONT></FONT>
+</FONT><BR>
+
+In most programming languages you use variables to store information like bytes, integers,
+strings and such. But, in assembly there is no such thing as a variable. So how do you do?
+Inside each processor there are a few very quick ways to store information, the registers.
+On a PC the most frequently used registers are AX, BX, CX and DX and on an Amiga they're
+D0, D1, D2 and so on. What registers are there on a Z80, which is the CPU on a TI-85?</P>
+
+<P>The <I>common</I> registers are called A, B, C, D, E, H and L (There are
+other registers, though they aren't important right now). Pretty easy? They
+are 8-bits registers, which means that you'll fit a byte in them. Now, how
+do you do if you want to store a word for example? You "simply" put the
+registers together two and two. There are three register pairs, called BC,
+DE and HL. As you probably can figure out, the BC register uses both the B
+and C register. Important also is that you can't combine the registers in
+another way, ie registers such as BD, HA and so isn't possible. Also
+important is that if you store something in the B register, it will be
+destroyed when storing something later in the BC register, because they
+are the same (sort of).</P>
+
+<P>I forgot one thing in the last lesson that you'll need to know. When talking
+about hexadecimal and binary, I forgot to tell you how you show that a number
+is written in binary and hex. A hex number can either be written like this $5E
+or like this 5Eh. Binary numbers are either written like this %11010001 or
+11010001b. I use $ and % because I think it's easier to read the source then.
+It's very important to know that there is <I>no whatsoever difference</I> between
+94 - $5E - %01011101. It's just three different ways to write the same thing.</P>
+
+<P>OK, back to how to store things in the memory. Since the registers are
+few you'll need to know how to store things in the memory. This method is
+a bit slower, so numbers you often use you should store in the registers
+more often. All calculations require that at least one of the numbers you
+want to add or sub is stored in a register. Anyway, since the RAM memory
+is 32k, how do you know where in the memory it's safe to store things? You
+don't want to write to some location in the memory where other programs
+are stored because then you will get bad checksum when trying to run those
+programs. Lucky for us is that there are a few places in the memory that
+aren't used by the TI when where not in TI-OS. One of those places
+are the text memory, which starts at address $80DF. There you'll fit 8x21
+(the text screen size) = 168 bytes. The reason you can use the text memory
+as storage is that when writing something to the screen, you write it directly
+to the LCD memory, not via the text memory as I think the ROM does. You don't
+have to understand this really, you just need to know that you're able to
+store things in the text memory. Other places to store things in is the second
+text memory (168 byte, starts at $8A6B) and the graph memory (1024 byte, starts
+at $8641). You can't use the whole graph memory when using Rob Taylors
+grayscale routine though, because then the calc will crash. First you should
+use the text memory, then the second one and last the graph mem. Of course,
+if you need to store big arrays, it's perhaps necessary to use the graph mem.
+</P>
+
+<P>What if you have <I>many</I> variables? How do you do then? 168+168+1024
+= 1360 bytes isn't <I>that</I> much. Then you can store it directly in
+the program. The disadvantage of this is that the program gets bigger
+(since you allocate space in the program) and it's more complicated to
+access that information, since you don't know the exact location of the
+variables. There are other methods, but it requires that you know how
+the TI-85 works internally.</P>
+
+<P>OK, that was a big explanation of this. Now, how do you use it practically?
+First you need to now how to explain that you mean a memory address instead
+of a word. The way to to this is that you put ( ) around the address, for
+example ($80DF). Then the compiler will now that you mean the <I>contents
+of the RAM memory at address $80DF</I>, not just the number $80DF.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="ld"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>LD<FONT SIZE=4>, THE MOST COMMON INSTRUCTION</FONT></FONT>
+</FONT><BR>
+
+As you saw in the previous lesson, ld is used very often. What does it do?
+Not so hard to guess actually. LD stands for Load, which means that you
+store the second argument in the first argument. Example: ld a,53 stores
+53 in the A register. Now there are a couple of different ways to do this.
+A list below show you some ways to use ld.</P>
+
+<UL>
+<LI>ld d,63
+<LI>ld bc,$7A3B
+<LI>ld ($80DF),a
+<LI>ld a,($80F5)
+<LI>ld b,(hl)
+<LI>ld (de),a
+<LI>ld ($8641),hl
+</UL>
+
+<P>You can probably guess what these instructions will do. As you see
+I always use the hexadecimal form when I use address location. You should
+do that, because that is standard. When you store words in the memory
+(the last of the ld instructions above), the word is stored "backwards".
+In the case above, the L register would be stored at ($8641) and the H
+register at ($8642). ld bc,$7A3B will store $7A in the B register and
+$3B in the C register though.</P>
+
+<P>Sadly, there are some rules you must follow when using ld. Some things
+that aren't allowed are listed below.</P>
+
+<UL>
+<LI>You are not allowed to store a 16-bit registers in a 8-bit registers
+and vice versa.
+<LI>You can't load a 16-bit reg with another 16-bit reg. ld bc,hl isn't
+allowed with other words. You have to ld b,h and ld c,l to do that.
+<LI>When you use a direct memory addressing, ($80F5) for example, the other
+register must be A or a 16-bit register. ld b,($80F5) is not allowed but
+ld bc,($80F5) is allowed. Note that (hl) is <I>not</I> a direct memory
+addressing.
+<LI>An important thing to know is that (hl) acts <I>exactly</I> like other
+8-bit registers (with the exception that the A reg is a bit special). You
+could say that it's an 8th register (which, in fact, it is if you look
+at how the opcodes are made). When I say "only registers", I always mean
+that (hl) is also possible. Because of that, hl is very often used as a memory
+pointer.
+</UL>
+
+<P>I think that covered the registers we've been through so far. When the
+other registers are introduced I'll explain how do use them.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="instr"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>S<FONT SIZE=4>OME</FONT></FONT>
+<FONT SIZE=5>O<FONT SIZE=4>THER</FONT></FONT>
+<FONT SIZE=5>I<FONT SIZE=4>NSTRUCTIONS</FONT></FONT>
+</FONT><BR>
+
+There are a few other instructions that are easy to use that you should
+now.</P>
+
+<P>
+<FONT COLOR="#FF8000"><FONT SIZE=4>Add</FONT></FONT><BR>
+Add does an addition. Simple? Yes, except that there are limitations of
+course. The first arg <I>must</I> be the A reg (if you want to make a
+8-bit addition) or HL (16-bit addition). If the first arg is A, then
+the second arg can be a direct value or a 8-bit register (remember that
+(hl) acts like an 8-bit register), <I>not</I> a memory location! If the
+first arg is HL, the the second arg <I>must</I> be a 16-bit register! Add
+hl,hl is also possible. The answer is <I>always</I> stored in the first
+register. Some example of correct additions are listed below.</P>
+
+<UL>
+<LI>add a,7
+<LI>add a,(hl)
+<LI>add a,c
+<LI>add hl,bc
+</UL>
+
+<P>
+<FONT COLOR="#FF8000"><FONT SIZE=4>Inc and Dec</FONT></FONT><BR>
+Inc and dec are very useful when you want to make small additions or
+subtractions. They only have one arg, which is a register, 8-bit or 16-bit.
+Worth notifying is that if you want to add a 8-bit reg (excluding A) with
+3, it's smarter to Inc that register three times, because if you for example
+want to add the C reg with 3, you have to ld a,c \ add a,3 \ ld c,a. That
+takes four byte (you'll see that if you look at the opcodes of the instructions.
+It's very good to have a book with opcodes when programming) but inc c \ inc c \
+inc c only takes three bytes. When it comes to 16-bit reg, it's even more
+useful to use Inc, especially when you want to add bc with de for example.
+</P>
+
+<P>Dec works exactly like Inc, but since Sub (see below) is even more limited
+than Add, you can use many Dec in a row and still it takes lesser bytes
+than a sub would have done.</P>
+
+<P>
+<FONT COLOR="#FF8000"><FONT SIZE=4>Sub</FONT></FONT><BR>
+As I said, subtraction is even more limited than addition. That's because
+you <I>must</I> sub from the A reg. Because of that, you only have one arg,
+which can be a 8-bit reg or a byte. But what do you do if you want to make
+a 16-bit sub? Well, there is a trick you can use. There are a 16-bit sub,
+but it requires that you clears the Carry flag (more about flags in the
+next lesson). If you want to sub hl with de, you do like this: or a \ sbc
+hl,de. Or a is the easiest way to clear the carry. What or really does
+will be explained in a later lesson.</P>
+
+<A NAME="helloworld"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>B<FONT SIZE=4>ACK TO THE</FONT></FONT>
+<FONT SIZE=5>"H<FONT SIZE=4>ELLO WORLD!</FONT></FONT><FONT SIZE=5>" <FONT SIZE=4>PROGRAM</FONT></FONT>
+</FONT><BR>
+Let us first look at the program again.</P>
+
+<FONT COLOR="#808080"><UL><PRE>
+#include "ti-85.h"
+
+.org 0
+.db "My first program!",0
+
+ ROM_CALL(CLEARLCD)
+ ld hl,0
+ ld (CURSOR_ROW),hl
+ ld hl,Text
+ ld de,(PROGRAM_ADDR)
+ add hl,de
+ ROM_CALL(D_ZT_STR)
+WaitKey:
+ call GET_KEY
+ cp K_EXIT
+ jr nz,WaitKey
+ ret
+
+Text:
+ .db "Hello World!",0
+
+.end
+</PRE></UL></FONT>
+
+<P>You should understand the beginning. The reason why we store $0000
+in <FONT COLOR="#FF8000">(CURSOR_ROW)</FONT> is because <FONT COLOR="#FF8000">CURSOW_ROW</FONT>
+is the alias for $800C, and at that memory location holds the current cursor position. Since you
+store a word, both ($800C) and ($800D) will be 0. That's good since ($800C) contains the y-pos
+and ($800D) contains the x-pos. 0,0 is the top left corner on the screen.</P>
+
+<P><FONT COLOR="#FF8000">ROM_CALL(D_ZT_STR)</FONT> displays a zero terminated string
+with start at HL. Then we must first load HL with the correct address. The string we
+want to display are stored last in the program (good place for storing constants).
+<FONT COLOR="#FF8000">ld hl,Text</FONT> loads hl with the <I>relative</I> address to the string.
+The origin of the program is at the start, where <FONT COLOR="#FF8000">.org 0</FONT> is. Then
+we add that address with <FONT COLOR="#FF8000">(PROGRAM_ADDR)</FONT>, which holds where in the
+memory our program is. So, <FONT COLOR="#FF8000">(PROGRAM_ADDR)</FONT> holds the address where
+<FONT COLOR="#FF8000">.org 0 is</FONT>, and <FONT COLOR="#FF8000">Text</FONT> holds
+the address where the string we want to output is with <FONT COLOR="#FF8000">.org 0</FONT> as zero.
+If you add these two addresses together, you get the <I>absolute</I>
+address to the string, which is what we want.</P>
+
+<P>The last part may be a bit cryptic, but it waits until the exit key
+is pressed. More about those instructions in the next lesson.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P><I>Return to the <A HREF="zshell.html">ZShell School</A></I></P>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

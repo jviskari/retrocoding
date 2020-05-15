@@ -1,0 +1,508 @@
+<HTML>
+
+<HEAD>
+<TITLE>The ZShell school - Lesson #4</TITLE>
+</HEAD>
+
+<!--
+
+  This homepage was written in a plain texteditor
+
+-->
+
+<BODY BGCOLOR="#000000" TEXT="CC4400" LINK="#FFC000" VLINK="#806000" ALINK="#FF00FF">
+
+<CENTER>
+
+<A HREF="index.html">   <IMG BORDER=0 SRC="buttons/home.gif" ALT="Home"></A>
+<A HREF="aboutme.html"> <IMG BORDER=0 SRC="buttons/aboutme.gif" ALT="About me"></A>
+<A HREF="pc.html">      <IMG BORDER=0 SRC="buttons/pc.gif" ALT="PC"></A>
+<A HREF="ticalcs.html"> <IMG BORDER=0 SRC="buttons/ticalcs.gif" ALT="TI-Calcs"></A>
+<A HREF="music.html">   <IMG BORDER=0 SRC="buttons/music.gif" ALT="Music"></A>
+<A HREF="guestb.html">  <IMG BORDER=0 SRC="buttons/guestb.gif" ALT="Guestbook"></A>
+<A HREF="news.html">    <IMG BORDER=0 SRC="buttons/news.gif" ALT="News"></A>
+
+<BR>
+<IMG ALIGN=TOP SRC="pics/smyrnlgo.gif"><BR>
+<A HREF="zshell.html"><IMG BORDER=0 ALIGN=TOP SRC="pics/lzshell.gif"></A>
+</CENTER>
+
+<TABLE ALIGN=CENTER BORDER=0 WIDTH=540><TR><TD>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>ESSON</FONT></FONT>
+<FONT SIZE=5>#4</FONT>
+</FONT><BR>
+</P>
+
+<P>Welcome to the (again) delayed online ZShell school! I'm very sorry for the delay, but I've been very busy the last week,
+and I've done a lot of ZShell programming too :-) You will also be able to do that if you continue reading these lessons, and
+maybe another great programmer will arise...</P>
+
+<P>I had to skip the part about the stack and PUSH and POP since the lesson would become to big else... Sorry about that... It <I>will</I> come
+in the next lesson.</P>
+
+<P><UL>
+<LI><A HREF="#intro">Introduction to bit manipulating instructions</A>
+<LI><A HREF="#logical">Logical operators</A>
+<LI><A HREF="#shift">All shift instructions</A>
+<LI><A HREF="#rotate">All rotate instructions</A>
+<LI><A HREF="#bigshirot">Shifting and rotating 16 bit registers</A>
+<LI><A HREF="#single">All single bit manipulating instructions</A>
+<LI><A HREF="#small">Small, useful instructions you should know</A>
+</UL></P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="intro"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>I<FONT SIZE=4>NTRODUCTION</FONT></FONT>
+<FONT SIZE=5>T<FONT SIZE=4>O</FONT></FONT>
+<FONT SIZE=5>B<FONT SIZE=4>IT</FONT></FONT>
+<FONT SIZE=5>M<FONT SIZE=4>ANIPULATING</FONT></FONT>
+<FONT SIZE=5>I<FONT SIZE=4>NSTRUCTIONS</FONT></FONT>
+</FONT><BR>
+
+<P>All these instructions (they're quite many) changes the bits in a byte in someway. You don't add or
+subtract anything, you just change the bits! You can either shift them left or right in different ways, or
+rotate them, set/reset/test them individually and last you can make some logical operations on them
+(OR, AND, XOR).<P>
+
+<P>Why should you use those instructions? Well, when you want fast graphics for example,
+because the pixel on the LCD is stored in bits (since it's only two colors, only one bit/pixel is needed)
+which means that 1 byte contains 8 pixels. To put a pixel, you den have to OR it, or maybe use XOR
+and AND to remove it or if you want something to scroll smootly to the left or right, a rotating instruction
+may give the best result. Also, if you want to multiply a register with 2, 4, 8... shifting is the absolute
+fastest way to do that.</P>
+ 
+<UL>
+186d  =  1  0  1  1  1  0  1  0  b
+</UL>
+
+<P>Just a simple reminder so you know how a binary number looks like :-) Remember also that bit 0 is the
+LSB (Least Significant Bit, the bit to the far right - a zero in this case) and bit 7 the MSB. You must
+know that else you may have a hard time understanding the instructions below.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="logical"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>OGICAL</FONT></FONT>
+<FONT SIZE=5>O<FONT SIZE=4>PERATORS</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>All three logical operations uses two operands: the A registers and another registers or
+immediate data. The result is always stored in the A register.</P>
+
+<FONT COLOR="#FF8000"><H4>OR</H4></FONT>
+
+<P>This instruction makes a logically 'or' with the A reg (also called accumulator) and the specified
+operand. With this I mean, that if at least one bit is set in a bitposition (bit 0, bit 1... bit 7) that bit
+is also set in the result (if bit 0 is set in the accumulator OR bit 0 is set in the specified operand then
+bit 0 is set in the answer. Then if bit 1 is set... and so on). Example:
+
+<UL><PRE>
+Input:  A - 186
+        E - 92
+         
+Instr:  OR E
+
+Output: A - 254
+
+    186  = 10111010
+     92  = 01011100
+    -----------------
+           11111110 = 254
+</PRE></UL>
+
+<P>Note that you don't write OR A,E - just OR E. OR A wouldn't change the accumulator (that's very obvious).</P>
+
+<P>How will this affect the flags? The Carry Flag is ALWAYS reset on ALL logical operators so that's easy. The zero
+flag is also set if the result is zero, else it will reset.</P>
+
+<P>One common use for the OR instruction is OR A. Why? It doesn't change any registers!? No, but it changes the
+flags. If A=0 the zero flag will be set and if A<>0 then it will be reset. That tells you "aha, then I can use
+OR A instead of CP 0 when I wan't to check if the accumulator is zero!". Yup! And it's smarter too! OR A just takes
+one byte, and CP 0 takes two bytes! So you save one byte! In a big program (>2000 rows) you can save about 50
+bytes with this. When your programs are finished, search for CP 0 in it and you may find some things to change.</P>
+
+<FONT COLOR="#FF8000"><H4>AND</H4></FONT>
+
+<P>AND is very easy to explain when you know OR. Instead of 'or'ing the bits, you 'and' the bits :-) In other words,
+both bits must be set if the result bit should be set. Example:</P>
+
+<UL><PRE>
+Input:  A - 186
+        E - 92
+         
+Instr:  AND E
+
+Output: A - 24
+
+    186  = 10111010
+     92  = 01011100
+    -----------------
+           00011000 = 24
+</PRE></UL>
+
+<P>AND is very useful when you want to mask away some bits. For example, you're only intersted in the lower four
+bits in the accumulator, and the upper four bits are just trash. How do I remove them? The answer is AND 15, since
+15d = 00001111b. Now, the four upper bits are all reset since both bits would be needed to be set if the bit should
+hang on to the result. Since the mask (in this case, 15) have those bits reset they will be spoiled. The
+lower four bits are in the mask set, which means that the lower four bits in the accumulator will remain.</P>
+
+<P>I really hope you can see this, because this is important. You should also write the masks in hexadecimal or
+even better in binary in your source, because it makes the code easier to read (in this case, $0F or %00001111).</P>
+
+<FONT COLOR="#FF8000"><H4>XOR</H4></FONT>
+
+<P>XOR is an exclusive OR. The difference between OR is that if both bits are set, the answer bit will be reset! Example:</P>
+
+<UL><PRE>
+Input:  A - 186
+        E - 92
+         
+Instr:  XOR E
+
+Output: A - 230
+
+    186  = 10111010
+     92  = 01011100
+    -----------------
+           11100110 = 230
+</PRE></UL>
+
+<P>In other words, if the specified operands bit is set, then you change that bit in the accumulator! Since you only change the
+bits, you doesn't really lose the value! For example, if you make two XOR E in a row, the accumulator will have the original value
+again. This may be good for encoding for example, because can always know which value you had before the XOR if you
+know the specified operand.</P>
+
+<P>This can also be used for removing bits. Since OR is used to set a bit, XOR can be used to remove bits. To do that you must
+first OR the accumulator then XOR it like this:
+
+<UL><PRE>
+Input:  A - 186
+        E - 92
+         
+Instr:  OR E followed by XOR E
+
+Output: A - 162
+
+    186  = 10111010
+     92  = 01011100
+    -----------------   (first the OR)
+           11111110 = 254
+           01011100
+    -----------------   (then the XOR)
+           10100010 = 162
+</PRE></UL>
+
+<P>This could also be done with a combination of AND and XOR but then the mask must
+be in the A reg, because first you should XOR the mask with $FF to change all bits and then
+you XOR that with the operand you want to remove bits from. This takes one byte more though,
+but may be more useful if you have the mask in the accumulator.</P>
+
+<P>Hmm, I just found out that you don't need to use XOR $FF... the instruction CPL does the
+same thing and only takes one byte... what the f... :-)</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="shift"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>A<FONT SIZE=4>LL</FONT></FONT>
+<FONT SIZE=5>S<FONT SIZE=4>HIFT</FONT></FONT>
+<FONT SIZE=5>I<FONT SIZE=4>NSTRUCTIONS</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>There are three shift instructions, SLA, SRA and SRL. They all have one operand (a 8 bit registers)
+which the result also is stored in and they all shift the bits to either the left (SLA) or the right (SRA and SRL)
+and the bit that disappear is stored in the Carry Flag. SLA and SRL will put a 0 at the empty position while SRA
+will not change the value in bit 7. To make it easier to understand here are some "pictures":</P>
+
+<H4><FONT COLOR="#FF8000">SLA (Shift left arithmeticly)</FONT></H4>
+
+<UL><PRE>
+C <- | 7 <---- 0 | <- 0
+      the operand
+
+Example:     Before: A = 10010100b
+             After:  A = 00101000b    Carry Flag set
+</PRE></UL>
+
+<P>This is a common way to multiply something with 2, 4, 8 and so on. Note: you should NEVER use SLA A
+since the same thing could be done with ADD A,A and the latter is one byte shorter.</P>
+
+<H4><FONT COLOR="#FF8000">SRA (Shift right arithmeticly)</FONT></H4>
+
+<UL><PRE>
+     | 7 ----> 0 | -> C
+      the operand
+
+Example:     Before: A = 10100010b
+             After:  A = 11010001b    Carry NOT set
+</PRE></UL>
+
+<P>This shift is good when you know that the operand may be a negative number, since that is
+indicated by bit 7. This shift won't change bit 7, which is necessary when shifting negative
+numbers.</P>
+
+<H4><FONT COLOR="#FF8000">SRL (Shift right logically)</FONT></H4>
+
+<UL><PRE>
+0 -> | 7 ----> 0 | -> C
+      the operand
+
+Example:     Before: A = 10100010b
+             After:  A = 01010001b    Carry NOT set
+</PRE></UL>
+
+<P>And this shift divides the operand with two and stores the remainder in the Carry Flag.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="rotate"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>A<FONT SIZE=4>LL</FONT></FONT>
+<FONT SIZE=5>R<FONT SIZE=4>OTATE</FONT></FONT>
+<FONT SIZE=5>I<FONT SIZE=4>NSTRUCTIONS</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>There are 10 different rotating instructions, although I won't explain two of them (RLD and
+RRD) since they are almost only good when dealing with BCD numbers, which I may explain
+in a later lesson. I've never used them, and the reason for it is that it's slow (BCD is a way
+to store big numbers and a way to handle floating point operations) and not really necessary
+in game programming.</P>
+
+<P>Anyway, what's the difference between rotating and shifting? In the shifting routines you saw
+that a 0 was being put at the end/beginning (except SRA). That's shifting. Rotating will put the
+Carry Flag in that position instead! Now, why so many more instructions then? Well, some instructions
+are almost the same and there are both 8 bit rotating and 9 bit rotating (through the carry). Here
+are the instructions one by one:</P>
+
+<H4><FONT COLOR="#FF8000">RL and RLA (Rotate left through carry)</FONT></H4>
+
+<P>These instructions do the same, except that with RL you specify an operand and with RLA the operand
+is A. So, RL A and RLA are the same thing? Yes, except for the flags. RL changes the Zero flag according
+to the result (set if operand becomes 0, else reset) but RLA doesn't touch the Zero flag. That isn't so important
+because when rotating you often don't care about the flags. Also, RLA saves one byte and is one cycle faster.
+According to "Programming the Z80" RLA is provided for compatibility with another CPU (8080).</P>
+
+<P>Another nice ASCII picture follows...</P>
+
+<UL><PRE>
+C <- | 7 <---- 0 | <- C
+      the operand
+
+Example:     Before: A = 10010101b   Carry Flag set
+             After:  A = 00101011b   Carry Flag set
+</PRE></UL>
+
+<P>Both C:s are stands for the Carry Flag, and they're not overwritten by each other in some way. This is 9 bit rotation
+also as you may see.</P>
+
+<H4><FONT COLOR="#FF8000">RLC and RLCA (Rotate left with branch carry)</FONT></H4>
+
+<P>Same thing here, the only difference is that RLCA doesn't change the Zero flag and it's a byte shorter. This
+is just a 8 bit rotation though as you see of the picture below:</P>
+
+<UL><PRE>
+C <- | 7 <---- 0 | <- b7
+      the operand
+
+Example:     Before: A = 01100101b
+             After:  A = 11001010b   Carry NOT set
+</PRE></UL>
+
+<P>b7 is the seventh bit of the operand, it's just hard to draw nice small ASCII pictures :-)</P>
+
+<H4><FONT COLOR="#FF8000">RR and RRA (Rotate right through carry)</FONT></H4>
+
+<P>Works like RL and RLA except for a direction change. No more explanation needed I guess.</P>
+
+<UL><PRE>
+C -> | 7 ----> 0 | -> C
+      the operand
+
+Example:     Before: A = 10011001b   Carry NOT set
+             After:  A = 01001100b   Carry Flag set
+</PRE></UL>
+
+<H4><FONT COLOR="#FF8000">RRC and RRCA (Rotate right with branch carry)</FONT></H4>
+
+<P>And this is an 8 bit rotation to the right and it stores the bit that was rotated around in the carry just like
+RLC and RLCA...</P>
+
+<UL><PRE>
+b0 -> | 7 ----> 0 | -> C
+        the operand
+
+Example:     Before: A = 01001001b
+             After:  A = 10100100b   Carry Flag set
+</PRE></UL>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="bigshirot"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>S<FONT SIZE=4>HIFTING</FONT></FONT>
+<FONT SIZE=5>A<FONT SIZE=4>ND</FONT></FONT>
+<FONT SIZE=5>R<FONT SIZE=4>OTATING</FONT></FONT>
+<FONT SIZE=5>16</FONT>
+<FONT SIZE=5>B<FONT SIZE=4>IT</FONT></FONT>
+<FONT SIZE=5>R<FONT SIZE=4>EGISTERS</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>Since all shift and rotate instructions only work with 8 bit register, you have to combine them
+to get it to work with 16 bit registers. I will just give a few examples since you probably can figure
+out how to do it by your own when you've seen the technique.</P>
+
+<TABLE WIDTH=100% BORDER=1>
+
+<TR>
+<TD WIDTH=20%><FONT COLOR="#FF8000"><B>Problem</B></FONT></TH>
+<TD COLSPAN=2 WIDTH=30%><B><FONT COLOR="#FF8000">Solution</FONT></B></TH>
+<TD><B><FONT COLOR="#FF8000">Comment</FONT></B></TH>
+</TR>
+
+
+<TR>
+<TD>Shifting HL left</TD>
+<TD COLSPAN=2 ALIGN=CENTER>ADD HL,HL</TD>
+<TD>Since multiplying with two is the same as adding something with itself, so why not? Just one byte long also.
+This only works with HL since you're not allowed to have any other 16 bit register as the first operand.</TD>
+</TR>
+
+<TR>
+<TD>Shifting DE left</TD>
+<TD ALIGN=CENTER>SLA E</TD>
+<TD ALIGN=CENTER>RL D</TD>
+<TD>First we shift the LSB left one step and put b7 in the carry, which will become b0 in the D register with
+RL. If you want to redo this two more times (multiply by 8) there is a smarter way which will be explained in
+another lesson (it's really simple though).</TD>
+</TR>
+
+<TR>
+<TD>Shifting BC right</TD>
+<TD ALIGN=CENTER>SRL B</TD>
+<TD ALIGN=CENTER>RR C</TD>
+<TD>Same thing as the above except that you first start with the MSB since it's a right shift</TD>
+</TR>
+
+<TR>
+<TD>Rotate HL right through carry</TD>
+<TD ALIGN=CENTER>RR H</TD>
+<TD ALIGN=CENTER>RR L</TD>
+<TD>A 17 bit rotation is easy as you see. Works like C -> H -> L -> C.</TD>
+</TR>
+
+</TABLE>
+
+<P>It's more complicated to make a 16 bit rotation since then you must first make a shift, then a rotate and then
+check if the Carry is set and if so change b0 (or b7 depending on which direction you're rotating) in the register
+you first shifted. Since you don't know how to change individual bytes yet (yeah, you can OR but then only
+with the A register) we better learn that...</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="single"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>A<FONT SIZE=4>LL</FONT></FONT>
+<FONT SIZE=5>S<FONT SIZE=4>INGLE</FONT></FONT>
+<FONT SIZE=5>B<FONT SIZE=4>IT</FONT></FONT>
+<FONT SIZE=5>M<FONT SIZE=4>ANIPULATING</FONT></FONT>
+<FONT SIZE=5>I<FONT SIZE=4>NSTRUCTIONS</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>With individual bits you can either set them (SET), reset them (RES) or test them (BIT). This is useful when you only
+want to change/test one bit in a register that isn't the accumulator. All these instructions have two operands: the bit you
+will change/test (0-7) and the register. Very sadly, you MUST know which bit you want to test, you can't for example
+write something like SET A,B which could mean "set bit A in B" but that isn't allowed.</P>
+
+<P>I don't know if I have to draw some ugly pictures really, since it's pretty obvious how it works. SET sets a bit,
+RES resets a bit and BIT tests a bit. The BIT instruction sets the zero flag if the tested bit
+was 0, and resets it if the bit was 1.</P>
+
+<P>Now we can write a short routine that rotates a 16 bit register:</P>
+
+<FONT COLOR="#808080"><UL><PRE>
+RRHL:      ; Rotate HL right (16 bit rotation)
+  srl h
+  rr l
+  ret nc
+  set 7,h
+  ret
+</PRE></UL></FONT>
+
+<P>Don't know if I've said it before, but you can use a condition after RET also as you see in the example. This one exits
+the routine (which is called with CALL_(RRHL)) if the carry flag isn't set, because if it isn't no bit is supposed to be set.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="small"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>S<FONT SIZE=4>MALL,</FONT></FONT>
+<FONT SIZE=5>U<FONT SIZE=4>SEFUL</FONT></FONT>
+<FONT SIZE=5>I<FONT SIZE=4>NSTRUCTIONS</FONT></FONT>
+<FONT SIZE=5>Y<FONT SIZE=4>OU</FONT></FONT>
+<FONT SIZE=5>S<FONT SIZE=4>HOULD</FONT></FONT>
+<FONT SIZE=5>K<FONT SIZE=4>NOW</FONT></FONT>
+</FONT><BR>
+</P>
+
+Here are some small instructions that I've skipped that you might want to know. All instruction takes one byte also.</P>
+
+<TABLE WIDTH=100% BORDER=1>
+
+<TR>
+<TD WIDTH=10%><B>Instruction</B></TD>
+<TD><B>Comment</B></TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">SCF</FONT></TD>
+<TD>This instruction sets the carry flag. May be useful to use before a rotate or to indicate that something went wrong
+before you make a return from a subroutine or something. To clear the carry flag, use one of the logical operators. OR A
+is often used.</TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">CCF</FONT></TD>
+<TD>This instruction "complements the carry flag" which I think means that the Carry flag is inverted, ie if it
+was set it becomes reset and vice versa. Can't find any real use for it anyway.</TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">CPL</FONT></TD>
+<TD>Complement accumulator. Changes all bits in the accumulator (same as XOR 255), but doesn't change the C and Z flags.</TD>
+</TR>
+
+<TR>
+<TH><FONT COLOR="#FF8000">NEG</FONT></TD>
+<TD>Negatates the accumulator. If A=5 it becomes -5 ($FB). Good to use when subtracting sometimes because then
+you can change the orders of the registers (B-A can be coded as A-B followed by a NEG to save one byte).</TD>
+</TR>
+
+</TABLE>
+
+<BR>
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P><I>Return to the <A HREF="zshell.html">ZShell school</A></I></P>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

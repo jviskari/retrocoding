@@ -1,0 +1,57 @@
+
+  
+
+TI-85 Assembler Programming - Key Input
+
+
+
+
+
+
+TI-85 Assembler Programming - Key Input
+
+
+Since you already know how to create loops using IF statements, use ROM calls and make your own subroutines, learning how to use GET_KEY should be a snap. Getting right to the point, here's the basic read key procedure:
+
+GetLoop:
+     call GET_KEY
+     or   A
+     jr   z, GetLoop
+     ret
+
+
+
+The GET_KEY routine itself returns in A the keycode of the key being pressed, or 0 if no key is being pressed. "OR A" causes the Zero flag to be updated, which is used to check whether a key was pressed. "OR A" really means "OR A, A", and anything OR'ed with itself is still itself, so the value in A doesn't change.  "JR Z" checks the updated Flag register to see if A is zero. If it is, then no key was pressed. In that case we jump back to the top of the loop and try again. If A is not zero, meaning we read a key, then we end this procedure and return to the rest of the program, leaving the keycode stored in A. 
+
+
+The keycode returned by GET_KEY is different than the one return by the TI-BASIC procedure getKy. You should probably download the table of GET_KEY keycodes and print it out for a reference. The sample program you will write and assemble in the next two lessons will return scancodes of pressed keys.   
+
+ 
+In the next lesson you will write and assemble a usable program. Choose the lesson that matches your platform.
+
+
+
+Using TASM to assemble programs written on an IBM PC.
+
+
+Using CAZ to assemble programs written on a Mac.
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 3-7-96 by Greg Parker. Last update: never
+
+ 
+
+
+
+
+
+

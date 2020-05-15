@@ -1,0 +1,101 @@
+
+
+
+TI-85 Assembler Programming - Sample Program
+
+
+
+
+TI-85 Assembler Programming - Sample Program
+
+ 
+; Sample.asm
+;
+; This simple program prints text on screen and waits for key input. 
+; After running it, try making some modifications - more interesting text, 
+; wait for a special key, etc.
+;
+; It should work fine, unless I typed something wrong. Always back up the calc
+; memory to the computer before running a program!
+
+
+#include "TI-85.h"
+
+ProgStart=$80DF             ; Memory location to save the address of the program
+
+
+.org 0
+.db "Sample", 0
+
+Main:
+    ROM_CALL(CLEARLCD)
+
+    ld   HL, 3              ; set text cursor position
+    ld   (CURSOR_ROW), HL
+    ld   HL, 3
+    ld   (CURSOR_COL), HL
+
+    ld   HL, (PROGRAM_ADDR) ; get program's memory address
+    ld   (ProgStart), HL    ; save address for later
+    ld   DE, HelloMessage   ; get difference between address of program, string
+    add  HL, DE             ; add to get address of string
+    ROM_CALL(D_ZT_STR)      ; print the string
+
+    call GetLoop            ; wait for a keypress
+
+    ld   HL, 4              ; set new text cursor position
+    ld   (CURSOR_ROW), HL
+    ld   HL, 3
+    ld   (CURSOR_COL), HL
+
+    ld   HL, (ProgStart)    ; get address back 
+    ld   DE, ByeMessage     ; get difference between address of program, string
+    add  HL, DE             ; add to get address of string 
+    ROM_CALL(D_ZT_STR)      ; print the string 
+
+    call GetLoop            ; wait for keypress again 
+ 
+    ret                     ; end of program 
+        
+
+ 
+GetLoop:                    ; wait for keypress 
+    call GET_KEY 
+    or   A 
+    jr   z, GetLoop         ; if no key, try again 
+
+    ret                     ; key pressed - go back      
+
+
+
+
+HelloMessage: 
+    .db "Hello, world", 0
+ByeMessage:
+    .db "Bye!", 0
+
+
+
+.end
+
+       
+
+
+On to the next lesson:  Loops using DJNZ.
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 8-12-96 by Greg Parker. Last update: never
+
+ 
+       
+
+

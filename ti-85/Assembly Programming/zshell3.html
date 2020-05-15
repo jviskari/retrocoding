@@ -1,0 +1,379 @@
+<HTML>
+
+<HEAD>
+<TITLE>The ZShell school - Lesson #3</TITLE>
+</HEAD>
+
+<!--
+
+  This homepage was written in a plain texteditor
+
+-->
+
+<BODY BGCOLOR="#000000" TEXT="CC4400" LINK="#FFC000" VLINK="#806000" ALINK="#FF00FF">
+
+<CENTER>
+
+<A HREF="index.html">   <IMG BORDER=0 SRC="buttons/home.gif" ALT="Home"></A>
+<A HREF="aboutme.html"> <IMG BORDER=0 SRC="buttons/aboutme.gif" ALT="About me"></A>
+<A HREF="pc.html">      <IMG BORDER=0 SRC="buttons/pc.gif" ALT="PC"></A>
+<A HREF="ticalcs.html"> <IMG BORDER=0 SRC="buttons/ticalcs.gif" ALT="TI-Calcs"></A>
+<A HREF="music.html">   <IMG BORDER=0 SRC="buttons/music.gif" ALT="Music"></A>
+<A HREF="guestb.html">  <IMG BORDER=0 SRC="buttons/guestb.gif" ALT="Guestbook"></A>
+<A HREF="news.html">    <IMG BORDER=0 SRC="buttons/news.gif" ALT="News"></A>
+
+<BR>
+<IMG ALIGN=TOP SRC="pics/smyrnlgo.gif"><BR>
+<A HREF="zshell.html"><IMG BORDER=0 ALIGN=TOP SRC="pics/lzshell.gif"></A>
+</CENTER>
+
+<TABLE ALIGN=CENTER BORDER=0 WIDTH=540><TR><TD>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>ESSON</FONT></FONT>
+<FONT SIZE=5>#3</FONT>
+</FONT><BR>
+</P>
+
+Welcome to the third lesson of the online ZShell School! In this lesson you'll learn how to compare registers
+with each other and how to do loops. To know this you must also know a bit about flags and what they
+are for. I will also explain what the "famous" ROM_CALLs really are and some advantages and disadvantages
+with the use of ROM calls.</P>
+
+<P><UL>
+<LI><A HREF="#flags">Flags</A>
+<LI><A HREF="#jump">Jumps & calls</A>
+<LI><A HREF="#compare">Comparing registers and values</A>
+<LI><A HREF="#loop">Loops</A>
+<LI><A HREF="#romcalls">ROM_CALLs</A>
+</UL></P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>F<FONT SIZE=4>LAGS</FONT></FONT>
+</FONT><BR>
+</P>
+
+Flags are very important. If you want to know what happened in the last instruction for example, you must check how
+the flags are set. Most of the instructions executed by the processor will modify some or all of the flags. So, how many
+flags are there on a Z80 CPU, and what do they do? The Z80 has 6 flags but you seldom use
+any other flag than the Zero Flag and the Carry Flag.</P>
+
+<P>A flag can either be set or cleared, depending on the last instructions that changed that flag. That means that 6 flags
+only takes 6 bits which fits in one byte, and that is how they're stored. You may have noted why the A registers doesn't
+have a "brother"? It has, and that registers is called the flag register (F) and the register pair is logically called AF then,
+though you can never do anything with the pair except push and pop (explanation in the next lesson).</P>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=4>The Zero flag</FONT>
+</FONT><BR>
+
+The Z flag is used to indicated whether the value of a byte which has been computed, or is being
+transferred, is zero. It is also used with comparison instructions to indicate a match, and for
+other miscellaneous functions. For example, if you decrease a 8-bit register (with DEC) and the
+registers reaches 0, the zero flag will be set. Note that if the registers doesn't reach zero,
+the flag will be cleared. The Z flag will also be set or cleared when using dec, inc, add and
+sub. Note that ld doesn't affect the Z flag. In fact, ld does <I>never</I> change <I>any</I>
+flag.</P>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=4>The Carry flag</FONT>
+</FONT><BR>
+
+The C flag is used to indicate whether an additon or subtraction operation has resulted in a
+carry (if an 8 bit addition results in a 9 bit answer) or a borrow (if the answer is negative).
+The C flag is also used as a ninth bit in the case of shift and rotate operations, which will
+be discussed in the next lesson. Remember that all arithemtic, shift and rotation operations
+will either set or clear the C flag, depending on the result.</P>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=4>Examples</FONT>
+</FONT><BR>
+The table below shows some examples on how the Zero and Carry flag works. The abbreviations
+ZF (Zero Flag set), NZ (No Zero), CF (Carry Flag set), NC (No Carry) are used to
+show the result. - means that the flag is unaffected.
+</P>
+
+<P>
+<TABLE BORDER=0 WIDTH=100%>
+
+<TR>
+<TD>ld a,185 \ add a,93</TD>
+<TD>NZ CF</TD>
+<TD>The result isn't zero, and the addition results in a 9 bit answer</TD>
+</TR>
+
+<TR>
+<TD>ld a,43 \ sub 43</TD>
+<TD>ZF NC</TD>
+<TD>The result is zero and no borrow is needed.</TD>
+</TR>
+
+<TR>
+<TD>ld c,73</TD>
+<TD> -  -</TD>
+<TD>None of the flags are affected.</TD>
+</TR>
+
+<TR>
+<TD>ld e,0 \ dec e</TD>
+<TD>NZ  -</TD>
+<TD>Dec (and inc) doesn't affect the C flag, even if a borrow was needed.</TD>
+</TR>
+
+<TR>
+<TD>ld hl,$8E56 \ add hl,hl</TD>
+<TD>NZ CF</TD>
+<TD>The answer is to big, 17 bits, and doesn't fit in a 16 bit register.</TD>
+</TR>
+
+</TABLE>
+</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="jump"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>J<FONT SIZE=4>UMPS</FONT></FONT>
+<FONT SIZE=5>& C<FONT SIZE=4>ALLS</FONT></FONT>
+</FONT><BR>
+</P>
+
+So, now you know a bit about flags, but how do you use them? There must be some instructions
+that checks the flag, else it would be pretty useless. Luckily, there are plenty of such
+instructions, and most of them are jump or call instructions. There are two kind of jump
+instructions, relative jumps and absolute jumps. The calls are always absolute. The relative
+jumps are much faster and a bit smaller (3 bytes because of the way ZShell works), but the
+relative jumps has a limit: you can only jump 129 bytes forward and 126 bytes backwards.
+In most cases that is sufficient, and you should always try relative jumps until the compiler
+give you an error ("Relative branch to long" or something like that). Then you should change
+to absolute jumps. The calls are ordinary subroutine calls, and the instruction ret will return
+to where the call was. Of course you can jump and call without bothering about the flags.</P>
+
+<CENTER><TABLE BORDER=1 WIDTH="80%">
+<CAPTION ALIGN=bottom><I>Table over different jumps and calls</I></CAPTION>
+<TR>
+<TH WIDTH="20%">Z80 instr</TH>
+<TH WIDTH="25%">ZShell instr</TH>
+<TH>Explanation</TH>
+</TR>
+
+<TR>
+<TD>jr condition,arg</TD>
+<TD>jr condition,arg</TD>
+<TD>A relative jump to arg if condition is true.</TD>
+</TR>
+
+<TR>
+<TD>jp condition,arg</TD>
+<TD>JUMP_condition(arg)</TD>
+<TD>An absolute jump to arg if condition is true.</TD>
+</TR>
+
+<TR>
+<TD>call condition,arg</TD>
+<TD>CALL_condition(arg)</TD>
+<TD>A subroutine call to arg if condition is true.</TD>
+</TR>
+
+</TABLE></CENTER>
+
+<P>Now, what does this stuff mean? First, when programming ZShell you should only use the second column. Those instructions
+are just aliases (that you'll find in ti-85.h) for a jump to ZShell, which then jumps to the specified label. The reason for this is simple:
+As I've said before, all variables (except zshell.85s) are moving around in the memory when creating, deleting or changing variabels, so
+when you compile your program, you never know where in the memory your program will be, but you do know the relative address, and since
+ZShell knows where in the memory your program is, it's easy to do far jumps.</P>
+
+<P>Second, you need to know which conditions you can use. Well, only four, but you probably don't need any more. They are
+NZ (not zero), Z (zero), NC (not carry) and C (carry). Actually, the Z80 supports four more conditions which you only can use
+with jp, but ZShell doesn't support those. If you don't want any condition, just skip that part of the instruction (ex: jr JumpHere). A simple
+program example follows.
+
+<FONT COLOR="#808080"><UL><PRE>
+ ld a,12
+ sub c
+ jr z,CIsTwelve
+ .
+ .
+
+CIsTwelve:
+ .
+ .
+</PRE></UL></FONT>
+
+Hopefully, you can guess what this program does. First, A is loaded with 12 and then subtracted with C (whatever it contains).
+If C equals A, then the result will be zero and the Z flag will be set, and then a jump will be made to CIsTwelve, else the program
+will continue directly after jr z,ClsTwelve. Perhaps I should say that labels (like CIsTwelve) doesn't take memory, so you could
+make a label for every row (like early basic...) if you want, but that would only make your program harder to read.</P>
+
+<P>If you want to know how the rest of the jump and call functions look like, you should study ti-85.h, because you should be able
+to understand the comments. It's really simple.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="compare"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>C<FONT SIZE=4>OMPARING</FONT></FONT>
+<FONT SIZE=5>R<FONT SIZE=4>EGISTERS</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>In the above example, you subtracted two registers to check if they were equal, and if they were the Z flag was set. That's logical
+because when subtracting two equal numbers the result is zero. There is one drawback though: the contents of A will change, which
+isn't so fun most of the time. Then we use another instruction, cp (<I>c</I>om<I>p</I>are), which works exactly like sub, <I>except</I>
+that the answer isn't stored in A! The only thing that happens is that some flags are set (we are only interested in the Z and C flag though).
+Now that's very good! Now we can easily check if two registers contains the same value. We can also compare the A registers with a
+numerical value (cp works exactly like sub, and the limitations are the same).</P>
+
+<P>But what if we want to check if the D register is greater than the A register? What will happen when we compare?
+The Z flag won't be set because the subtraction won't be zero, but if D is greater than A, then the answer would be negative, right?
+And what happens then? Yes, the C flag will be set! If D is equal or lesser than A, the C flag will be reset. A table below shows all cases.</P>
+
+<CENTER>
+<TABLE BORDER=1 WIDTH=50%>
+<CAPTION ALIGN=bottom><I>Table showing the Z and C flags when cp D is executed</I></CAPTION>
+
+<TR>
+<TH WIDTH="33%">Case</TH>
+<TH WIDTH="33%">Z flag</TH>
+<TH WIDTH="33%">C flag</TH>
+</TR>
+
+<TR>
+<TD ALIGN=center>A &lt; D</TD>
+<TD ALIGN=center>0</TD>
+<TD ALIGN=center>1</TD>
+</TR>
+
+<TR>
+<TD ALIGN=center>A = D</TD>
+<TD ALIGN=center>1</TD>
+<TD ALIGN=center>0</TD>
+</TR>
+
+<TR>
+<TD ALIGN=center>A &gt; D</TD>
+<TD ALIGN=center>0</TD>
+<TD ALIGN=center>0</TD>
+</TR>
+
+</TABLE>
+</CENTER>
+
+<BR>
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="loop"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>C<FONT SIZE=4>OMPARING</FONT></FONT>
+<FONT SIZE=5>R<FONT SIZE=4>EGISTERS</FONT></FONT>
+</FONT><BR>
+</P>
+
+<P>All programs probably uses loops. You almost always want you program waiting for something or repeating some instructions while waiting on something
+to happen, for example a key press. In the last case, you have to compare the scancode with the key you're waiting for. Example below:</P>
+
+<FONT COLOR="#808080"><UL><PRE>
+WaitKey:
+ call GET_KEY   ; Calls a routine in the rom that gets the last
+                ; key pressed and stores the scancode in A.
+                ; If no key pressed since last call, A=0.
+                ; Note that the routine doesn't wait for a key.
+ cp K_EXIT      ; Compares A with the scancode for the exit key
+ jr nz,WaitKey  ; If the answer isn't zero (A <> $37), jump
+                ; back and check again.
+</PRE></UL></FONT>
+
+<P>Sometimes you know how many times the loop should be reapeting, for example when making a line with the width of 20 pixels. One
+simple way to do this is to have a counter which starts at 20, and at the end of the routine, you decrease it and check if it's zero (of course
+you can start from zero and increase, but then you have to check if the counter has reached 20 with the cp instructions which isn't needed
+when using dec, since dec will set the Z flag when the register has reached zero). But for this case the Z80 has a special instruction for us,
+which both decreases, sets the Z flag if necessary and makes a relative jump if the Z flag isn't set. That instruction is called djnz (<I>D</I>ecrease,
+<I>J</I>ump <I>n</I>ot <I>z</I>ero), and the syntax is <I>djnz label</I> (it's my favourite instructions btw, because it "looks" cool and is fun
+to pronounce :-).</P> But wait! How do we tell which register do decrease? Well, we don't. Djnz always decreases the B register, and that's
+why the B register is very often used as a counter. Of course another problem arises now, what if we want to loop, lets say, 1000 times? B is
+only a 8 bit registes so it won't work. One way is to use a 16 bit register and decrease it with dec, another is to nestled loops, but then you
+must save the B reg. Two different examples below:</P>
+
+<CENTER>
+<TABLE BORDER=1 WIDTH="80%">
+<TR>
+<TD VALIGN=top WIDTH="50%">
+<FONT COLOR="#808080"><PRE>
+ ld b,4
+Loop1:
+ ld c,b     ; push bc
+ ld b,250
+Loop2:
+ .
+ .
+ djnz Loop2
+ ld b,c     ; pop bc
+ djnz Loop1
+</PRE></FONT>
+</TD>
+<TD VALIGN=top>
+<FONT COLOR="#808080"><PRE>
+ ld bc,1000
+Loop:
+ .
+ .
+ dec bc
+ ld a,b
+ or c
+ jr nz,Loop
+</PRE></FONT>
+</TD>
+</TR>
+</TABLE>
+</CENTER>
+
+<P>If you want to use the left version, you can use push and pop instead of using the C register. Of course, the right version is shorter and
+faster, but sometimes you may prefer the left version.</P>
+
+<P>If you want to move memory from one location to another, there are some other useful instructions, <I>ldir</I> and <I>lddr</I>, but
+I'll explain them in another lesson.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="romcalls"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>ROM_CALLS</FONT>
+</FONT><BR>
+</P>
+
+<P>Yeah, what is a rom call really? I've seen some people saying: "How do we do that? With a rom_call maybe?". That shows that people
+think they're powerful tools, and sure, they are, but ZShell doesn't support so many, and you normally don't use too many of them. So, what
+happens?</P>
+
+<P>What we do is that we use routines that already exists (why reinvent the wheel?), and that saves a lot of memory. For example, to display
+a string, you need a lot of instructions: you must take the first letter, look up the font, put out the correct character, and update the cursor. All
+this takes about 1500 bytes (font included) I guess, so it's rather smart to use a routine that's already done and is stored in the rom, wouldn't
+you say? Another thing: in the program above I used call GET_KEY. Observe that I used call, which means that I know exactly where the
+routine is stored, which means that the get key routine is at the same place in all ROM versions (yes, GET_KEY and some other calls
+in the ti-85.h are ROM calls though it doesn't "look" like one). That's not the case with D_ZT_STR (Display Zero-terminated Text String), because
+it's at different places in the ROM depending on the ROM version. Therefor, a call to ZShell must be made which finds out where the absolute
+address is and then jumps to the right offset. In fact, all ROM_CALLs should be called ZSHELL_CALLs, because first a call is made to ZShell,
+then a <I>jump</I> is made to the ROM... The real ROM calls are GET_KEY and those... ;-)</P>
+
+<P>To find out which ROM calls you should use, read ti-85.h and the ZShell Function Library (in the ZShell package I believe) where a
+short explanation describes what happens, which registers are affected and some traps.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P><I>Return to the <A HREF="zshell.html">ZShell school</A></I></P>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

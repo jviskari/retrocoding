@@ -1,0 +1,312 @@
+ 
+                              **************** 
+                              * GRAPH-TI.TXT * 
+                              **************** 
+  
+To print this file from the DOS prompt to a parallel printer connected 
+to LPT1 on your PC, enter: TYPE A:\FREEWARE\GRAPH-TI.TXT >LPT1 
+ 
+ABOUT GRAPH-TI.TXT 
+------------------ 
+  
+This file contains information about the Texas Instruments World Wide 
+Web pages and the graphing calculator e-mail interest groups.  It 
+explains how to access the TI archives, and join and use the network to 
+can exchange information and programs for graphing calculators, 
+including many programs for the TI-82 and TI-85.  
+ 
+Note: The information in this file was current as of August 1995. 
+  
+GRAPHING CALCULATOR INTEREST GROUP AVAILABLE BY E-MAIL 
+------------------------------------------------------ 
+  
+Internet mailing lists work by providing an easy method to send e-mail 
+to all other members of the interest group.  The mail may be an idea, a 
+question, or the response to a question.  Long discussions on a topic 
+often take place and all members can "listen" to the e-mail conversation 
+and benefit from it. 
+  
+The lists are available to anyone with access to electronic mail on  
+Internet, BITNET, and connected networks.  Most colleges and 
+universities have this access and an increasing number of secondary 
+schools have this access or are getting it. 
+  
+This lists were conceived to allow users of Texas Instruments graphing 
+calculators to share ideas and solve problems together.  It is provided 
+and support by Texas Instruments Incorporated through an AT&T managed 
+computer. 
+  
+IMPORTANT INTERNET ADDRESSES 
+  
+There are several addresses which are associated with the Graph-TI and 
+Calc-TI lists and the Graph-TI archive.  It is important that you not 
+mix these up, or you may end up sending list server commands to the 
+archive or even posting them to the list.  The following addresses are 
+used to access the lists and the archive: 
+ 
+Texas Instruments World Wide Web site: 
+       HTTP://www.ti.com 
+ 
+Graph-TI archive: 
+       via e-mail:     mailserv@archive.ppp.ti.com 
+ 
+       via anonymous ftp:      archive.ppp.ti.com 
+(directory pub/graph-ti) 
+ 
+       via gopher:     archive.ppp.ti.com (login as "gopher") 
+ 
+Newsgroups: 
+       Graph-TI Newsgroup:     bit.listserv.graph-TI 
+ 
+       Calc-TI Newsgroup:      bit.listserv.calc-ti 
+ 
+Mailing lists: 
+       list server:    majordomo@lists.ppp.ti.com 
+(for subscription requests) 
+ 
+       Graph-TI list:  Graph-TI@lists.ppp.ti.com 
+(for posting to Graph-TI) 
+ 
+       Calc-TI list:   Calc-TI@lists.ppp.ti.com 
+(for posting to Calc-TI) 
+  
+Commands relating to the lists like "subscribe" and "unsubscribe" in 
+general should be sent to the list server. Messages which you want to 
+post to all Graph-TI list subscribers should be sent to the Graph-TI 
+list (or should be posted to the Graph-TI Newsgroup).  Messages which 
+you want to post to all Calc-TI list subscribers should be sent to the 
+Calc-TI list (or should be posted to the Calc-TI Newsgroup). Commands 
+relating to the Graph-TI archive should be sent to the Graph-TI archive. 
+  
+Questions or comments of any kind can be sent to 
+  
+       ti-cares@ti.com. 
+ 
+===================================================================== 
+Question:      What are Graph-TI and Calc-TI? 
+  
+Graph-TI was created by Professor Bert Waits of Ohio State 
+University and by Texas Instruments to provide a forum for 
+free exchange of educational information regarding the Texas 
+Instruments TI-81, TI-82, and TI-85 calculators and associated 
+products.  It has various forms:  the Newsgroup, the list, and 
+the archive.  The Newsgroup and the list allow subscribers from 
+around the world to share information with each other relating 
+to education and the TI calculators.  The archive is a collection 
+of programs and documents for the TI calculators; anyone may submit 
+programs to the archive or download programs from it. 
+  
+ONLY EDUCATIONAL TOPICS ARE ACCEPTABLE ON GRAPH-TI.  Please do 
+not post anything to Graph-TI unless it is related to education. 
+  
+Calc-TI was created as a forum for discussion of topic related 
+to all Texas Instruments calculators, but not related to education. 
+It is in many ways similar to Graph-TI, except that all topics 
+related to all Texas Instruments calculators are acceptable on 
+Calc-TI.  Calc-TI, like Graph-TI, has two forms:  a list and a 
+Newsgroup.  Note, however, that the Graph-TI archive serves 
+both Graph-TI and Calc-TI.  There is no Calc-TI archive, and 
+non-educational materials are allowed in the archive. 
+  
+The Newsgroups and the lists contain exactly the same information. 
+Any information sent to one of the lists is automatically posted 
+to the corresponding Newsgroup, and vice versa.  Therefore, there 
+is no reason to subscribe both to a list and its Newsgroup. 
+If you are able to subscribe to a Newsgroup, you should probably 
+do so, since a Newsgroup has many advantages over a list. 
+If you are not able to subscribe to a Newsgroup you should 
+subscribe to the list. 
+  
+===================================================================== 
+Question:      How do I subscribe to the Graph-TI or Calc-TI 
+Newsgroup? 
+ 
+The exact procedure varies among news readers and systems. In general, 
+you will want to select bit.listserv.graph-ti (for Graph-TI) or 
+bit.listserv.calc-ti (for Calc-TI) and tell the news reader to subscribe 
+you. 
+  
+For example, if you are using the UNIX news reader trn and you want to 
+subscribe to the Graph-TI Newsgroup, you should type: 
+  
+       g bit.listserv.graph-ti 
+  
+to select bit.listserv.graph-ti.  trn will note that you are not yet 
+subscribed to bit.listserv.graph-ti, and will ask you if you want to 
+subscribe.  Hit y and trn will subscribe you. The procedure for 
+subscribing to the Calc-TI Newsgroup is the same, except you should 
+type: 
+  
+       g bit.listserv.calc-ti 
+  
+====================================================================== 
+Question:      How do I unsubscribe from the Graph-TI or Calc-TI 
+Newsgroup? 
+  
+The exact procedure varies among news readers and systems. In general, 
+you will want to select bit.listserv.graph-ti (for Graph-TI) or 
+bit.listserv.calc-ti (for Calc-TI) and tell the news reader to 
+unsubscribe you.  
+ 
+For example, if you are using the UNIX news reader trn and you want to 
+unsubscribe from the Graph-TI Newsgroup, you should type: 
+ 
+       g bit.listserv.graph-ti 
+ 
+to select bit.listserv.graph-ti, and then type u to unsubscribe from it.  
+  
+The procedure for unsubscribing from the Calc-TI Newsgroup is the same, 
+except you should type:  
+       g bit.listserv.calc-ti 
+  
+===================================================================== 
+Question:      What are the Graph-TI and Calc-TI lists? 
+  
+The Graph-TI and Calc-TI lists are automated e-mail mailing lists.  
+Postings to the Graph-TI list are sent directly to the e-mail address of 
+each person who is subscribed to the Graph-TI list, and postings to the 
+Calc-TI list are sent to all Calc-TI list subscribers. 
+  
+If you have access to Interment news, you probably would prefer to use 
+the Newsgroups, rather than the lists.  See "What are the Graph-TI and 
+Calc-TI Newsgroups?" for more information. 
+  
+===================================================================== 
+Question:      How do I subscribe to the Graph-TI or Calc-TI list? 
+  
+To subscribe to the Graph-TI or Calc-TI list, send an e-mail message to 
+majordomo@lists.ppp.ti.com.  The message should contain only the 
+following line: 
+  
+       SUBSCRIBE {listname} 
+  
+You should replace {listname} in the above line by GRAPH-TI or CALC-TI, 
+depending on which list you want to subscribe to.  The commands are not 
+case-sensitive so you may mix upper and lower case letters.  Do not 
+include the brackets.  Example:  you would subscribe to the Graph-TI 
+list by sending the following line in an e-mail message to 
+majordomo@lists.ppp.ti.com: 
+  
+       SUBSCRIBE GRAPH-TI 
+ 
+===================================================================== 
+Question:      How do I remove myself from the Graph-TI or Calc-TI 
+list? 
+  
+To remove yourself from the Graph-TI or Calc-TI list (to "unsubscribe"), 
+send an e-mail message to majordomo@lists.ppp.ti.com.  The message 
+should contain only the following line: 
+  
+       UNSUBSCRIBE {listname} 
+  
+You should replace {listname} in the above line by GRAPH-TI or CALC-TI, 
+depending on which list you want to remove yourself from.  Do not 
+include the brackets.  Example:  to remove yourself from the Graph-TI 
+list, send the following line in an e-mail message to 
+majordomo@lists.ppp.ti.com: 
+  
+       UNSUBSCRIBE GRAPH-TI 
+  
+This should be sent from the same e-mail address used when you 
+subscribed. If your e-mail address has changed since you subscribed, and 
+you are no longer able to send mail from the original address, please 
+send mail to: 
+  
+ti-cares@.ti.com explaining your situation. 
+  
+===================================================================== 
+Question:      How do I find out about some of the list server's other 
+capabilities? 
+  
+The list server understands more commands than the few (SUBSCRIBE and 
+UNSUBSCRIBE) described above.  It is possible to get a list of 
+subscribers to either list, and to do other things.  If you want more 
+information about the extended capabilities of the list server, send an 
+e-mail message to majordomo@lists.ppp.ti.com.  The message should 
+contain only the word HELP. 
+  
+===================================================================== 
+Question:      What is the Graph-TI archive? 
+  
+The Graph-TI archive is a collection of programs and documents for the 
+TI-81, TI-82, TI-85 calculators, and associated products.  Anyone may 
+download these programs, and anyone may submit programs to the archive.  
+The archive, which is located at archive.ppp.ti.com, can be accessed 
+through e-mail, anonymous ftp, or gopher. 
+  
+===================================================================== 
+Question:      How do I access the Graph-TI archive through e-mail? 
+  
+The Graph-TI archive can be accessed by sending commands through  
+e-mail. Such commands should be sent to mailserv@archive.ppp.ti.com.  
+For a list of all available commands, send an e-mail message to 
+mailserv@archive.ppp.ti.com.  The message should contain only the word 
+HELP.  A help file will be mailed to you.  
+  
+For convenience, part of the help file is listed below: 
+  
+LS/DIR - Produce a directory content listing for each directory 
+specified. A fully qualified pathname is required for each desired 
+directory listing.  Each directory specified must exist on the DS 
+server. 
+  
+       Examples:  ls /ftp/pub/graph-ti, /ftp/pub/graph-ti/misc 
+  
+                  dir /ftp/pub/graph-ti/TI-85 
+  
+A complete mapping of the public file space on the DS server is 
+available in the /ls-lR file and may be retrieved as follows (the "file" 
+command is discussed below): 
+  
+       Command:  file /ls-lR 
+  
+Note: 
+The beginning (root) of the public file space is the /ftp directory. 
+The anonymous ftp login changes the top of the file system to /ftp. 
+This results in implicitly appending /ftp to all fully qualified 
+file specifications.  The mail server always checks fully qualified 
+file specifications for the leading /ftp.  If it is not found, it is 
+appended by the mail server.  This allows an ftp user to give a tip 
+on retrieving a file to a mail server user and have the mail server 
+find and send the file.  The examples in this user guide use both 
+forms. 
+  
+FILE - Request a particular file be transferred by e-mail.  It requires 
+a fully qualified pathname for each desired file.  The file(s) specified 
+must be in the public file space on the DS server.  The command fails if 
+the specified file does not exist.  This is the best command for 
+requesting files since there is no ambiguity when fully qualified 
+pathnames are used. 
+  
+       Examples:  file /ftp/pub/Graph-TI/README. 
+                  file /ftp/pub/Graph-TI/TI-85/archispi.85 
+===================================================================== 
+Question:      How do I access the Graph-TI archive through ftp? 
+  
+The Graph-TI archive accepts anonymous ftp logins.  You can access 
+the archive through ftp by connecting to archive.ppp.ti.com and 
+logging in with username "anonymous".  You should type your e-mail 
+address as the password.  The programs are located in the pub/Graph-TI 
+directory. Don't be alarmed if you encounter a disclaimer from AT&T, 
+as they are running the archive for TI. 
+  
+===================================================================== 
+Question:      How do I access the Graph-TI archive through gopher? 
+  
+There are two ways to connect to the Graph-TI archive with gopher. 
+If you are running a gopher client, then point it to archive.ppp.ti.com. 
+Select the menus 
+  
+       4. InterNIC Directory and Database Services (AT&T)/ 
+               4. InterNIC Database Services (Public Databases)/ 
+                       9. Graph-TI archive/ 
+  
+If you do not have a gopher client, then you may connect to the 
+Graph-TI archive with a remote gopher client. You must telnet 
+telnet to archive.ppp.ti.com and login as "gopher" (in all lower 
+case letters, without the quotation marks). Then select the same 
+menus as indicated above. 
+  
+To retrieve a file, look at the file, type q to quit browsing it, 
+and then enter m to mail the file to your e-mail address. 
+

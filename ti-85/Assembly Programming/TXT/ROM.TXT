@@ -1,0 +1,75 @@
+
+
+
+TI-85 Assembler Programming - ROM Calls and Numeric Output
+
+
+
+
+
+
+TI-85 Assembler Programming - ROM Calls and Numeric Output
+
+Moving data around with the LD instruction is useful, but it's boring by itself. If you wrote a program which just did LD all the time, you wouldn't be able to see it actually do anything, except the screen would get dimmer after a while. In order to make an interesting program, you need to know how to do output. 
+
+
+On the TI-85, output is not handled through Z80 assembler instructions directly. Instead, we call routines in the TI-85 ROM, which then do the output for us. This lesson introduces ROM calls in general and describes one of them which is used to print numbers.
+
+ROM calls are a kind of subroutine. A subroutine is a is like a mini-program. When you "call" the subroutine, it is like you are running the mini-program. When the subroutine is finished, your program continues. Running a program from within a program in TI-BASIC is similar. In the case of ROM calls, the subroutine is stored in the calculator's ROM instead of in the memory.
+
+
+There are twenty ROM calls available through ZShell. Most of them deal with screen output, like writing out a number or writing a character in the menu-sized text. Others read a keypress, handle the little busy indicator, or do other useful things that aren't in the Z80 instruction set.
+
+
+With TASM, ROM calls are incredibly simple, one of the few simple things in assembler. There are two ways of making a ROM call, depending on which routine you are calling:
+
+     ROM_CALL(D_HL_DECI)
+     call GET_KEY
+ 
+5 routines use call; the rest use ROM_CALL(). The other part of the call is the name of the routine. The names are usually arcane. D_HL_DECI stands for Display HL in DECImal form. It prints the value in HL onto the screen at a specified location. GET_KEY reads which key is pressed, if any, like the TI-BASIC GetKy instruction. You'll learn about it and the other ROM calls later.
+
+
+One drawback of ROM calls and other subroutines in assembly is that there is no such thing as a parameter list passed to the routine. TI-BASIC people don't have to worry about this; you didn't have parameter lists either. A parameter list is a list of values that are given to the subroutine to tell the subroutine what its task is. The only way to get values to and from subroutines in assembler is to use the registers and the memory. The registers are usually used instead of the memory, because it is faster and more convenient. 
+
+
+The D_HL_DECI ROM call uses HL as a parameter. Before calling D_HL_DECI, you set HL to the value you want printed. The function looks at HL while it is executing to find out what value to print. 
+
+
+D_HL_DECI also uses memory for parameters. Memory locations $800C and $800D always hold the coordinates of the large sized text cursor. $800C is the row and $800D is the column. If you want the number is a specific place, you change those memory locations. D_HL_DECI looks at those locations to find out where to put the number. When the function is done, the coordinates are changed to reflect the new position.
+
+
+The number printed by D_HL_DECI is right-formatted and padded with spaces to make it 5 characters long.  
+
+Here is an example of D_HL_DECI in action:
+
+     LD   HL, 14238     ; load the number to print
+     LD   ($800C), 1    ; load cursor coordinates
+     LD   ($800D), 1    ; (1, 1) is upper left
+     ROM_CALL(D_HL_DECI); print the number
+          ; at this point, 14238 is printed in upper left
+          ; cursor is after the number
+          ; $800C and $800D hold the new cursor position   
+
+
+
+That's about all there is to subroutines. If you want to know more about the ROM calls, check out the ZShell Function Library. It documents all of the ROM calls. You will want to download this page later, anyway.
+
+The next lesson deals with program jumps - defining your own subroutines in your program.   
+
+
+On to the next lesson: Program Jumps
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 12-27-95 by Greg Parker. Last update: 12-29-95
+
+
+

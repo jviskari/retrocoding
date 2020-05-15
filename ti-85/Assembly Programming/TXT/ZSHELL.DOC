@@ -1,0 +1,385 @@
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+		     ÜÜÜÜÜ  ÜÜÜ  Ü   Ü ÜÜÜÜÜ Ü     Ü
+			Üß Û   ß Û   Û Û     Û     Û
+		      Üß    ßßßÜ ÛßßßÛ Ûßß   Û     Û
+		     ÛÜÜÜÜ ßÜÜÜß Û   Û ÛÜÜÜÜ ÛÜÜÜÜ ÛÜÜÜÜ
+			 Version 4.0 - November 1995
+				Copyright 1995
+			  Dan Eble (eble.2@osu.edu)
+		      Magnus Hagander (e95_mha@e.kth.se)
+		    Rob Taylor (100635.152@compuserve.com)
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ TABLE OF CONTENTS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ PART ONE: FOR USERS
+ -------------------
+   I. INTRODUCTION
+  II. REQUIREMENTS
+ III. PUTTING ZSHELL ON YOUR CALCULATOR
+  IV. RUNNING ZSHELL
+   V. RUNNING PROGRAMS FROM ZSHELL
+
+ PART TWO: FOR PROGRAMMERS
+ -------------------------
+   VI. DIFFICULTIES OF PROGRAMMING THE TI-85
+  VII. PROGRAMMING FOR THE ZSHELL OPERATING SYSTEM
+ VIII. LISTS OF HELPFUL INFORMATION
+   IX. IMPORTANT NEWS IN THIS VERSION!
+
+ PART THREE: OTHER TOPICS
+ ------------------------
+  X.    LEGAL STUFF
+  XI.   CONTACTING THE DEVELOPERS
+  XII.  NEW VERSIONS AND INFORMATION
+  XIII. REVISION HISTORY
+
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+			  PART ONE: FOR USERS
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ I. INTRODUCTION
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   ZShell is a program for the TI-85 graphing calculator that enables
+execution of Z80-compatible programs stored in string variables.
+   ZShell is a shell and an operating system combined.  The shell part
+provides an organised way to list and execute the string programs stored on
+the calculator.  The operating system part provides functions necessary for
+the string programs to work properly with different ROM versions and in the
+quicksand environment of the TI-85's memory.
+
+    ZSHELL40.ZIP
+   --------------
+    ZSHELL  .85B -- ZShell 4.0, TexaNoid, Organiser and Function Tester
+    ZSHELL  .DOC -- this file
+    TI-85   .H   -- header file for TASM facilitating TI-85 programming.
+		    TASM is the Table Assembler, not Borland's product.
+    STRING85.COM -- compiles binary Z80 code into an .85S file
+    UPGRADE.TXT  -- information about how to upgrade old programs (version
+		    3.x) to ZShell 4.0.
+    TEXAN.DOC    -- Documentation for TexaNoid
+    ORGANISE.DOC -- Documentation for Organiser
+    TEST.DOC     -- Documentation for Function Tester
+
+
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ II. REQUIREMENTS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   You must have a Graph-Link or know someone who does or know someone who
+knows someone who does...
+   For this version of ZShell, you must have ROM version 3.0A, 4.0, 5.0, 6.0,
+   8.0, 9.0 or 10.0.  To find out what version of ROM you have, press the
+   following keys: [2nd] [MODE] [ALPHA] [S].  The sentence "Enter self test?"
+   accompanied by a version number will appear.  Hit any key EXCEPT [ENTER].
+   PRESSING [ENTER] WILL CAUSE YOUR MEMORY TO BE ERASED.
+
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ III. PUTTING ZSHELL ON YOUR CALCULATOR
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   ZShell itself is stored in a string variable.  All you have to do to put
+it in your calculator is use your the Graph-Link and transfer a memory backup
+to your calculator.  To do this without losing whatever is presently in your
+memory, follow these steps:
+
+   1) Transfer all of the data on your calculator to a group file on the
+      computer.
+   2) Transfer the ZShell backup file to your calculator.
+   3) Transfer the group file back to your calculator.  Don't overwrite any
+      variables from the ZShell backup.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ IV. RUNNING ZSHELL
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   To run ZSHELL, hit [CUSTOM] [F1].  Note that if you have a ROM version
+other than the ones listed in the "REQUIREMENTS" section (II), ZShell will
+not run. If you are really unlucky, it might lock your calculator!
+   NOTE! If the F1 section of the Custom menu does not show "ZShell", DO NOT
+PRESS F1, or you calculator will HANG!
+   Programs made for ZShell 3.0, 2.0 and 1.0 are incompatible with ZShell 4.0
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ V. RUNNING PROGRAMS FROM ZSHELL
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   When you start ZShell, it displays a list of the string programs on your
+calculator, or "NO PROGRAMS" if it can't find any.  Use the up and down arrow
+keys to select a program, [MORE] to see the next page of programs (if you
+have more than eight), [ENTER] to run a program, and [EXIT] to return to the
+home screen.
+
+
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+		       PART TWO: FOR PROGRAMMERS
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ VI. DIFFICULTIES OF PROGRAMMING THE TI-85
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   1) Different versions of ROM are very much alike, but differ slightly in
+      the offset of most CALLs.
+      This also changed with ROM 9.0 - they are not even alike any more....
+   2) The calculator dynamically rearranges its memory, so there is never
+      an sure way to pinpoint the location of a program in order to access
+      data and do JUMPs and CALLs.  One way to circumvent this problem is
+      to recall a picture variable into the graphics memory (8641).
+   3) The PIC method of storing programs is convenient, but too inflexible.
+      It limits (or augments) the size of a program to 1008 bytes and
+      requires much pressing of keys to go between programs.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ VII. PROGRAMMING FOR THE ZSHELL OPERATING SYSTEM
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   ZShell fixes the ROM CALL offset problem by providing a function that,
+given an index, calculates the correct address before calling a ROM routine.
+The address of this ROM_CALL routine is 8C09. Here is an example of how
+to clear the screen (the clear screen function has been given index 08).
+
+     call $8C09   ; this is a call to the ROM_CALL function
+     .db 08       ; the following byte specify the index
+
+   If your assembler can handle macros (I recommend TASM), then you could
+define some so that the above looks like this in your code:
+
+     ROM_CALL(CLEARLCD)   ; "Ah," you say, "Very nice."
+
+** You can get TASM at ftp.rbk.sollentuna.se in /pub/TI-Calc/software/
+** or mrcnext.cso.uiuc.edu in /pub/pcsig as "disk0643.zip"
+
+   In order to do CALLs and JUMPs within your own program, there are
+functions that do add the program's offset in memory to the address you
+supply.  In TI-85.H, we have defined these macros:
+
+   ; Type of CALL or JUMP      Address
+
+     #DEFINE ROM_CALL(index)   call $8C09 \ .db index
+     #DEFINE CALL_Z(addr)      call $8C0C \ .dw addr
+     #DEFINE CALL_(addr)       call $8C0F \ .dw addr
+     #DEFINE CALL_NZ(addr)     call $8C12 \ .dw addr
+     #DEFINE CALL_C(addr)      call $8C18 \ .dw addr
+     #DEFINE CALL_NC(addr)     call $8C1E \ .dw addr
+     #DEFINE JUMP_Z(addr)      call $8C24 \ .dw addr
+     #DEFINE JUMP_(addr)       call $8C27 \ .dw addr
+     #DEFINE JUMP_NZ(addr)     call $8C2A \ .dw addr
+     #DEFINE JUMP_C(addr)      call $8C30 \ .dw addr
+     #DEFINE JUMP_NC(addr)     call $8C36 \ .dw addr
+
+   Therefore, if you wanted to JUMP if the carry flag were set to location
+$0ABC relative to the beginning of your program, you would do this:
+
+     call $8C30   ; address of JUMP_C
+     .dw $0ABC    ; address of where to JUMP
+
+   Or, with the macros,
+
+     JUMP_C($0ABC)
+
+   A very simple, size efficient way to do fix the problem.
+   In order to access data in your program, there are two solutions, one for
+temporary data (like players' scores) and one for permanent data (like title
+strings).
+   When using temporary data, the best solution is to use the 168
+bytes of the text memory at $80DF.  ZShell automatically sets every byte in
+this range to 00 before running any program, so you don't have to worry about
+zeroing any matrices yourself, which saves space.
+   To access permanent data, what you need to do is find your program's
+address in memory and add the relative offset of the data.  Fortunately,
+ZShell provides the word at ($8C3C), which is the address of the currently
+executing program.  For example, if you needed to display the string at
+$246 from the start of your program, you would do this:
+
+;    without TI-85.H   ;   with TI-85.H
+		       ;
+     ld hl, ($8C3C)    ;   ld hl, (PROGRAM_ADDR)
+     ld de, $246       ;   ld de, $246
+     add hl,de         ;   add hl, de
+     call $8C09        ; ROM_CALL(D_ZT_STR)   ; display zero-terminated
+     .db $0B           ;                        ; normal text string
+
+   Additionally, ($8C3F) contains the ZShell version number.  It is $40 for
+ZShell 4.0.
+   ZShell 3.1 and later will also recalculate a string's checksum after
+it is run, so that permanent variables can be used with little hassle.
+To enable this feature, make sure bit 0 of (8C40) is set (1) when your
+program terminates.
+   ZShell 4.0 and later have an option to "warp out". This means that
+when the program exits, the user is NOT brought out to ZShell, but
+directly to the calculator mode. Useful for "boss-key" and likely.
+
+   Here are important ZShell data locations:
+     PROGRAM_ADDR =$8C3C  ; program address
+     ROM_VERS     =$8C3E  ; ROM version byte
+     ZSHELL_VER   =$8C3F  ; ZShell version number (3)
+     ZS_BITS      =$8C40  ; bit 0 set : checksum again
+			  ; bit 1 set : warp out
+
+   In order to turn your assembled binary code into an .85S, all you have to
+do is run it through STRING85.COM.  Here's the batch file I use to assemble,
+convert to strings, get ready to transfer my programs to my calculator:
+
+ @echo off
+ tasmb -80 -g3 -q -r8 -y %1.asm   ; assemble source
+ if errorlevel 1 goto errors      ; stop batch on assembly error
+ ren %1.obj %1                    ; take extension off object file
+ string85 %1                      ; convert to string
+ move %1.85s \link85              ; move to \link85
+ del %1.bak                       ; delete other files (I have a 40Mb hdd)
+ del %1.lst
+ del %1
+ cd\link85                        ; switch to \link85 and run program
+ link85
+ cd\tasm                          ; go back to \tasm
+ goto done
+ :errors
+ echo ERRORS!
+ :done
+
+   From version 4.0, string85.com takes command-line arguments. For
+information about these arguments, just type "string85" on the
+command-line.
+   If you are using link85x (and not link85), you should change the
+row "move %1.85s \link85" into "move %1.85s \link85\%1.85g".
+   Of course, you will also have to change the batch-file to suit
+your directory structure.
+
+Here are some important points about the structure of your programs:
+  1) You should use .ORG 0 or your calls and jumps will be messed up.
+  2) Immediately after .ORG 0, you should define a null-terminated string
+     to display next to the name in the ZShell menu.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ VIII. LISTS OF HELPFUL INFORMATION
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   The files TI-PORTS.TXT, TI-ROM.TXT, and TI-RAM.TXT contain information
+useful and necessary for writing good programs.  These lists are nowhere near
+complete (and the RAM list is nowhere near organised :)), so I welcome 
+corrections and additions.  My Internet address is <eble.2@osu.edu>.
+NOTE: The call addresses in TI-ROM.TXT are now obsolete - calling any of these
+addresses directly will render program incompatible with many calculators and
+could cause them to crash.
+   There is also a mailing list for ZShell users and developers. Write a
+message to "majordomo@kuai.se" with "subscribe list-zshell" in the message
+body to get on it.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ IX. IMPORTANT NEWS IN THIS VERSION!
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+From version 4.0 and up, ZShell no longer uses CALL_ROM which took ROM
+addresses as arguments It has been replaced by ROM_CALL which takes an index
+to a ROM routine. This was required to change in order to include
+support for ROM 9.0 and later. This gives the developers the following
+problems and solutions:
+   * Old programs no longer work with ZShell
+     Solution: Recompile the programs with the new TI-85.H. If you only used
+	       functions declared within it, there should be no problem. If
+	       not, you will have to rewrite it using these functions.
+   * You used a ROM call not indexed in ZShell 4.0
+     Solution: You should've told us when we asked developers for ROM calls
+	       used. Your only chance now is mailing us as and ask us to
+	       include it in the next version of ZShell. If we can find a
+	       way to include the routine ROM independent, we will do it.
+	       Alternatively, rewrite the ROM routine yourself. For most of
+	       the ROM routines not catered for in ZShell 4.0 this is a
+	       relatively easy job.
+
+
+   Also note that there are five addresses left in TI-85.H that have not
+been exchanged for indexes. This is because they are in fixed location in
+ALL ROM versions. Therefor, use a plain call instruction to access them -
+no macro or likely defined in TI-85.H.
+   Note that the FindPixel routine often used (but not declared in TI-85.H)
+is NOT to be accessed the usual way. It was completely fixed in location in
+ROM <=8.0, but has moved in ROM >= 9.0. Therefor, use the indexed function
+FindPixel declared in TI-85.H, and handled by ZShell, instead.
+   From version 4.0 and up, ZShell will report an error if the user is
+trying to execute a program made for a NEWER version of ZShell than the
+current. This is used to inform a user that there is a new version out there
+somewhere, just waiting to be installed... It will be presented in the same
+way as a program with bad checksum, and the program will not be executed.
+
+
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+			PART THREE: OTHER TOPICS
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ X. LEGAL STUFF
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   ZSHELL.85B and all the companion files are our work.  We encourage their
+distribution as long as they are kept together, unmodified from the form in
+which we originally distributed them.
+   You may NOT put ZShell up on any WWW-page, FTP-site or BBS without
+agreement with the developers. This is NOT to stop the distribution of
+ZShell. It is to allow us to keep track of the distribution sites out there,
+so we can make sure a bug-fix or upgrade is always available. Just mail
+Magnus Hagander <e95_mha@e.kth.se> for an arrangement.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ XI. CONTACTING THE DEVELOPERS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   First of all - don't hesitate to contact us. If you have a question that
+is about something very basic, that you think a normal user could handle,
+use one of the mailing lists. However, if you have some comment or something
+more advanced, contact one of us. We will try to respond to all mail sent
+to us.
+   If you want to contact the developers directly, make your first try to
+Magnus Hagander (e95_mha@e.kth.se), second to Rob Taylor
+(100635.152@compuserve.com) and third to Dan Eble (eble.2@osu.edu). The
+reason Dan is so low down on the list is that he is no longer working on
+ZShell - he's working on the TI-92 instead.
+   If you have a question that does not require the assistance from the
+developers directly, write to list-zshell. To join list-zshell, write a
+message to "majordomo@kuai.se" with "subscribe list-zshell" in the message
+body. You will then receive information about how to write to the list etc.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ XII. NEW VERSIONS AND INFORMATION
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   New versions will always be available from:
+      ftp.rbk.sollentuna.se in /pub/TI-Calc/ti-85/ZShell
+as either zshell.zip or zshell<version>.zip. In this directory you can also
+find a lot of programs for ZShell. If you have written one of your own,
+please upload it here!
+   New versions will always be announced on the Calc-TI and list-zshell
+mailing lists.
+
+   A list of authorised mirror-sites are available on ftp.rbk.sollentuna.se
+in /pub/TI-Calc/ti-85/ZShell as mirrors.txt. Please use only mirrors listed
+in this file. If you on the other hand run a FTP (or WWW) site, and want
+to be an authorised mirror site - mail e95_mha@e.kth.se and ask for it.
+
+   If you have InterNet and WWW access, please check
+http://www.rbk.sollentuna.se/~mha/zshellfan/ - "The ZShell Fan Page".
+At this site we collect the thoughts of ZShell users around the world.
+Please sign in on this page - it's so nice to know that people appreciate
+the work we do.
+   There is also the "ZShell Homepage", at http://www.kuai.se/~piett/zshell/
+On that page you can find up-to-date (hopefully) information on ZShell,
+as well as links to ZShell resources etc.
+   For a reference and examples on the functions defined in TI-85.H, check
+http://www2.e.kth.se/~e95_mha/Public/zshell_ref.html.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ XIII. REVISION HISTORY
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+November 1994:
+First Release.
+
+January 1995: Version 2.0
+Small optimisations.
+Cursor returns to last location after program exits.
+Cursor wraps from the bottom of the page to the top, and vice versa.
+Optional checksum after program termination.
+
+January 1995: Version 3.0
+No need to recall ZShell into the graphics screen.
+
+February 1995: Version 3.1
+ROM 5.0 support.
+
+November 1995: Version 4.0
+ROM 9.0 support. ROM 10.0 support.
+Rewrote basic layer for ZShell calls. All earlier programs has to
+be recompiled with a new TI-85.H to work with ZShell 4.0, since
+ROM offsets has been exchanged for indexes. This caused the
+CALL_ROM routine to be renamed to ROM_CALL.
+Added ability to "warp" out of ZShell.
+Made ZShell inform the user if a program is newer than ZShell.

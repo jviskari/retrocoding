@@ -1,0 +1,501 @@
+ZShell Function Library
+
+This file contains reference information about the functions that are defined
+in ZShell.
+
+Information on this page is Copyright (C) 1995 The ZShell Development Team:
+Magnus Hagander (mha@ticalc.org) and Rob Taylor (rtaylor@ticalc.org).
+
+---------------------------------------------------------------------------
+
+Introduction
+
+This file contains information for ZShell 4.0 only! No other versions are
+documented here.
+
+This page contains a reference for the ROM function calls defined in
+TI-85.H. They are all called with the macro ROM_CALL, also defined in
+TI-85.H, unless otherwise specified.
+
+For further information about ZShell, check http://www.ticalc.org/asm/zshell/.
+
+Note that most of the bits that can be set/reset before calling a function
+are set to a default by ZShell. Unless you want to do something else, you
+don't have to change them. If you change them, be sure that you change them
+back if you want to use a function depending on them in the other mode.
+
+Check this file for some useful subroutines to include in your ZShell
+program.
+
+---------------------------------------------------------------------------
+
+Function Index
+
+The following functions are described in this file:
+
+   * LD_HL_MHL
+   * CP_HL_DE
+   * UNPACK_HL
+   * STORE_KEY
+   * GET_KEY
+
+   * TX_CHARPUT
+   * D_LT_STR
+   * M_CHARPUT
+   * D_ZM_STR
+   * D_LM_STR
+   * GET_T_CUR
+   * SCROLL_UP
+   * TR_CHARPUT
+   * CLEARLCD
+   * D_HL_DECI
+   * CLEARTEXT
+   * D_ZT_STR
+   * BUSY_OFF
+   * BUSY_ON
+   * FIND_PIXEL
+
+---------------------------------------------------------------------------
+
+LD_HL_MHL
+
+Call method: call LD_HL_MHL
+Input:       HL = pointer
+Returns:     HL = (HL)   (the byte pointed to by HL)
+             A  = L      (just a junk return?)
+
+Description: This function loads HL with the value pointed to by HL. This
+can be useful if you want to retreive the word pointed to by HL.
+Traps: Note that the call changes the contents of A.
+Example:
+
+   ld   hl,LOOKUP         ;HL points to a lookup table defined in RAM
+   ld   de,OFFSET         ;DE is how far into the table we want to be
+   add  hl,de             ;HL now points to the word we want
+   call LD_HL_MHL         ;HL now contains the word we looked up in the table
+
+---------------------------------------------------------------------------
+
+CP_HL_DE
+
+Call method: call CP_HL_DE
+Input:       HL, DE = The words to compare
+Returns:     The same flags as CP. E.g. zero flag set if they are equal.
+
+Description: This function compares the contents of HL and DE with each
+other. It works just as the CP instruction, but CP does not work with words
+- just bytes.
+Traps: The function compare the VALUES of DE and HL, not the memory pointed
+to by them (as HL is usually used for).
+Example:
+
+   ld   HL,VALUE1         ;HL contains one value
+   ld   HL,VALUE2         ;DE contains second value
+   call CP_HL_DE
+   jr   z,Equal           ;Jump to equal if HL and DE were equal.
+
+---------------------------------------------------------------------------
+
+UNPACK_HL
+
+Call method: call UNPACK_HL
+Input:       HL = value to unpack from
+Returns:     A  = value unpacked from HL
+             HL = changed, to allow unpacking of next number
+
+Description: This function "unpacks" one number from HL. It works from
+right to left, unpacking the one-number first, then the 10-number and so
+on. It is used to convert HL into characters that can be displayed using
+the standard functions in decimal form. This function is used by D_HL_DECI.
+Traps: Note that the function destroys the contents of HL.
+Example:
+
+   ld   de,StringPlace+4        ;Location to store string
+   ld   b,5                     ;A word fits into 5 characters
+ConvLoop:
+   call UNPACK_HL               ;Unpack the next number
+   add  a,'0'                   ;Now A is the CHARACTER for this value
+   ld   (de),a                  ;Put that character into the string
+   dec  de                      ;Point DE to the next byte in the string
+   djnz ConvLoop                ;Convert all the 5 characters
+
+---------------------------------------------------------------------------
+
+STORE_KEY
+
+Call method: call STORE_KEY
+Input:       A = scancode
+Returns:     (8000) = scancode
+             (8006) = scancode (if scancode <>0)
+             set 3,(IY+00)
+
+Description: This function stores a keystroke into the buffer. This
+keystroke can then be read by the GET_KEY function.
+Traps: Overwrites any scancode that is in the buffer already.
+Example:
+
+   ld   a,$0F             ;0F is the scancode for key CLEAR
+   call STORE_KEY         ;Store CLEAR into the keystroke buffer
+
+---------------------------------------------------------------------------
+
+GET_KEY
+
+Call method: call GET_KEY
+Input:       None
+Returns:     A = scancode of last key pressed
+             HL = 8000
+             res 3,(IY+00)
+
+Description: This is one of the most used ROM function. It returns the last
+key that was pressed. The value returned in A is the scancode of the key.
+Traps: Note that the contents of HL is changed. GET_KEY returns 0 if there
+was no key pressed - it does not wait for a key.
+Example:
+
+KeyLoop:
+   call GET_KEY
+   jr   z,KeyLoop         ;Loop until a key is pressed, then continue
+
+---------------------------------------------------------------------------
+
+TX_CHARPUT
+
+Call method: ROM_CALL(TX_CHARPUT)
+Input:       A = Character to print
+             Memory and bits for normal output.
+Returns:     (800C) and (800D) updated with new cursor positions.
+
+Description: This function prints a character to the screen. It also
+converts the character if it is a control character.
+Traps: If you set it to alter text memory, contents of your own variables
+can be changed if they reside within the text memory (they usually do).
+Example:
+
+   ld       hl,$0101      ;HL contains X and Y position
+   ld       ($800C),hl    ;Since HL is a word, it overlaps into 800D
+   ld       A,'2'         ;Char to put
+   ROM_CALL(TX_CHARPUT)   ;Put the character
+
+---------------------------------------------------------------------------
+
+D_LT_STR
+
+Call method: ROM_CALL(D_LT_STR)
+Input:       HL = pointer to length index string
+             Memory and bits for normal output.
+Returns:     (800C) and (800D) updated with new cursor position.
+             HL = pointer to next byte after the string
+
+Description: This function prints a string of characters to the screen in
+normal text style (not menu style). The length of the string is determined
+by the value of the first byte in the string. The cursor coordinades are
+updated, and HL will point to the next byte after the string. Traps: HL is
+a full pointer to the string. If you are using a string defined within your
+program, you must add the programs start offset to it.
+Example:
+
+   ld   hl,STRING         ;Offset of the string, defined within "myself"
+   ld   de,(PROGRAM_ADDR) ;Address of program start, defined in TI-85.H
+   add  hl,de
+   ROM_CALL(D_LT_STR)     ;Display the string
+   ret                    ;Return from sub-routine (or to ZShell)
+String:
+   .db  5,"Hello"         ;String to use
+
+---------------------------------------------------------------------------
+
+M_CHARPUT
+
+Call method: ROM_CALL(M_CHARPUT)
+Input:       A = character to print
+             Memory and bits for menu output.
+Returns:     (8333) updated with new cursor position.
+             DE is destroyed.
+
+Description: This function prints the character in A on the screen in "menu
+style". This is the style that is used by the TI-85 itself when in graphics
+mode and in menus.
+Traps: Note that DE is destroyed.
+Example:
+
+   ld   a,'A'             ;I want to print the character A.
+   ld   hl,$1010          ;HL contains the coordinates
+   ld   ($8333),hl        ;Since HL is a word, it overlaps into 8334
+   ROM_CALL(M_CHARPUT)
+
+---------------------------------------------------------------------------
+
+D_ZM_STR
+
+Call method: ROM_CALL(D_ZM_STR)
+Input:       HL = pointer to null terminated string
+             Memory and bits for menu output.
+Returns:     (8333) updated with new cursor position.
+             HL = pointer to next byte after string.
+
+Description: This function prints a zero terminated string (ASCIIZ) on the
+screen in menu style.
+Traps: HL is a full pointer to the string. If you are using a string
+defined within your program, you must add the programs start offset to it.
+Example:
+
+   ld   hl,STRING         ;Offset of the string, defined within "myself"
+   ld   de,(PROGRAM_ADDR) ;Address of program start, defined in TI-85.H
+   add  hl,de
+   ROM_CALL(D_ZM_STR)     ;Display the string
+   ret                    ;Return from sub-routine (or to ZShell)
+String:
+   .db  "Hello",0         ;String to use, with a 0 at the end
+
+---------------------------------------------------------------------------
+
+D_LM_STR
+
+Call method: ROM_CALL(D_LM_STR)
+Input:       HL = pointer to string
+             B  = length of string
+             Memory and bits for menu output.
+Returns:     (8333) updated with new cursor position.
+             HL = pointer to next byte after string.
+
+Description: This function prints a length indexed string on the screen in
+menu style.
+Traps: HL is a full pointer to the string. If you are using a string
+defined within your program, you must add the programs start offset to it.
+Example:
+
+   ld   hl,STRING         ;Offset of the string, defined within "myself"
+   ld   de,(PROGRAM_ADDR) ;Address of program start, defined in TI-85.H
+   add  hl,de
+   ld   b,5               ;We want to print 5 characters
+   ROM_CALL(D_LT_STR)     ;Display the string
+   ret                    ;Return from sub-routine (or to ZShell)
+String:
+   .db  "Hello"           ;String to use
+
+---------------------------------------------------------------------------
+
+GET_T_CUR
+
+Call method: ROM_CALL(GET_T_CUR)
+Input:       None
+Returns:     HL = absolute address of text cursor (in 80DF text memory)
+
+Description: This function returns the absolute address of the text cursor.
+Traps: None, I think.
+Example:
+
+   ROM_CALL(GET_T_CUR)      ;Get the address
+   ld   (hl),'A'            ;Set this byte to "A".
+
+---------------------------------------------------------------------------
+
+SCROLL_UP
+
+Call method: ROM_CALL(SCROLL_UP)
+Input:       (8B2F) = first row to scroll (0-7)
+             (8B30) = last row to scroll (1-8)
+             set 1,(IY+OD) = scroll the text memory
+             res 1,(IY+0D) = don't scroll the text memory
+Returns:     None
+
+Description: This function scrolls the screen or part of it one line up,
+and inserts a blank line at the end of it.
+Traps: If you chose to scroll the text memory, your own variables can be
+changed if they reside in the text memory, which they normally do.
+Example:
+
+   sub  a                 ;Set A=0
+   ld   ($8B2F),a         ;Starting row is 0
+   ld   a,5
+   ld   ($8B30),a         ;Last row to scroll is 5
+   ROM_CALL(SCROLL_UP)
+
+---------------------------------------------------------------------------
+
+TR_CHARPUT
+
+Call method: ROM_CALL(TR_CHARPUT)
+Input:       A = Character to print
+             Memory and bits for normal output.
+Returns:     (800C) and (800D) updated with new cursor positions.
+
+Description: This function prints a character to the screen.
+Traps: If you set it to alter text memory, contents of your own variables
+can be changed if they reside within the text memory (they usually do).
+Example:
+
+   ld       hl,$0101      ;HL contains X and Y position
+   ld       ($800C),hl    ;Since HL is a word, it overlaps into 800D
+   ld       A,'2'         ;Char to put
+   ROM_CALL(TR_CHARPUT)   ;Put the character
+
+---------------------------------------------------------------------------
+
+CLEARLCD
+
+Call method: ROM_CALL(CLEARLCD)
+Input:       None
+Returns:     The LCD is cleared (FC00-FFFF is zeroed out).
+             Text and graphics memory are left untouched.
+             HL=8358
+             DE=0000
+             BC=0000
+
+Description: This function clears the LCD screen. Since it does not change
+the text memory, your variables are left alone.
+Traps: Quite a lot of registers are changed.
+Example:
+
+   ...
+   ROM_CALL(CLEARLCD)
+   ...
+
+---------------------------------------------------------------------------
+
+D_HL_DECI
+
+Call method: ROM_CALL(D_HL_DEC)
+Input:       HL = value to print
+             Memory and bits for normal output.
+Returns:     (800C) and (800D) updated with new cursor positions.
+
+Description: HL is displayed as a 5-number, right justified, blank-padded
+decimal number.
+Traps: None, I think.
+Example:
+
+   ld   hl,1234                ;This is the value we want to print
+   ROM_CALL(D_HL_DECI)
+
+---------------------------------------------------------------------------
+
+CLEARTEXT
+
+Call method: ROM_CALL(CLEARTEXT)
+Input:       set 1,(IY+0D) = fill text memory (80DF) with spaces
+             res 1,(IY+0D) = clear the LCD without altering the text memory
+Returns:     None
+
+Description: This function clears the text memory. If you want to be sure
+you just clear the screen and not the memory, use the CLEARLCD function
+instead.
+Traps: If you fill the text memory with spaces, any data you have stored in
+variables there will (logically) be destroyed.
+Example:
+
+   ...
+   ROM_CALL(CLEARTEXT)          ;Yikes, I lost my variables...
+   ...
+
+---------------------------------------------------------------------------
+
+D_ZT_STR
+
+Call method: ROM_CALL(D_ZT_STR)
+Input:       HM = pointer to null-terminated string
+             Memory and bits for normal output.
+Returns:     (800C) and (800D) updated with new cursor positions.
+
+Description: This function prints a zero-terminated string on the screen in
+normal style.
+Traps: HL is a full pointer to the string. If you are using a string
+defined within your program, you must add the programs start offset to it.
+Example:
+
+   ld   hl,STRING         ;Offset of the string, defined within "myself"
+   ld   de,(PROGRAM_ADDR) ;Address of program start, defined in TI-85.H
+   add  hl,de
+   ROM_CALL(D_ZT_STR)     ;Display the string
+   ret                    ;Return from sub-routine (or to ZShell)
+String:
+   .db  "Hello",0         ;String to use with a 0 behind
+
+---------------------------------------------------------------------------
+
+BUSY_OFF
+
+Call method: ROM_CALL(BUSY_OFF)
+Input:       Nothing
+Returns:     res 0,(IY+12)
+
+Description: The busy indicator (upper right corner of the screen) is
+turned off.
+Traps: None, I think.
+Example:
+
+   ...
+   ROM_CALL(BUSY_OFF)
+   ...
+
+---------------------------------------------------------------------------
+
+BUSY_ON
+
+Call method: ROM_CALL(BUSY_ON)
+Input:       None
+Returns:     set 0,(IY+12)
+
+Description: The busy indicator (upper right corner of the screen) is
+turned on.
+Traps: None, I think.
+Example:
+
+   ...
+   ROM_CALL(BUSY_ON)
+   ...
+
+---------------------------------------------------------------------------
+
+FIND_PIXEL
+
+Call method: ROM_CALL(FIND_PIXEL)
+Input:       B = X coordinate
+             C = Y coordinate
+Returns:     HL = offset in video buffer
+             A = Value of bit to change
+
+Description: This function returns the offset and bit-value of a given
+pixel on the graphics screen. It is useful if you want to set, reset or
+read a single pixel. If you want to update a larger area of the screen, you
+should use direct memory access. Check this page for example of routines
+that use this function.
+Traps: HL and A are (naturally) destroyed. This function must be executed
+when memory page is set to 4. To do this, use the following code:
+
+   ld   a,4
+   out  (5),a
+
+Example:
+
+   ld   b,10
+   ld   c,50                ;Put pixel at (10,50)
+   ROM_CALL(FIND_PIXEL)
+   or   (hl)
+   ld   (hl),a
+
+Memory and bit sets for normal text operations
+
+The following memory addresses and bits are used in the functions that deal
+with normal text strings (not menu style):
+
+             (800C) = Row to put character in
+             (800D) = Column to put character in
+             set 3,(IY+05) = Display white on black
+             res 3,(IY+05) = Display black on white (normal)
+             set 1,(IY+0D) = Alter text memory
+             res 1,(IY+0D) = Don't alter text memory
+
+Memory and bit sets for menu text operations
+
+The following menu addresses and bits are used in the functions that deal
+with menu text strings:
+
+             (8333) = x coordinate
+             (8334) = y coordinate
+             res 1,(IY+05) = Print only 6 rows of the character
+             set 1,(IY+05) = Print entire 7 rows of the character
+             res 3,(IY+05) = Print character over current screen
+             set 3,(IY+05) = XOR character with current screen
+

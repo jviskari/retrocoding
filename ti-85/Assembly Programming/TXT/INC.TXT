@@ -1,0 +1,50 @@
+
+
+
+TI-85 Assembler Programming - The INC and DEC instructions
+
+
+
+
+
+
+TI-85 Assembler Programming - The INC and DEC instructions
+
+Moving data around using LD is useful, but programs have to change data in order to be interesting. The INC and DEC instructions are a common and simple way to change a value.
+
+
+Here is an example of each:
+
+     INC  A
+     DEC  B
+
+If A was 10, it is now 11. If B was 23, it is now 22. Pretty simple, right? INC increments, or adds one to, the value in a register. DEC decrements, or subtracts one from, the value in a register. It is just like saying A = A + 1 or A + 1 -> A. INC and DEC work on any single register, and are incredibly efficient. 
+
+
+The other way to use INC and DEC is to change the value of a memory location by using the HL register pair to store the address:
+
+     LD   HL, $80DF   ; the memory location to change
+     INC  (HL)        ; increment the data at that location
+
+If the data at location $80DF was 16, then the new value at location $80DF will be 17. Incrementing data in memory is slower than incrementing registers, but it is still very fast. A typical LD operation takes anywhere from 7 to 16 clock cycles, while INC (HL) takes 7 and INC A takes only one!
+
+
+The next lesson deals with using the code that is in the TI-85 ROM so that we can do screen output. 
+    
+
+
+On to the next lesson:  ROM calls
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 12-27-95 by Greg Parker. Last update: 12-30-95
+
+
+

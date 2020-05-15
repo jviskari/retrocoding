@@ -1,0 +1,112 @@
+
+
+
+TI-85 Assembler Programming - Text Output
+
+
+
+
+TI-85 Assembler Programming - Text Output
+
+Text output is relatively easy on the TI-85. Almost everything is handled by ROM routines. You can print strings or single characters in normal or "menu" format.
+
+
+A character is a single letter, number, or symbol. Printing characters is easy. There are two ROM calls which print characters - TX_CHARPUT ans M_CHARPUT. TX_CHARPUT draws a character on screen in normal style. M_CHARPUT draws the character in menu style. Here's an example of each:
+ 
+...  
+
+     ld   A, 'q'         ; let's print "q"
+     ld   ($8333), $01   ; load x-coordinate into memory location $8333
+     ld   ($8334), $01   ; load y-coordinate into memory location $8334
+     ROM_CALL(M_CHARPUT) ; print the letter in menu style
+
+...
+
+     ld   A, 'q'         ; let's print a larger "q" 
+     ld   ($800C), $01   ; load row number into memory location $800C
+     ld   ($800D), $01   ; load column number into memory location $800D
+     res  1, (IY + 0D)   ; preserve text memory
+     ROM_CALL(TX_CHARPUT); print the letter in normal style    
+
+ 
+For menu style, the location (x, y) to print on screen is in $8333 and $8334. Both numbers are pixel values. For normal style, the location (row, column) is in $800C and $800D. For normal style, the coordinates are not pixel values. The TI-85 screen is 8 rows high and 21 columns across. It's the same as in the normal text screen. After a character is printed in either style, the memory coordinates are updated so that the next character printed will be after the previous one.  
+
+  
+The line marked "preserve text memory" is important. Text memory is where the TI-85 stores which characters are in the text screen. While in ZShell, we normally use that space to store our variables, since we draw into screen memory, not text memory. If text memory is not preserved, the values of our variables might change, which is a bad thing.
+
+
+Strings are harder to print. A string is a sequence of individual characters. "Hello, world!" is a string. The strings used in this lesson are predefined in your program when it is assembled. Here's how to define one:
+
+; Somewhere in the program, usually at the end...
+
+MyString:
+.db "Hello, world!", 0
+
+This string is called a "zero-terminated" string, because it has a zero at the end. The other kind of string is called a "length indexed" string because the first byte is the number of characters the string has. Here's an example:
+
+MyString:
+.db 13, "Hello, world!"     ; This string is 13 characters long
+
+The distinction is important because different routines are used to print the different strings.
+
+
+The label is used as the name of the string. When we want to print the string, we use the label as the identifier. The label is really the address of where the string is in the program. Unfortunately, the string-printing routines want the address of the string in all of the memory, not just our program. So, we have to add the address of our program to the address of the string. Here's a picture:
+
+|-----------------------|------------------------Hello, world------------...
+^ Start of memory       ^ Start of program       ^ The string
+
+| -- Program address -- | -- The string label -- |
+| --  What the string printing routines want  -- |
+
+Luckily, ZShell stores the address of our program in memory location PROGRAM_ADDR. PROGRAM_ADDR is a number defined in TI-85.h. Here's how to use that number to convert our string label into the address used to print the string:
+
+     ld   HL, MyString       ; get the label
+     ld   DE, (PROGRAM_ADDR) ; get the program's address
+     add  HL, DE             ; HL is now the needed address
+ 
+This calculation is needed no matter which string printing method you use.
+
+
+There are four different ways to print a string - length-indexed in menu and normal style, and zero-terminated in menu and normal style. The four ROM routines are:
+
+D_LM_STR: Display Length-indexed Menu-style STRing
+D_LT_STR: Display Length-indexed Text-style STRing
+D_ZM_STR: Display Zero-terminated Menu-style STRing
+D_ZT_STR: Display Zero-terminated Text-style STRing
+
+The string routines use the same coordinates as the character printing routines above. The screen coordinate is updated after printing a string just like it is after printing a character. Also, with length-indexed strings, the length must be stored in register B before printing. Here is an example of D_LM_STR. The rest are very similar to this:
+
+     ld   ($8333), $01       ; set the coordinates   
+     ld   ($8334), $01
+        
+     ld   HL, MyString       ; fix the string address
+     ld   DE, (PROGRAM_ADDR)
+     add  HL, DE
+
+     ld   B, 13              ; the string is 13 characters long
+     ROM_CALL(D_LM_STR)      ; print the string      
+  
+
+ 
+In the next lesson, you will learn how to use program jumps to create your own subroutines.    
+
+
+On to the next lesson: Program Jumps
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 7-8-96 by Greg Parker. Last update: never
+
+ 
+ 
+
+
+
+

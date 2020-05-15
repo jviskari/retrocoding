@@ -1,0 +1,96 @@
+
+
+
+TI-85 Assembler Programming - Program Jumps
+
+
+
+
+
+
+TI-85 Assembler Programming - Program Jumps
+
+ROM calls are nice. They let you do something without worrying how it does it. You don't really care how D_HL_DECI prints the number onscreen, as long as it does. Also, you can do it many times without having to type in the whole process each time; you only have to type in ROM_CALL(). In this lesson, you will learn how to write your own subroutines that have the same qualities.
+
+
+In previous lessons, programs were completely straightforward. An instruction would execute, and then the next one, and then the next one, and so on. With ROM calls, you could change the execution order slightly by running ROM code in the middle, but the program still went in a straight line. In order to make execution deviate from the straight path, we need to use program jumps. Jumps allow us to go to a different place in the program and continue from there. They are exactly like goto's in various languages. 
+
+
+In assembler, jumps are done by instruction number. Counting instructions to figure out where to jump to is not fun, so TASM allows us to assign labels to instructions and jump to them. Here is an example of a program jump:
+
+     ; start of program somewhere above
+     ...
+
+     LD   A, 45
+MyLabel:            ; program label 
+     LD   HL, 17
+     ROM_CALL(D_HL_DECI)
+
+     ...
+     ; more program
+     ...
+
+     LD   C, 42
+     JR   MyLabel   ; jump to MyLabel
+     LD   D, 15
+     ...
+
+The program executes merrily until it gets to the JR instruction. At that point, the program continues running at the label. Here, the program will store 42 in C just before it jumps to MyLabel. There, it will continue by storing 17 in HL and executing a ROM call. The instruction LD D, 15 does not get executed. MyLabel is identified as a label by the :. 
+
+
+In this way, we can set up simple loops. It is not a good idea at this point, but we can do it anyway:
+
+Loop:
+     INC  A
+     LD   B, A
+     JR   Loop
+
+We increment A, store A into B, and then jump back where we were before and sttart again. Do you see why we don't want to do this? The program will get stuck in this loop because there is no way out of it. We just keep executing these three instructions over and over again. Since it doesn't stop, it is called an infinite loop. The only way to stop an infinite loop is to take out the batteries and reset the calculator. In the next two lessons, you will learn to control loops and make them stop.
+
+
+Jumps done using JR have limited range. They can't jump too far away from themselves. If you need to jump a long way (more than about 120 program bytes) then you need to use the JP instruction. JP is slower but can jump anywhere in the program, no matter how far away. Using ZShell, the JP instruction is replaced by the JUMP_ macro. It does the same thing but takes into account special circumstances encountered on the TI-85. 
+
+
+JR doesn't work very well for subroutines, though. When the program jumps to a label using JR, there is no way to find out where it can from. If we want to jump to a subroutine, we have to store where we were so we can go back when the subroutine is done.
+
+
+The way to handle subroutines is with the CALL and RET statements. CALL is the same as JR, in that it jumps to a label, except that it stores the program's previous location on the stack. Don't worry about what the stack is yet, just remember that the old location is stored. The number that is stored is called the return address. The RET statement is used at the end of a subroutine. It looks at the stack to find out what the old location was and jumps back to there. Here's an example:
+
+     ;... the program
+     INC  C
+     CALL MySub    ; jump to the subroutine
+     INC  A     
+     ;... more stuff
+MySub:
+     INC  B      
+     ;... do stuff in the subroutine
+     RET           ; go back where we came from     
+
+First comes INC C. Then we jump to MySub, remembering where we came from. In MySub we INC B and do other stuff. At the end of MySub is the RET instruction, so we find out where we came from and go back. When we get back we INC A and continue with the program.
+
+
+If we want, we can call subroutines from within subroutines. One warning - make sure each CALL has a RET and each RET has a CALL. If CALL is missing the program will get confused, because it won't know where to go back to. If RET is missing, the program will keep going, either running part of the following subroutine or falling off of the end of the program. All of those things result in buggy programs.
+
+
+In the next lesson we'll look at conditional jumps, the assembler equivalent of if statements.
+
+
+
+On to the next lesson: "IF" statements.
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 12-27-95 by Greg Parker. Last update: 12-30-95
+
+
+ 
+ 
+

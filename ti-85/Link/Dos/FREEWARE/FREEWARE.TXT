@@ -1,0 +1,849 @@
+
+				****************
+				* FREEWARE.TXT *
+				****************
+
+TI-GRAPH LINK FOR THE PC
+------------------------
+
+To print this file from the DOS prompt to a parallel printer connected to
+LPT1 on your PC, enter: 
+
+   TYPE A:\FREEWARE\FREEWARE.TXT >LPT1
+
+NOTE: The contents of this file apply, in most cases, to the TI-82 and
+TI-85 graphing calculators.  Because of the similarity of the calculators,
+the abbreviation "TI-82/85" is used to mean "TI-82 and/or TI-85."  In some
+areas, references are also made that apply to TI-81 calculators.  Differences
+that exist between the TI-81, TI-82, and TI-85 are explicitly described where
+applicable.
+
+
+ABOUT GRAPH-TI (TI-Graphing Calculator Interest Group)
+------------------------------------------------------
+
+From our attendance at many math conferences and institutes, the Texas
+Instruments Graphics Team has learned that teachers want to keep in touch
+with each other and keep current with the use of graphing calculators in 
+the classroom. 
+
+To aid this worldwide communication and sharing, Texas Instruments
+has formed an electronic mail (e-mail) TI Graphics Calculator Interest
+Group (GRAPH-TI) for educators.  Data communication is available on Internet,
+BITNET, and connected networks.
+
+For a complete description of GRAPH-TI and instructions on how to use
+GRAPH-TI to share programs and data, see the file GRAPH-TI.TXT on this
+disk.  For other questions, feel free to contact TI via e-mail at ti-cares@ti.com.
+
+Now that you have TI-GRAPH LINK, you can take full advantage of GRAPH-TI 
+by having access not only to running dialogue about the products and 
+pedagogical hints, but also to the growing number of programs, data, and 
+interesting problems that are being collected in the GRAPH-TI library.  
+The TI-82/85 programs and data that have been accumulated are available to 
+you for loading into your TI-82/85.
+
+
+ASCII and CONVERSION FILE UTILITIES
+-----------------------------------
+
+The directory \FREEWARE on the TI-GRAPH LINK disk contains several public 
+domain programs to help you exchange TI-82/85 programs, data, and 
+documentation, particularly on the TI graphing calculator special interest
+e-mail network.  The use of these programs is explained elsewhere in this 
+file.
+
+To take full advantage of GRAPH-TI, you need to understand how to use
+the software utilities that are included on this disk.  These utilities 
+are necessary for using GRAPH-TI for TI-82/85 program and data sharing.
+
+    ASCII81P.EXE   Converts a TI-81 program (filename.PRG) into an ASCII
+                   text file (filename.AS1) for viewing and editing.
+                   Example:  ASCII81P filename.PRG
+
+                   Converts the ASCII text file back into a TI-81 program
+                   file.  
+                   Example:  ASCII81P filename.AS1
+      
+    ASCII82P.EXE   Converts a TI-82 program (filename.82P) into an ASCII
+                   text file (filename.AS2) for viewing and editing.
+                   Example:  ASCII82P filename.82P
+ 
+                   Converts the ASCII text file back into a TI-82 program
+                   file.  
+                   Example:  ASCII82P filename.AS2
+
+    ASCII85P.EXE   Converts a TI-85 program (filename.85P) into an ASCII 
+                   text file (filename.ASC) for viewing and editing.
+                   Example:  ASCII85P filename.85P
+ 
+                   Converts the ASCII text file back into a TI-85 program 
+                   file.  
+                   Example:  ASCII85P filename.ASC
+
+    TRANSLAT.EXE   Translates a TI-81 program into a TI-82 program.
+                   Example:  TRANSLAT filename.PRG
+
+                   Translates a TI-82 program into a TI-85 program.
+                   Example:  TRANSLAT filename.82P
+
+                   Translates a TI-85 program into a TI-82 program.
+                   Example:  TRANSLAT filename.85P
+
+    UUE20.COM      Encodes a TI-81/82/85 program or data file into a
+                   UUE text file (filename.UUE).  
+                   Example:  UUE20 filename.PRG to produce filename.UUE
+
+    UUD20.COM      Decodes a UUE file and replaces the original data file 
+                   on the disk. 
+                   Example:  UUD20 filename.UUE
+
+PROGRAM ACKNOWLEDGMENTS
+-----------------------
+
+ASCII81P.EXE, ASCII82P.EXE, ASCII85P.EXE, and TRANSLAT.EXE were developed
+by Steve Reid of the TI Graphics Team and are released into the public domain.
+
+UUE20.COM and UUD20.COM are utilities from the software public domain. 
+They are available free of charge from the public domain and are included
+here for your convenience.  The TI Graphics Team wishes to thank the
+authors, David Kirschbaum and Ted Kaldis, for their permission to place
+these utilities on this disk.
+
+
+PURPOSE OF THESE UTILITIES
+--------------------------
+
+GRAPH-TI is set up on Internet using electronic mail.  E-mail communication
+is based on the ASCII character set.  TI-81/82/85 programs and TI-82/85 data
+files are binary and will not transfer "as is" via e-mail.  This disk 
+contains programs providing two different methods of turning binary files 
+into ASCII files and then reversing the process.  Using either method, a 
+TI-81/82/85 program file can be included in an e-mail message to a colleague.
+
+Programs to be submitted to the TI-82/85 library on GRAPH-TI should be in a
+specific format (see "CREATING A STANDARD-FORMAT GRAPH-TI FILE" later in 
+this section), which incorporates both methods.
+
+USING ASCIIxxP.EXE (ASCII81P.EXE, ASCII82P.EXE, and ASCII85P.EXE)
+-----------------------------------------------------------------
+
+You can use the ASCIIxxP.EXE conversion utilities to convert binary 
+TI-81/82/85 program files (.PRG, .82P, or .85P, not data files such as .82L
+or.85M) into a human-readable ASCII equivalent.  Using ASCIIxxP.EXE, the 
+ASCII files can also be converted back to binary TI-81/82/85 program files.
+
+  -  The ASCII files can be viewed and edited using a DOS text editor.
+
+  -  TI-82/85 programs can be loaded back into the TI-82/85 calculator using
+     TI-GRAPH LINK.
+
+  -  TI-81 programs, created using the PC-81 emulator can be edited and
+     loaded back into PC-81.
+
+CREATING AN ASCII FILE FROM A PROGRAM:
+
+To use this utility to create an ASCII file from a TI-82 program, you would
+enter, for example:
+
+  ASCII82P filename.82P
+
+where filename is the name of a TI-82 program file.
+
+The utility creates a new file that has the same filename as the original 
+file and the extension .AS2 (for TI-82 programs).  The original program is 
+unchanged. 
+
+  - If  ASCII81P is used for a TI-81 program, a file with the extension
+    .AS1 is created; 
+
+  - If  ASCII85P is used for a TI-85 program, a file with the extension
+    .ASC is created.
+
+To use this utility to convert an ASCII-equivalent program file back to a 
+binary program file, enter, for example:
+
+  ASCII82P filename.AS2
+
+where filename is the name of a TI-82 ASCII file.  The utility creates a new
+file that has the same filename and the extension .82P.
+
+WARNING: If a file with the same filename and extension already exists in the 
+working directory, the older file will be replaced without notice by the 
+newly created file.
+
+
+
+CREATING A NEW PROGRAM FROM AN ASCII FILE:
+
+To use this utility to create a new program from a new ASCII file,
+you must include certain commands before and after your program.  
+In your ASCII editor include the following commands:
+
+For a TI-81 program:
+-----------------------------      
+\START81\         
+\NAME=prgmname
+\FILE=TI81_x.PRG (where x = 0-9, A-Z, or @)  
+   .
+   .
+Your program goes here.
+   .
+   .
+\STOP81\
+
+
+For a TI-82 program:
+-----------------------------
+\START82\
+\COMMENT=optional description
+\NAME=prgmname
+\FILE=prgmname.82P
+   .
+   .
+Your program goes here.
+   .
+   .
+\STOP82\
+
+
+For a TI-85 program:
+-----------------------------
+\START\
+\COMMENT=optional description
+\NAME=prgmname
+\FILE=prgmname.85P
+   .
+   .
+Your program goes here.
+   .
+   .
+\STOP\
+
+
+USING TRANSLAT.EXE
+------------------
+
+You can use TRANSLAT.EXE to translate binary TI-81/82/85 program files (.PRG,
+.82P, or .85P) for use by a different calculator.  The following translations 
+are possible:
+
+	TI-81 --> TI-82 	TI-82 --> TI-85		TI-85 --> TI-82.
+
+During the translation process, a warning message is displayed for each line
+in the program for which there may be no direct code translation.  These 
+messages are normally displayed to the screen.  However, you can redirect 
+this information to a printer connected to the parallel printer port or 
+to a file by using the DOS redirect command (>).
+
+
+- To redirect the messages to a printer, enter 
+	
+	TRANSLAT filename.PRG >lpt1	(for TI-81 programs)
+	TRANSLAT filename.82P >lpt1	(for TI-82 programs)
+	TRANSLAT filename.85P >lpt1	(for TI-85 programs)
+
+- To redirect the messages to an ASCII file named errors.txt, enter:
+
+	TRANSLAT filename.PRG >errors.txt	(for TI-81 programs)
+	TRANSLAT filename.82P >errors.txt	(for TI-82 programs)
+	TRANSLAT filename.85P >errors.txt	(for TI-85 programs)
+
+When TRANSLAT.EXE is executed on a program file, it creates a new file
+that has the same filename as the original file and the appropriate extension.  
+
+-  From a PC-81 program, it creates a TI-82 program file with a .82P extension.
+
+-  From a TI-82 program, it creates a TI-85 program file with a .85P extension.
+
+-  From a TI-85 program, it creates a TI-82 program file with a .82P extension.
+
+For example, to use this utility to translate a TI-85 program for use on a
+TI-82, you would enter "TRANSLAT filename.85P" where filename is the name of
+the TI-85 program.
+
+The translate utility creates a new file that has the same filename as the
+original file and the extension .82P.  The original file is unchanged. 
+
+WARNING: If a file with the same filename and extension already exists in the 
+working directory, the older file will be replaced without notice by the 
+newly created file.
+
+
+USING TRANSLAT.EXE TO CONVERT TI-81 PROGRAMS to TI-82 PROGRAMS
+--------------------------------------------------------------
+Most TI-81 statements accurately translate to TI-82 equivalents.
+There may be some syntactical differences between some of the statements,
+which need to be corrected.
+
+Significant differences include:
+
+   *** R>P(  and P>R(  CONVERSIONS ***
+
+   The TI-81 has two conversions:
+
+      R>P(     : stores the R value in 'Ans' and the 'R' variable, and
+                 the theta value in the 'theta' variable.
+
+      P>R(     : stores the X value in 'Ans' and the 'X' variable, and 
+                 the Y value in the 'Y' variable.
+
+   The TI-82 has four separate functions.  They return values but do not 
+   update R, theta, X, or Y.
+ 
+      R>Pr(    : returns the R value of the conversion, 
+      R>P@(    : (where '@' is the theta symbol) returns the theta value of
+                 the conversion.
+
+      P>Rx(    : returns the 'X' value of the conversion,
+      P>Ry(    : returns the 'Y' value of the conversion.
+
+   TI-GRAPH LINK converts R>P( from the TI-81 into R>Pr( on the TI-82 and P>R(
+   into P>Rx(.  Related statements should be adjusted as appropriate.
+
+   *** MATRIX DIMENSIONING ***
+
+   On the TI-81, matrices are dimensioned and dimensions are retrieved using 
+   the Arow, Acol, Brow, etc. variables in the [VARS] DIM menu.  An integer 
+   value is stored into the corresponding row or column variable.  On the 
+   TI-82, matrix dimensions are set by storing a two-element list to the 'dim'
+   of the desired matrix name.  'dim' can also be used as a function that 
+   returns the dimensions of a matrix.
+
+   For example:
+      {5,4}->dim [A] on the TI-82 sets matrix [A] to have 5 rows and 4 
+      columns.
+
+   This would have been done by the following on the TI-81:
+      5->Arow
+      4->Acol
+
+   TRANSLAT.EXE cannot perform a complete translation on code such as this.
+   When TRANSLAT.EXE sees the Arow or Acol (or B,C dim variables), it 
+   translates that variable into the following TI-82 code:
+
+      dim [A]:Ans(1) for 'Arow' value in 'Ans'
+      dim [A]:Ans(2) for 'Acol' value in 'Ans'
+
+   This code translation gets the value of the row or column index into the
+   'Ans' variable.  This may not be what was originally intended.  Modify 
+   the translated code as needed.
+
+   *** End VS. RETURN ***
+
+   The TI-82 has both the END and RETURN commands, while the TI-81 combined 
+   these functions into one END statement.  TRANSLAT.EXE translates any END 
+   command found into a TI-82 END statement (for use in closing FOR loop 
+   structures, etc.).  There may be instances where the END statement needs
+   to be a RETURN on the TI-82.  Modify the translated TI-82 code as needed.
+
+USING UUE20.COM and UUD20.COM
+-----------------------------
+
+You can use UUE20.COM to convert binary TI-81/82/85 programs (.PRG, .82P, or
+.85P) and data (.82L or 85M, for example) into an ASCII format for transfer 
+via e-mail.  The recipient can use UUD20.COM to reverse the process by 
+converting the "encoded" ASCII version of the file back to binary (.PRG, 
+.82P, .85P, .82L, 85L, .82M, .85M, ...) for loading into a TI-82/85.  
+(NOTE: You can use UUE20 and UUD20 with any binary file, not just 
+TI-81/82/85 data files.)
+
+
+CREATING A STANDARD-FORMAT GRAPH-TI FILE
+----------------------------------------
+
+Suppose you have a program and associated data files on your TI-82/85 that
+you want to submit to GRAPH-TI for others to use.  You would follow the steps
+summarized under "FORMAT" and detailed under "PROCEDURE" shown below.
+
+Assume that you have previously transmitted the group file TILOGO.82G/85G
+(provided in the \SAMPLES directory) to your TI-82/85.  (If necessary, see 
+"Sending Items to the TI-82/85" in the guidebook.)  Your calculator would
+contain the individual program and data components of the group file.  These
+items are listed as TILOGO and Pic1.  When executed, this simple program
+reverses the displayed pixels of Pic1. 
+
+
+FORMAT
+------
+
+The GRAPH-TI submission format for any programs, with or without data, is:
+
+     --------------------------------------- 
+    |PUT filename.ext                       |
+    |Mandatory 2-line, mini-abstract for    |
+    |the GRAPH-TI LIST command.             |
+    |----begin documentation----            |
+    |User documentation should include      |
+    |any information users should know      |
+    |about the program, such as memory or   |
+    |system requirements, and any variables |
+    |that must be defined outside the       |
+    |program.                               |
+    |----end documentation----              |
+    |----begin ASCII----                    |
+    |ASCII version of the program obtained  |
+    |from the ASCIIxxP.EXE utility on the   |
+    |disk.                                  |
+    |----end ASCII----                      |
+    |----begin UUE----                      |
+    |UUE20 encoded version of the grouped   |
+    |file obtained from the UUE20 utility   |
+    |on the disk.                           |
+    |----end UUE----                        |
+    |eof  (end of file)                     |
+     ---------------------------------------
+
+
+PROCEDURE
+---------
+
+NOTE: You may substitute your actual program and data item names in place of
+TILOGO and PIC1 in this procedure.
+
+1.  Use TI-GRAPH LINK to transfer the program (TILOGO) and picture (Pic1)
+    to the PC and save them as binary files, TILOGO.82P/85P and PIC1.82I/85I.
+
+2.  We want to keep TILOGO.82P/85P and PIC1.82I/85I together in the
+    GRAPH-TI library file, so use the Group Data Files command from
+    the Utilities menu to combine them into a group file, TILOGO.82G/85G.
+
+3.  (optional) To include a human-readable form of the program in the 
+    GRAPH-TI file, you must use ASCIIxxP.EXE to translate the file into an 
+    ASCII equivalent file.  At the DOS prompt, enter ASCIIxxP TILOGO.82P/85P.
+    This produces an ASCII file, TILOGO.AS2 (TI-82) or TILOGO.ASC (TI-85),
+    which substitutes strings of "typewriter" characters for the special
+    TI-82/85 characters.
+
+4.  Because both TILOGO.82/85P and PIC1.82I/85I (included in TILOGO.82G/85G) 
+    are binary, they cannot be sent via e-mail.  Use UUE20 to create an 
+    ASCII version of the group file, TILOGO.82G/85G.  At the DOS prompt, 
+    enter UUE20 TILOGO.82G/85G.  This produces an encoded ASCII file, 
+    TILOGO.UUE.  Although the .UUE file is ASCII, it is far from readable 
+    because of the encoding scheme used.  However, UUD20 can "decode" it for
+    transfer to a TI-82/85 (see "DECODING A GRAPH-TI FILE").
+
+5.  Using any DOS text editor, open the file TILOGO.UUE.  You will not be
+    able to read any of the text, but you should see a lot of strange
+    "typewriter" characters.  Place the cursor at the very beginning
+    of the file.
+
+6.  The first line of a GRAPH-TI library file is the command to submit
+    the file to GRAPH-TI.  Enter a blank line and type "PUT filename.ext"
+    where "filename.ext" is the name of the .UUE file.  The file name is 
+    case-sensitive, and is the name that will be used by the GRAPH-TI archive.
+
+7.  The second part of a GRAPH-TI library file must contain a 2-line, 
+    mini-abstract to be read by the GRAPH-TI LIST command.  Type the 
+    abstract lines as lines 2 and 3.  (Each line should be 75 characters
+    or less.)
+
+8.  The third part of the file is any documentation that you feel
+    necessary for future users.  This may include program instructions,
+    system requirements, and information about the mathematical application.
+
+    Type the fourth line "----begin documentation----".  Begin your
+    documentation on the fifth line.  At the end of your documentation, 
+    type a line "----end documentation----".
+
+
+9.  The fourth part of the file contains the human-readable ASCII listings 
+    of the program(s) included in your file.  This allows GRAPH-TI users
+    to read the program for reference or to type it directly into their
+    TI-82/85, if TI-GRAPH LINK is not readily available to them.  (This 
+    section is optional; if your program is very large, you may decide not
+    to include it.)
+
+    Type a line "----begin ASCII----".  Now insert the file TILOGO.AS2 
+    (for TI-82) or TILOGO.ASC (for TI-85) created in step 3.  Type a line
+    "----end ASCII----".
+
+10. The fifth part of the file contains the UUE encoded TI-82/85 group. 
+    This is the section that UUD20 (see below) will pick out of the
+    e-mail file and decode as TILOGO.82G/85G.
+
+    Type a line "----begin UUE----".  The .UUE group file created in
+    step 4 is already in the file you are editing, because it is the file 
+    you loaded into the editor.  Move the cursor to the end of the file 
+    and type a line "----end UUE----".
+
+11. Save the file, which is entirely in ASCII, as TILOGO.UUE (this
+    will replace your original .UUE file), and you are ready to submit
+    it to GRAPH-TI or to share it with other users!
+
+The file TILOGO.UUE that was the result of this example is in directory
+\SAMPLES for you to refer to.
+
+
+CREATING A STANDARD-FORMAT NONPROGRAM GRAPH-TI FILE
+---------------------------------------------------
+
+For sharing data, but not programs, the submission format is the same
+as above, except that there is no ASCII version of the data in the
+file.  In the procedure outlined above, you would skip steps 3 and 9.
+
+"DECODING" A GRAPH-TI FILE
+--------------------------
+
+If you request and receive a file from GRAPH-TI, it will be in this format. 
+To load the program or data into your TI-82/85, you simply need to run the
+UUD20 utility on the new .UUE file you got from GRAPH-TI.  The UUD20
+utility knows to ignore all the extra items in the file (mini-abstract,
+user documentation, ASCII section if have a program file), and extracts and
+decodes only the UUE20 section of the file; all other sections remain 
+unchanged.
+
+Loading a GRAPH-TI application into your TI-82/85 is a simple
+two-step process.  For example, the recipient of TILOGO.UUE would:
+
+1. Enter UUD20 TILOGO.UUE at the DOS prompt.  The group file TILOGO.82G/85G 
+   is created.  (UUE20 "knows" the name of the original file.)
+
+2. Use TI-GRAPH LINK to transmit TILOGO.82G/85G to the TI-82/85.  (TI-GRAPH
+   LINK "knows" to send the individual elements in the group separately.)
+
+OTHER USES OF ASCIIxxP.EXE
+--------------------------
+
+Above we mentioned that ASCIIxxP could be used to produce an ASCII version
+of a TI-82/85 program to be included in the file submitted to GRAPH-TI.  Upon
+receipt of a TI-82/85 library file from GRAPH-TI, you can use ASCIIxxP to
+produce a .82P/85P file for loading into your TI-82/85.  ASCIIxxP (like UUD)
+"knows" to ignore all the other items in the GRAPH-TI file (mini-abstract,
+user documentation, and UUE20 section) and just operates on the .AS2/.ASC 
+section of the file.  The output will be "filename.82P/85P" (ASCIIxxP "knows" the name of
+the original program) and can be loaded into the TI-82/85 using TI-GRAPH LINK.
+
+Another use of ASCIIxxP is for e-mail communication of programs or sample 
+sections of code.  With ASCIIxxP any existing TI-82/85 program can be
+converted for e-mail distribution. 
+
+In addition, the GRAPH-TI Interest Group e-mail often has interesting
+programs or programming ideas for people to consider.  These programs usually
+require some of the special TI-82/85 characters.  
+
+The ASCII82P and ASCII85P conversion sets are listed below to help establish
+a standard for representation of the non-ASCII characters and symbols as they
+are used in GRAPH-TI communications.  This should be a time-saver for 
+TI-82/85 and GRAPH-TI users.
+
+The ASCII representation of special TI-82/85 characters uses the \ 
+(back-slash) character at the beginning and end to identify and separate 
+the multi-character strings that represent the special characters, as 
+listed on the following pages.
+
+
+FUNCTIONS AND INSTRUCTIONS FOR THE TI-81:
+(NOTE: FOR TI-81 ONLY -- TI-82 and TI-85 ITEMS FOLLOW.)
+
+    KEYWORD (key)                  STRING (with delimiters) 
+    -------------                  ------------------------
+    STO-> store                    \->\
+    (-)  unary minus               \(-)\
+    square root                    \SquareRoot\
+    cube root                      \CubeRoot\
+    10^ (ten to x)                 \10^\  (representation is for 10 only)
+    inverse                        \^-1\
+    squared                        \^2\
+    cubed                          \^3\
+    r  radian                      \radian\
+    o  degree                      \degree\
+    R>P(                           \R>P(\
+    P>R(                           \P>R(\
+    theta                          \Theta\
+    Sigma x                        \Sigma-x\
+    Sigma x^2                      \Sigma-x^2\
+    Sigma xy                       \Sigma-xy\
+    Sigma y                        \Sigma-y\
+    Sigma y^2                      \Sigma-y^2\
+    x bar (mean)                   \x-bar\
+    y bar (mean)                   \y-bar\
+    standard deviation (pop) x     \sx\
+    standard deviation (pop) y     \sy\
+    pi                             \pi\
+    
+    KEYWORD (key)                  STRING (without delimiters) 
+    -------------                  ---------------------------
+    sin^-1                         sin^-1_
+    sinh^-1                        sinh^-1_
+    cos^-1                         cos^-1_
+    cosh^-1                        cosh^-1_
+    tan^-1                         tan^-1_
+    tanh^-1                        tanh^-1_
+
+    (NOTE: _ after -1 is a REQUIRED blank space.    
+
+
+FUNCTIONS AND INSTRUCTIONS FOR THE TI-82:
+(NOTE: FOR TI-82 ONLY -- TI-85 ITEMS FOLLOW.)
+--------------------------------------------
+    ->   store                     \->\
+    pi                             \pi\
+    >= greater than or = to        \>=\
+    <= less than or = to           \<=\
+    not equal to                   \<>\
+    square root                    \sqrt\
+    cube root                      \CubeRt\
+    10^                            \10^\   (representation is for 10 only)
+    (-) negation                   \(-)\
+    x Root y                       \XrootY\
+    sequence variable n            \n\
+    matrix transpose               \T\
+    squared                        \^2\
+    cubed                          \^3\
+    inverse                        \^-1\
+    r   radian                     \rad\
+    o   degree                     \deg\
+    sinh^-1                        \sinh^-1\
+    sin^-1                         \sin^-1\
+    cosh^-1                        \cosh^-1\
+    cos^-1                         \cos^-1\
+    tanh^-1                        \tanh^-1\
+    tan^-1                         \tan^-1\
+    to Frac display conversion     \>Frac\
+    to DMS display conversion      \>DMS\
+    to Dec display conversion      \>Dec\
+    E  exponent notation           \E\
+    zthetamax                      \Z-@max\
+    zthetamin                      \Z-@min\
+    zthetastep                     \Z-@step\
+    delta X  (uppercase)           \Delta-x\
+    delta Y  (uppercase)           \Delta-y\
+    thetamax                       \@max\
+    thetamin                       \@min\
+    thetastep                      \@step\
+    Sigma x                        \Sigma-x\
+    Sigma x^2                      \Sigma-x^2\
+    Sigma xy                       \Sigma-xy\
+    Sigma y                        \Sigma-y\
+    Sigma y^2                      \Sigma-y^2\
+    standard deviation (pop) x     \sx\
+    standard deviation (pop) y     \sy\
+    x bar (mean)                   \x-bar\
+    y bar (mean)                   \y-bar\
+
+    sequence function              \Un\
+    sequence function              \Vn\
+    sequence variable              \UnStart\
+    sequence variable              \VnStart\
+    sequence variable              \nStart\
+    sequence variable              \nMin\
+    sequence variable              \nMax\
+    sequence variable              \Un-1\
+    sequence variable              \Vn-1\
+    zoom memory sequence variable  \ZUnStart\
+    zoom memory sequence variable  \ZVnStart\
+    zoom memory sequence variable  \ZnStart\
+    zoom memory sequence variable  \ZnMin\
+    zoom memory sequence variable  \ZnMax\
+    table variable                 \Delta-Tbl\
+
+    X1 parametric function         \X1t\
+    Y1 parametric function         \Y1t\
+    X2 parametric function         \X2t\
+    Y2 parametric function         \Y2t\
+    X3 parametric function         \X3t\
+    Y3 parametric function         \Y3t\
+    X4 parametric function         \X4t\
+    Y4 parametric function         \Y4t\
+    X5 parametric function         \X5t\
+    Y5 parametric function         \Y5t\
+    X6 parametric function         \X6t\
+    Y6 parametric function         \Y6t\
+
+    Y1 function                    \Y1\
+    Y2 function                    \Y2\
+    Y3 function                    \Y3\
+    Y4 function                    \Y4\  
+    Y5 function                    \Y5\
+    Y6 function                    \Y6\
+    Y7 function                    \Y7\
+    Y8 function                    \Y8\
+    Y9 function                    \Y9\
+    Y0 function                    \Y0\
+
+    r1 function                    \r1\
+    r2 function                    \r2\
+    r3 function                    \r3\
+    r4 function                    \r4\
+    r5 function                    \r5\
+    r6 function                    \r6\
+
+    L1 list variable               \L1\
+    L2 list variable               \L2\
+    L3 list variable               \L3\
+    L4 list variable               \L4\
+    L5 list variable               \L5\
+    L6 list variable               \L6\
+
+    x1 statistical summary point   \x1\
+    y1 statistical summary point   \y1\
+    x2 statistical summary point   \x2\
+    y2 statistical summary point   \y2\
+    x3 statistical summary point   \x3\
+    y3 statistical summary point   \y3\
+
+    first quartile variable        \Q1\
+    third quartile variable        \Q3\
+
+Greek Characters
+    theta                          \@\
+
+MISC characters
+    box mark                       \box icon\
+    cross mark                     \crs icon\
+    dot mark                       \dot icon\  
+
+CONV characters
+    rectangular to polar return theta  \R>P@\
+    rectangular to polar return R      \R>Pr\
+    polar to rectangular return x      \P>Rx\
+    polar to rectangular return y      \P>Ry\
+
+
+\Special
+    continue TI-82 program line     \#\
+
+
+FUNCTIONS AND INSTRUCTIONS FOR THE TI-85:
+---------------------------------------------
+    ->   store                     \->\
+    pi                             \pi\
+    <  angle for complex numbers   \angle\
+    >= greater than or = to        \>=\
+    <= less than or = to           \<=\
+    not equal to                   \<>\
+    square root                    \sqrt\
+    10^                            \10^\  (representation is for 10 only)
+    (-) negation                   \(-)\
+    x Root y                       \xRooty\
+    matrix transpose               \T\
+    squared                        \^2\
+    inverse                        \^-1\
+    r   radian                     \rad\
+    o   degree                     \deg\
+    sinh^-1                        \sinh^-1\
+    sin^-1                         \sin^-1\
+    cosh^-1                        \cosh^-1\
+    cos^-1                         \cos^-1\
+    tanh^-1                        \tanh^-1\
+    tan^-1                         \tan^-1\
+    binary designator (b)          \bin\
+    decimal designator (d)         \dec\
+    hex designator (h)             \hex\
+    octal designator (o)           \oct\
+    hexadecimal A                  \hexA\
+    hexadecimal B                  \hexB\
+    hexadecimal C                  \hexC\
+    hexadecimal D                  \hexD\
+    hexadecimal E                  \hexE\
+    hexadecimal F                  \hexF\
+    to Sph display conversion      \>Sph\
+    to Rec display conversion      \>Rec\
+    to Pol display conversion      \>Pol\
+    to Oct display conversion      \>Oct\
+    to Hex display conversion      \>Hex\
+    to Frac display conversion     \>Frac\
+    to DMS display conversion      \>DMS\
+    to Dec display conversion      \>Dec\
+    to Cyl display conversion      \>Cyl\
+    to Bin display conversion      \>Bin\
+    vc-li  data conversion         \vc>li\
+    St-Eq  data conversion         \St>Eq\
+    li-vc data conversion          \li>vc\
+    Eq-St data conversion          \Eq>St\
+    E  exponent notation           \E\
+    u0  built-in constant          \u0\
+    e0  built-in constant          \e0\
+    zthetamax                      \z-@max\
+    zthetamin                      \z-@min\
+    zthetastep                     \z-@step\
+    delta x  (lowercase)           \Delta-x\
+    delta y  (lowercase)           \Delta-y\
+    thetamax                       \@max\
+    thetamin                       \@min\
+    thetastep                      \@step\
+    Sigma x                        \Sigma-x\
+    Sigma x^2                      \Sigma-x^2\
+    Sigma xy                       \Sigma-xy\
+    Sigma y                        \Sigma-y\
+    Sigma y^2                      \Sigma-y^2\
+    standard deviation (pop) x     \Sx\
+    standard deviation (pop) y     \Sy\
+    x bar (mean)                   \x-bar\
+    y bar (mean)                   \y-bar\
+
+Greek Characters
+    alpha (lowercase)              \LC-alpha\
+    beta (lowercase)               \LC-beta\
+    gamma (lowercase)              \LC-gamma\
+    Delta (uppercase)              \UC-Delta\
+    delta (lowercase)              \LC-delta\
+    epsilon (lowercase)            \LC-epsilon\
+    theta (lowercase)              \LC-theta\
+    lambda (lowercase)             \LC-lambda\
+    mu (lowercase)                 \LC-mu\
+    rho (lowercase)                \LC-rho\
+    Sigma (uppercase)              \UC-Sigma\
+    sigma (lowercase)              \LC-sigma\
+    tau (lowercase)                \LC-tau\
+    phi (lowercase)                \LC-phi\
+    Omega (uppercase)              \UC-Omega\
+
+MISC characters
+    N tilde                        \UC-N~\
+    n tilde                        \LC-n~\
+    C cedilla                      \UC-C-cedilla\
+    c cedilla                      \LC-c-cedilla\
+    ? inverted                     \?\
+
+INTL characters
+    A acute                        \UC-A'\
+    a acute                        \LC-a'\
+    A grave                        \UC-A`\
+    a grave                        \LC-a`\
+    A circumflex                   \UC-A^\
+    a circumflex                   \LC-a^\
+    A umlaut                       \UC-A:\
+    a umlaut                       \LC-a:\
+    etc for e, i, o, u
+
+CONV characters (for example, ft^2 to m^2 would be \ft^2\\>\\m^2\
+    >   conversion operator         \>\
+    lt-yr  light year               \lt-yr\
+    ft^2                            \ft^2\
+    m^2                             \m^2\
+    mi^2                            \mi^2\
+    km^2                            \km^2\
+    in^2                            \in^2\
+    cm^2                            \cm^2\
+    yd^2                            \yd^2\
+    cm^3                            \cm^3\
+    in^3                            \in^3\
+    ft^3                            \ft^3\
+    m^3                             \m^3\
+    us  (micro seconds)             \usec\
+    oC   degree C                   \deg C\
+    oF   degree F                   \deg F\
+    oK   degree K                   \deg K\
+    oR   degree R                   \deg R\
+    N/m^2                           \N/m^2\
+    lb/in^2                         \lb/in^2\
+    mmH2O                           \mmH2O\
+    inH2O                           \inH2O\
+    ftlb/s                          \ftlb/s\
+    cal/s                           \cal/s\
+    Btu/mn                          \Btu/mn\
+    ft/s                            \ft/s\
+    m/s                             \m/s\
+    mi/hr                           \mi/hr\
+    km/hr                           \km/hr\
+    kw-hr                           \kw-hr\
+    l-atm                           \l-atm\
+
+\Special
+    continue TI-85 program line     \#\
+
+
+
+

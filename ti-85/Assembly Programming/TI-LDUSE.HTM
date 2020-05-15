@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+
+<TITLE>TI-85 Assembler Programming - Legal LD Uses</TITLE>
+
+<!-- Date: Saturday, February 18, 1995  12:28 AM -->
+
+</HEAD>
+
+<BODY>
+<CENTER><H3>TI-85 Assembler Programming - Legal LD uses</H3></CENTER>
+
+<P>
+This table lists the legal source/destination combinations for the LD instruction. Thanks to John Powers for looking this up so we don't have to.
+</P>
+<P> 
+<PRE>
+LD &lt;dest&gt; &lt;source&gt;
+
+X marks a legal source/dest combination
+
+         Source
+Dest   imm mem A B C D E H L (BC) (DE) (HL) (IX) (IY) BC DE HL IX IY SP
+      ------------------------------------------------------------------
+mem  |  .   .  X . . . . . .  .    .    .    .    .   X  X  X  X  X  X
+     | 
+A    |  X   X  . X X X X X X  X    X    X    X    X   .  .  .  .  .  .
+B    |  X   .  X . X X X X X  .    .    X    X    X   .  .  .  .  .  .
+C    |  X   .  X X . X X X X  .    .    X    X    X   .  .  .  .  .  .
+D    |  X   .  X X X . X X X  .    .    X    X    X   .  .  .  .  .  .
+E    |  X   .  X X X X . X X  .    .    X    X    X   .  .  .  .  .  .
+H    |  X   .  X X X X X . X  .    .    X    X    X   .  .  .  .  .  .
+L    |  X   .  X X X X X X .  .    .    X    X    X   .  .  .  .  .  .
+     | 
+(BC) |  .   .  X . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+(DE) |  .   .  X . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+(HL) |  X   .  X X X X X X X  .    .    .    .    .   .  .  .  .  .  .
+(IX) |  X   .  X X X X X X X  .    .    .    .    .   .  .  .  .  .  .
+(IY) |  X   .  X X X X X X X  .    .    .    .    .   .  .  .  .  .  .
+     | 
+BC   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+DE   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+HL   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+IX   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+IY   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+     | 
+SP   |  X   X  . . . . . . .  .    .    .    .    .   .  .  X  X  X  .
+
+imm  = immediate data such as $80DF
+mem  = memory address such as ($80DF)
+(BC) = using the value in BC as a memory address
+</PRE>
+</P>
+
+
+</BODY>
+</HTML>

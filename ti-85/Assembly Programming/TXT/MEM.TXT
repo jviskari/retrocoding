@@ -1,0 +1,42 @@
+
+
+
+TI-85 Assembler Programming - Data and Memory
+
+
+
+
+
+
+TI-85 Assembler Programming - Data and Memory
+
+In other programming languages, you store data in variables. You can do stuff with variables like adding two of them together and storing the result in a third variable. 
+
+ 
+In assembler, variables aren't as simple. The "variable" is actually an abstract concept. Inside the computer or calculator, variables don't exist. Instead, you directly access the memory and store your data there. 
+
+
+On the TI-85, "memory" means the 32K of RAM that is built-in. This memory is divided into 1-byte chunks. One byte allows you to store an eight digit binary number, so the largest number you can store in each location is a binary 11111111, or 255 in decimal. The lowest is 0. If you want to use larger numbers, you group several chunks together. One common grouping is two bytes, or a "word". Two bytes together can hold a value between 0 and 65535 (2^16). 
+
+
+Each one-byte chunk has a unique number, or address. We access these bytes by using the addresses, just like we use variable names to access variables.  Addresses are usually given as hexadecimal numbers for convenience, so a typical address might be $80DF. Addresses used with the Z80 chip are two bytes long.
+
+
+
+On to the next lesson: Data and Registers.
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 12-27-95 by Greg Parker. Last update: 12-29-95
+
+ 
+
+

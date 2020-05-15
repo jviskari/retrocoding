@@ -1,0 +1,2527 @@
+			    The ZShell School
+
+
+Lesson #1
+
+Welcome to the first lesson of the ZShell School! This first lesson may be
+a bit boring, but it's really necessary to know how the calculator works
+and a bit about the RAM memory, so you know what you do when you program.
+In the end of the lesson we'll make a classic "Hello World!" program. All
+software necessary to compile the program are downloadable at the "How to
+compile" section.
+
+Contents
+
+  * Binary and hex
+  * The memory in the TI-85
+  * A "Hello World!" program
+  * How to compile a program
+  * Next lesson
+  * Questions? Comments? Errors?
+  * Old lessons
+
+---------------------------------------------------------------------------
+
+Binary and hex
+
+I will now explain a very important part when you're programming a lowlevel
+language. You who know this stuff may skip this section.
+
+Our own number system has the base 10, and that's because we humans have 10
+fingers. Computers (and calculators) don't have fingers, they have
+electricity. To make it easy, there are two conditions, on and off, or 0
+and 1. That is a bit. Since it's a bit unpractical to work with the base 2,
+we put together 8 bits and then we got a byte (ex 01101011). A byte range
+between 0 and 255 (there are 2^8 = 256 different ways to combinate 8 bits).
+16 bits are called a word (0-65535). Less common is a nibble which range
+between 0 and 15 (4 bits) and octal (0-7 and 3 bits).
+
+What is hexadecimal? In the hexadecimal representation, a group of four
+bits (nibble) is encoded as one hexadecimal digit. Hexadecimal digits are
+represented by the symbols from 0 to 9, and by the letters A (10), B (11),
+..., F (15). A byte is represented by two hexdigits (ex D3).
+
+Convert between decimal - hexadecimal - binary
+
+One way is to use the calc of course, but it's often faster to do it in
+your head. It's very easy to convert between hex and binary. Remember that
+a hexadecimal number consist of two groups of four bits. Just take one
+group at a time.
+
+  | 0100 | 1100 | -> 4C
+
+  D5 -> | 1101 | 0101 |
+
+Binary to decimal is simple math. Just go from right to left and take bit
+n * 2^n. The bits in a byte are numbered 0-7, right to left. Each bit is
+worth 1, 2, 4, 8 and so on.
+
+  10010101 = 1*2^0 + 0*2^1 + 1*2^2 + ... + 1*2^7 = 1 + 4 + 16 + 128 = 149
+
+To convert from decimal to binary is also easy. One way is to divide the
+decimal number with two, and keep the remainder and so on.
+
+  173/2 = 86, remainder 1, 86/2 = 43, remainder 0, 43/2 = 21, remainder 1,
+  21/2 = 10, remainder 1, 10/2 = 5, remainder 0, 5/2 = 2, remainder 1,
+  2/2 = 1, remainder 0, 1/2 = 0, remainder 1.
+
+  Collect the remainders backwards and you get 10101101
+
+When you want to go between hex and decimal (the most common convertation)
+you can first convert to binary and then convert it to decimal/hexadecimal.
+Choose your own way, because you will do it often.
+
+Negative numbers
+
+I won't write so much here because it's really simple. You only need know a
+little about two compliment and you know the rest, because the compiler
+will do it automatically when you compile your assemly program. You need to
+know what happens to some length though.
+
+What you need to know is this: -1 = 255, -2 = 254. You should understand
+the rest then :-) If you want to add 5 with -3 for example, this is what
+will happen:
+
+   5       = 00000101
+  -3 = 253 = 11111101
+	     --------
+	    100000010
+
+Since a byte only can store 8 bits, the first 1 will disappear and 00000010
+is left = 2 which is the correct result! (The bit doesn't really disappear,
+it will be stored in the Carry Flag. More about that in the next lesson)
+
+---------------------------------------------------------------------------
+
+The memory in the TI-85
+
+The TI-85 uses a 8-bit Z80 processor. Since it's a 8-bit processor,
+instructions that only take one byte are generally faster executed than
+longer instructions. A Z80 can "reach" 64k (1k = 1024 byte. 64k = 65536
+byte) byte in the memory, so there are some limitations. (even worse than
+Bill Gates 640k...)
+
+The first 32k contains the ROM (The ROM is actually 128k, but only 32k is
+accessable at one time) and the second 32k contains the RAM. You don't have
+32k to play with though, because about 4,5k is reserved for different
+things (cursor positions, graph mem, text mem, menu pointers and a lot
+more). Another difficulty is that all variables are moving around in the
+memory when you create new vars or just change the Ans variable, so when
+you want to access something from your program, you have to know where the
+program is at the moment... Luckily, ZShell takes care of that part so we
+don't have to bother (almost).
+
+---------------------------------------------------------------------------
+
+Your first program!
+
+If you haven't tried before, this will be your first program. And of course
+it must be a classic "Hello World!" program! The source code will follow
+below, and then I'll explain what each row does. I think it's easiest that
+way. In the next lesson, I'll explain a bit more about what each
+instructions really do.
+
+  #include "ti-85.h"
+
+  .org 0
+  .db "My first program!",0
+
+    ROM_CALL(CLEARLCD)
+    ld hl,0
+    ld ($800C),hl
+    ld hl,Text
+    ld de,(PROGRAM_ADDR)
+    add hl,de
+    ROM_CALL(D_ZT_STR)
+  WaitKey:
+    call GET_KEY
+    cp K_EXIT
+    jr nz,WaitKey
+    ret
+
+  Text:
+  .db "Hello World!",0
+
+  .end
+
+The first line includes the ti-85.h file which contains a lot of alias (I
+write those aliases with capital letters). Without it the code will be very
+harder to understand. Most aliases is just an alias for a memory address or
+a byte.
+
+All programs begin with .org 0. It has to do with that you program will
+move around in the memory while it's on the calc. To make it simple, the
+compiler will assume that you program begins at offset 0 (but it really
+doesn't) but when you want to access variables, you add the offset of the
+program (which ZShell knows) and it will be correct.
+
+The second line is just a description of the program. It will be displayed
+in ZShell. It must end with ,0 so ZShell will know where the string ends
+(strings ended with ,0 is called zero-terminated strings).
+
+Then the program starts. The rom_call is just an alias which is included in
+the ti-85.h file, and what really happens is that it jumps into a place in
+the ROM where the screen is cleared. In that way, we don't need to write
+our own code to clear the LCD.
+
+The next two rows moves the cursor to the top left cornor of the screen,
+and the three rows after that loads the text string at the bottom program
+into hl (or more exactly, hl points to the string). Here we have an example
+that we need to know where in the memory the string is stored. ZShell
+stores the location of our program in the memory (program_addr is just an
+alias of that memory location) so we just add those two offsets.
+
+Then we display the string with another rom_call and at the end we wait for
+the user to press the Exit key.
+
+This was just a quick description of how the program worked, and if you
+didn't understand it all, don't worry.
+
+---------------------------------------------------------------------------
+
+How to compile a program
+
+You need a couple of programs. First, you need TASM 3.0.1 (not Turbo
+Assembler) and you also need String85, which you should have since it's
+included in the ZShell package. Then you need a link program, but you
+probably already have one. If you don't, you should go to www.ticalc.org
+and get one. There are different link programs depending on which kind of
+link you have. Of course you also need ZShell 4.0, else it will definately
+not work :-).
+
+When you compile the program, you must have the file tasm80.tab (included
+in the tasm zip file) in the same directory. You compile the code with this
+line:
+
+  tasm -80 -q -g3 -r12 -i myfile.asm
+
+where myfile.asm is your source. If your code is big (>1000 lines), it will
+take a while because tasm is slow. If you get errors it will show... After
+you've done that you use string85 like this:
+
+  string85 myfile
+
+It's important that you don't use any extension! String85 will hopefully
+create a .85s file that are ready to be linked over to the calc!
+
+There is one thing you should know when you use TASM: You must make at
+least one space from the left margin if the row in the source contains an
+instructions, and all label may not contain any spaces. Else you get a lot
+of errors when compiling.
+                             The ZShell School
+
+Lesson #2
+
+Welcome to the second lesson of the online ZShell school! Today you'll
+learn a little about registers and how to store bytes, words and strings in
+the memory. You'll also learn some common instructions so you will
+understand the "Hello world!" program you wrote in the last lesson a bit
+better.
+
+Contents
+
+   * Registers
+   * LD, the most common instruction
+   * Some other instructions
+   * Back to the "Hello world!" program
+   * Next lesson
+   * Questions? Comments? Errors?
+   * Old lessons
+
+---------------------------------------------------------------------------
+
+Registers
+
+In most programming languages (in fact, all other languages I know) you use
+variables to store information like bytes, integers, strings and such. But,
+in assembly there is no such thing as a variable. So how do you do? Inside
+each processor there are a few very quick ways to store information, the
+registers. On a PC the most frequently used registers are called ax, bx, cx
+and dx and on an Amiga, I think, they're called d0, d1, d2 and so on. What
+are they called on a Z80, which is the CPU on a TI-85?
+
+The common registers are called A, B, C, D, E, H and L (There are other
+registers, though they aren't important right now). Pretty easy? They are
+8-bits registers, which means that you'll fit a byte in them. Now, how do
+you do if you want to store a word for example? You "simply" put the
+registers together two and two. There are three register pairs, called BC,
+DE and HL. As you probably can figure out, the BC register uses both the B
+and C register. Important also is that you can't combine the registers in
+another way, ie registers such as BD, HA and so isn't possible. Also
+important is that if you store something in the B register, it will be
+destoryed when storing something later in the BC register, because they are
+the same (sort of).
+
+I forgot one thing in the last lesson that you'll need to know. When
+talking about hexadecimal and binary, I forgot to tell you how you show
+that a number is written in binary and hex. A hex number can either be
+written like this $5E or like this 5Eh. Binary numbers are either written
+like this %11010001 or 11010001b. I use $ and % because I think it's easier
+to read the source then.
+
+OK, back to how to store things in the memory. Since the registers are few
+you'll need to know how to store things in the memory. This method is a bit
+slower, so numbers you often use you should store in the registers more
+often. All calculations require that at least one of the numbers you want
+to add or sub is stored in a register. Anyway, since the RAM memory is 32k,
+how do you know where in the memory it's safe to store things? You don't
+want to write to some location in the memory where other programs are
+stored because then you will get bad checksum when trying to run those
+programs. Lucky for us is that there are a few places in the memory that
+aren't used by the TI when where not in "basic-mode". One of those places
+are the text memory, which starts at address $80FD. There you'll fit 8x21
+(the text screen size) = 168 bytes. The reason you can use the text memory
+as storage is that when writing something to the screen, you write it
+directly to the LCD memory, not via the text memory as I think the ROM
+does. You don't have to understand this really, you just need to know that
+you're able to store things in the text memory. Other places to store
+things in is the second text memory (168 byte, starts at $8A6B) and the
+graph memory (1024 byte, starts at $8641). You can't use the whole graph
+memory when using Rob Taylors grayscale routine though, because then the
+calc will crash. First you should use the text memory, then the second one
+and last the graph mem. Of course, if you need to store big arrays, it's
+perhaps necessary to use the graph mem.
+
+What if you have many variables? How do you do then? 168+168+1024 = 1360
+bytes isn't that much. Then you have to store it directly in the program.
+The disadvantage of this is that the program gets bigger (since you
+allocate space in the program) and it's more complicated to access that
+information, since you don't know the exact location of the variables.
+
+OK, that was a big explanation of this. Now, how do you use it practically?
+First you need to now how to explain that you mean a memory address instead
+of a word. The way to to this is that you put ( ) around the address, for
+example ($80DF). Then the compiler will now that you mean the address
+$80DF, not the word $80DF.
+
+---------------------------------------------------------------------------
+
+LD, the most common instruction
+
+As you saw in the previous lesson, ld is used very often. What does it do?
+Not so hard to guess actually. LD stands for Load, which means that you
+store the second argument in the first argument. Example: ld a,53 stores 53
+in the A register. Now there are a couple of different ways to do this. A
+list below show you some ways to use ld.
+
+   * ld d,63
+   * ld bc,$7A3B
+   * ld ($80DF),a
+   * ld a,($80F5)
+   * ld b,(hl)
+   * ld (de),a
+   * ld ($8641),hl
+
+You can probably guess what these instructions will do. As you see I always
+use the hexadecimal form when I use address location. You should do that,
+because that is standard. Another thing you may need to know about when
+storing words is that they are stored "backwards". For example ld bc,$7A3B
+will put $7A in the C register and $3B in the B registers, not the other
+way round. Always when you deal with words the LSB (least significant byte)
+is stored first. The last example, ld ($8641),hl, will store L in ($8641)
+and H in ($8642).
+
+Sadly, there are some rules you must follow when using ld. Some things that
+aren't allowed are listed below.
+
+   * You are not allowed to store a 16-bit registers in a 8-bit registers
+     and vice versa.
+   * You can't load a 16-bit reg with another 16-bit reg. Ld bc,hl isn't
+     allowed with other words. You have to ld b,h and ld c,l to do that.
+   * When you use a direct memory allocation, ($80F5) for example, the
+     other register must be A or a 16-bit register. Ld b,($80F5) is not
+     allowed but ld bc,($80F5) is allowed. Note that (hl) is not a direct
+     memory allocation.
+   * An important thing to know is that (hl) acts exactly like other 8-bit
+     registers (with the exception that the A reg is a bit special). You
+     could say that it's an 8th register. (which, in fact, it is if you
+     look at how the opcodes are made) When I say "only registers", I
+     always mean that (hl) is also possible. Because of that, hl is very
+     often used as a memory pointer.
+
+I think that covered the registers we've been through so far. When the
+other registers are introduced I'll explain how do access the.
+
+---------------------------------------------------------------------------
+
+Some more instructions
+
+There are a few other instructions that are easy to use that you should
+now.
+
+Add
+
+Add does an addition. Simple? Yes, except that there are limitations of
+course. The first arg must be the A reg (if you want to make a 8-bit
+addition) or HL (16-bit addition). If the first arg is A, then the second
+arg can be a direct value or a 8-bit register (remember that (hl) acts like
+an 8-bit register), not a memory location! If the first arg is HL, the the
+second arg must be a 16-bit register! Add hl,hl is also possible. The
+answer is always stored in the first register. Some example of correct
+additions are listed below.
+
+   * add a,7
+   * add a,(hl)
+   * add a,c
+   * add hl,bc
+
+Inc and Dec
+
+Inc and dec are very useful when you want to make small additions or
+subtractions. They only have one arg, which is a register, 8-bit or 16-bit.
+Worth notifying is that if you want to add a 8-bit reg (excluding A) with
+3, it's smarter to Inc that register three times, because if you for
+example want to add the C reg with 3, you have to ld a,c \ add a,3 \ ld
+c,a. That takes four byte (you'll see that if you look at the opcodes of
+the instructions. Very good to have a book with opcodes when programming)
+but inc c \ inc c \ inc c only takes three bytes. When it comes to 16-bit
+reg, it's even more useful to use Inc, especially when you want to add bc
+with de for example.
+
+Dec works exactly like Inc, but since Sub (see below) is even more limited
+than Add, you can use many Dec in a row and still it takes lesser bytes
+than a sub would have done.
+
+Sub
+
+As I said, subtraction is even more limited than addition. That's because
+you must sub from the A reg. Because of that, you only have one arg, which
+can be a 8-bit reg or a byte. But what do you do if you want to make a
+16-bit sub? Well, there is a trick you can use. There are a 16-bit sub, but
+it requires that you clears the Carry flag (more about flags in the next
+lesson). If you want to sub hl with de, you do like this: or a \ sbc hl,dr.
+Or a is the easiest way to clear the carry. What or really does will be
+explained in a later lesson.
+
+Back to the "Hello world!" program
+
+Let us first look at the program again.
+
+     #include "ti-85.h"
+
+     .org 0
+     .db "My first program!",0
+
+      ROM_CALL(CLEARLCD)
+      ld hl,0
+      ld ($800C),hl
+      ld hl,Text
+      ld de,(PROGRAM_ADDR)
+      add hl,de
+      ROM_CALL(D_ZT_STR)
+     WaitKey:
+      call GET_KEY
+      cp K_EXIT
+      jr nz,WaitKey
+      ret
+
+     Text:
+      .db "Hello World!",0
+
+     .end
+
+You should understand the beginning. The reason why we store $0000 in
+($800C) is because that ($800C) holds the current cursor position. Since
+you store a word, both ($800C) and ($800D) will be 0. That's good since
+($800C) contains the x-pos and ($800D) contains the y-pos. 0,0 is the top
+left corner on the screen.
+
+ROM_CALL(D_ZT_STR) display a zero terminated string with start at (hl).
+Then we must first load hl with the correct address. The string we want to
+display are stored last in the program (good place for storing constants).
+Ld hl,Text loads hl with the relative address to the string. The origin of
+the program is at the start, where .org 0 is. Then we add that address with
+(PROGRAM_ADDR), which holds where in the memory our program is. So,
+(PROGRAM_ADDR) holds the address where .org 0 is, and Text holds the
+address where the string we want to output is with .org 0 as zero. If you
+add these two addresses together, you get the absolute address to the
+string, which is what we want.
+
+The last part may be a bit cryptic, but it waits until the exit key is
+pressed. More about those instructions in the next lesson.
+                             The ZShell School
+
+Lesson #3
+
+Welcome to the third lesson of the online ZShell school! In this lesson
+you'll learn how to compare registers with each other and how to do loops.
+To know this you must also know a bit about flags and what they are for. I
+will also explain what the "famous" ROM_CALLs really are and some
+advantages and disadvantages with the use of ROM calls. At the end of the
+lesson you'll find what will come up in the next lessons. If you have any
+objections, just mail them.
+
+Contents
+
+   * Flags - a short explanation
+   * Jumps and calls
+   * Comparing registers and values
+   * How to do different kind of loops
+   * ROM_CALLs, what are they?
+   * A schedule on the upcoming lessons
+   * Questions? Comments? Errors?
+   * Old lessons
+
+---------------------------------------------------------------------------
+
+Flags - a short explanation
+
+Flags are very important. If you want to know what happened in the last
+instruction for example, you must check how the flags are set. Most of the
+instructions executed by the processor will modify some or all of the
+flags. So, how many flags are there on a Z80 CPU, and what do they do? The
+Z80 has 6 flags (or 7 flags depending on how you count) but you will
+probably never use more than two, the Zero Flag and the Carry Flag.
+Actually, I've never heard of one ZShell application that have used any
+other flags, so I won't explain them...
+
+A flag can either be set or reset, depending on the last instructions that
+changed that flag. That means that 6 flags only takes 6 bits which fits in
+one byte, and that is how they're stored. You may have noted why the A
+registers doesn't have a "brother"? It has, and that registers is called
+the flag register (F) and the register pair is logically called AF then,
+though you can never do anything with the pair except push and pop
+(explanation in the next lesson).
+
+The Zero flag
+
+The Z flag is used to indicated whether the value of a byte which has been
+computed, or is being transferred, is zero. It is also used with comparison
+instructions to indicate a match, and for other miscellaneous functions.
+For example, if you decrease a register (with DEC) and the registers
+reaches 0, the zero flag will be set. Note that if the registers doesn't
+reach zero, the flag will be reset. The Z flag will also be set or reset
+when using dec, inc, add and sub. Note that ld doesn't affect the Z flag.
+In fact, ld does never change any flag.
+
+The Carry flag
+
+The C flag is used to indicate whether an additon or subtraction operation
+has resulted in a carry (if an 8 bit addition results in a 9 bit answer) or
+a borrow (if the answer is negative). The C flag is also used as a ninth
+bit in the case of shift and rotate operations, which will be discussed in
+the next lesson. Remember that all arithemtic, shift and rotation
+operations will either set it or reset the C flag, depending on the result.
+
+Some examples on how different instructions affect the flags
+
+   Instruction(s):    Z flag C flag              Explanation
+
+                                    The result isn't zero, and the addition
+ ld a,185    add a,93  Reset   Set  results in a 9 bit answer (278d =
+                                    100010110b).
+
+ ld a,43     sub 43     Set   Reset The result is zero and no borrow is
+                                    needed.
+ ld c,73                 -      -   None of the flags are affected.
+
+ ld e,0      dec e     Reset    -   Dec (and inc) doesn't affect the C
+                                    flag, even if a borrow was needed.
+
+ ld hl,$8E56 add hl,hl Reset   Set  The answer is to big, 17 bits, and
+                                    doesn't fit in a 16 bit register.
+
+---------------------------------------------------------------------------
+
+Jumps and calls
+
+So, know you know a bit about flags, but how to use them? There must be
+some instructions that checks the flag, else it would be pretty useless.
+Luckily, there are plenty of such instructions, and all of them are jump or
+call instructions. There are two kind of jump instructions, relative jumps
+and absolute jumps. The calls are always absolute. The relative jumps are
+much faster and a bit smaller (3 bytes because of the way ZShell works),
+but the relative jumps has a limit: you can only jump 129 bytes forward and
+126 bytes backwards. In most cases that is sufficient, and you should
+always try relative jumps until the compiler give you an error ("Relative
+branch to long" or something like that). Then you should change to absolute
+jumps. The calls are ordinary subroutine calls, and the instruction ret
+will return to where the call was. Of course you can jump and call without
+bothering about the flags.
+
+             Z80 instr        ZShell instr         Explanation
+
+                                               A relative jump to arg
+        jr condition,arg   jr condition,arg    if condition is true.
+                                               An absolute jump to arg
+        jp condition,arg   JUMP_condition(arg) if condition is true.
+                                               A subroutine call to arg
+        call condition,arg CALL_condition(arg) if condition is true.
+
+                    Table over different jumps and calls
+
+Now, what does this stuff mean? First, when programming ZShell you should
+only use the second column. Those instructions are just aliases (that
+you'll find in ti-85.h) for a jump to ZShell, which then jumps to the
+specified label. The reason for this is simple: As I've said before, all
+variables (except zshell.85s) are moving around in the memory when
+creating, deleting or changing variabels, so when you compile your program,
+you never know where in the memory your program will be, but you do know
+the relative address, and since ZShell knows where in the memory your
+program is, it's easy to do far jumps.
+
+Second, you need to know which conditions you can use. Well, only four, but
+you probably don't need any more. They are NZ (not zero), Z (zero), NC (not
+carry) and C (carry). Actually, the Z80 supports four more conditions which
+you only can use with jp, but ZShell doesn't support those. If you don't
+want any condition, just skip that part of the instruction (ex: jr
+JumpHere). A simple program example follows.
+
+      ld a,12
+      sub c
+      jr z,CIsTwelve
+      .
+      .
+
+     CIsTwelve:
+      .
+      .
+
+Hopefully, you can guess what this program does. First, A is loaded with 12
+and then subtracted with C (whatever it contains). If C equals A, then the
+result will be zero and the Z flag will be set, and then a jump will be
+made to CIsTwelve, else the program will continue directly after jr
+z,ClsTwelve. Perhaps I should say that labels (like CIsTwelve) doesn't take
+memory, so you could make a label for every row (like early basic...) if
+you want, but that would only make your program harder to read.
+
+If you want to know how the rest of the jump and call functions look like,
+you should study ti-85.h, because you should be able to understand the
+comments. It's really simple.
+
+---------------------------------------------------------------------------
+
+Comparing registers
+
+In the above example, you subtracted two registers to check if they were
+equal, and if they were the Z flag was set. That's logical because when
+subtracting two equal numbers the result is zero. There is one drawback
+though: the contents of A will change, which isn't so fun most of the time.
+Then we use another instruction, cp (compare), which works exactly like
+sub, except that the answer isn't stored in A! The only thing that happens
+is that some flags are set (we are only interested in the Z and C flag
+though). Now that's very good! Now we can easily check if two registers
+contains the same value. We can also compare the A registers with a
+numerical value (cp works exactly like sub, and the limitations are the
+same).
+
+But what if we want to check if the D register is greater than the A
+register? What will happen when we compare? The Z flag won't be set because
+the subtraction won't be zero, but if D is greater than A, then the answer
+would be negative, right? And what happens then? Yes, the C flag will be
+set! If D is equal or lesser than A, the C flag will be reset. A table
+below shows all cases.
+
+                       Case       Z flag       C flag
+                      A < D          0           0
+                      A = D          1           0
+                      A > D          0           1
+
+            Table showing the Z and C flags when cp A,D is exectued
+
+---------------------------------------------------------------------------
+
+How to do different kind of loops
+
+All programs probably uses loops. You almost always want you program
+waiting for something or repeating some instructions while waiting on
+something to happen, for example a key press. In the last case, you have to
+compare the scancode with the key you're waiting for. Example below:
+
+     WaitKey:
+      call GET_KEY   ; Calls a routine in the rom that gets the last key
+                     ; pressed and stores the scancode in A.
+                     ; If no key pressed since last call, A will be 0.
+                     ; Note that the routine doesn't wait for a key.
+      cp K_EXIT      ; Compares A with the scancode for the exit key (which is $37)
+      jr nz,WaitKey  ; If the answer isn't zero (A <> $37), jump back and check again.
+
+Sometimes you know how many times the loop should be reapeting, for example
+when making a line with the width of 20 pixels. One simple way to do this
+is to have a counter which starts at 20, and at the end of the routine, you
+decrease it and check if it's zero (of course you can start from zero and
+increase, but then you have to check if the counter has reached 20 with the
+cp instructions which isn't needed when using dec, since dec will set the Z
+flag when the register has reached zero). But for this case the Z80 has a
+special instruction for us, which both decreases, sets the Z flag if
+necessary and makes a relative jump if the Z flag isn't set. That
+instruction is called djnz (Decrease, Jump not zero), and the syntax is
+djnz label (it's my favourite instructions btw, because it "looks" cool and
+is fun to pronounce :-).
+
+But wait! How do we tell which register do decrease? Well, we don't. Djnz
+always decreases the B register, and that's why the B register is very
+often used as a counter. Of course another problem arises now, what if we
+want to loop, lets say, 1000 times? B is only a 8 bit registes so it won't
+work. One way is to use a 16 bit register and decrease it with dec, another
+is to nestled loops, but then you must save the B reg. Two different
+examples below:
+
+         ld b,4                        ld bc,1000
+        Loop1:                        Loop:
+         ld c,b     ; push bc          .
+         ld b,250                      .
+        Loop2:                         dec bc
+         .                             jr nz,Loop
+         .
+         djnz Loop2
+         ld b,c     ; pop bc
+         djnz Loop1
+
+If you want to use the left version, you can use push and pop instead of
+using the C register. Of course, the right version is shorter and faster,
+but sometimes you may prefer the left version.
+
+If you want to move memory from one location to another, there are some
+other useful instructions, ldir and lddr, but I'll explain them in another
+lesson.
+
+---------------------------------------------------------------------------
+
+ROM_CALLs, what are they?
+
+Yeah, what is a rom call really? I've seen some people saying: "How do we
+do that? With a rom_call maybe?". That shows that people think they're
+powerful tools, and sure, they are, but ZShell doesn't support so many, and
+you normally don't use too many of them. So, what happens?
+
+What we do is that we use routines that already exists (why reinvent the
+wheel?), and that saves a lot of memory. For example, to display a string,
+you need a lot of instructions: you must take the first letter, look up the
+font, put out the correct character, and update the cursor. All this takes
+about 1500 bytes (font included) I guess, so it's rather smart to use a
+routine that's already done and is stored in the rom, wouldn't you say?
+Another thing: in the program above I used call GET_KEY. Observe that I
+used call, which means that I know exactly where the routine is stored,
+which means that the get key routine is at the same place in all ROM
+versions (yes, GET_KEY and some other calls in the ti-85.h are ROM calls
+though it doesn't "look" like one). That's not the case with D_ZT_STR
+(Display Zero-terminated Text String), because it's at different places in
+the ROM depending on the ROM version. Therefor, a call to ZShell must be
+made which finds out where the absolute address is and then jumps to the
+right offset. In fact, all ROM_CALLs should be called ZSHELL_CALLs, because
+first a call is made to ZShell, then a jump is made to the ROM... The real
+ROM calls are GET_KEY and those... ;-)
+
+To find out which ROM calls you should use, read ti-85.h and the ZShell
+Function Library (in the ZShell package I believe) where a short
+explanation describes what happens, which registers are affected and some
+traps.
+                             The ZShell School
+
+Lesson #4
+
+Welcome to the (again) delayed online ZShell school! I'm very sorry for the
+delay, but I've been very busy the last week, and I've done a lot of ZShell
+programming too :-) You will also be able to do that if you continue
+reading these lessons, and maybe another great programmer will arise...
+
+I had to skip the part about the stack and PUSH and POP since the lesson
+would become to big else... Sorry about that... It WILL come in the next
+lesson.
+
+Contents
+
+   * Introduction to bit manipulating instructions
+   * Logical operators
+   * All shift instructions
+   * All rotate instructions
+   * Shifting and rotating 16 bit registers
+   * All single bit manipulating instructions
+   * Small, useful instructions you should know
+   * A schedule on the upcoming lessons
+   * Questions? Comments? Errors?
+   * Old lessons
+
+---------------------------------------------------------------------------
+
+Introduction to bit manipulating instructions
+
+All these instructions (they're quite many) changes the bits in a byte in
+someway. You don't add or subtract anything, you just change the bits! You
+can either shift them left or right in different ways, or rotate them,
+set/reset/test them individually and last you can make some logical
+operations on them (OR, AND, XOR).
+
+Why should you use those instructions? Well, when you want fast graphics
+for example, because the pixel on the LCD is stored in bits (since it's
+only two colors, only one bit/pixel is needed) which means that 1 byte
+contains 8 pixels. To put a pixel, you den have to OR it, or maybe use XOR
+and AND to remove it or if you want something to scroll smootly to the left
+or right, a rotating instruction may give the best result. Also, if you
+want to multiply a register with 2, 4, 8... shifting is the absolute fastet
+way to do that.
+
+     186d = 1 0 1 1 1 0 1 0 b
+
+Just a simple reminder so you know how a binary number looks like :-)
+Remember also that bit 0 is the LSB (Least Significant Bit, the bit to the
+far right - a zero in this case) and bit 7 the MSB. You must know that else
+you may have a hard time understanding the instructions below.
+
+---------------------------------------------------------------------------
+
+Logical operators
+
+All three logical operations uses two operands: the A registers and another
+registers or immediate data. The result is always stored in the A register.
+
+OR
+
+This instruction makes a logically 'or' with the A reg (also called
+accumulator) and the specified operand. With this I mean, that if at least
+one bit is set in a bitposition (bit 0, bit 1... bit 7) that bit is also
+set in the result (if bit 0 is set in the accumulator OR bit 0 is set in
+the specified operand then bit 0 is set in the answer. Then if bit 1 is
+set... and so on). Example:
+
+Input:  A - 186
+        E - 92
+
+Instr:  OR E
+
+Output: A - 254
+
+    186  = 10111010
+     92  = 01011100
+    -----------------
+           11111110 = 254
+
+Note that you don't write OR A,E - just OR E. OR A wouldn't change the
+accumulator (that's very obvious).
+
+How will this affect the flags? The Carry Flag is ALWAYS reset on ALL
+logical operators so that's easy. The zero flag is also set if the result
+is zero, else it will reset.
+
+One common use for the OR instruction is OR A. Why? It doesn't change any
+registers!? No, but it changes the flags. If A=0 the zero flag will be set
+and if A<>0 then it will be reset. That tells you "aha, then I can use OR A
+instead of CP 0 when I wan't to check if the accumulator is zero!". Yup!
+And it's smarter too! OR A just takes one byte, and CP 0 takes two bytes!
+So you save one byte! In a big program (>2000 rows) you can save about 50
+bytes with this. When your programs are finished, search for CP 0 in it and
+you may find some things to change.
+
+AND
+
+AND is very easy to explain when you know OR. Instead of 'or'ing the bits,
+you 'and' the bits :-) In other words, both bits must be set if the result
+bit should be set. Example:
+
+Input:  A - 186
+        E - 92
+
+Instr:  AND E
+
+Output: A - 24
+
+    186  = 10111010
+     92  = 01011100
+    -----------------
+           00011000 = 24
+
+AND is very useful when you want to mask away some bits. For example,
+you're only intersted in the lower four bits in the accumulator, and the
+upper four bits are just trash. How do I remove them? The answer is AND 15,
+since 15d = 00001111b. Now, the four upper bits are all reset since both
+bits would be needed to be set if the bit should hang on to the result.
+Since the mask (in this case, 15) have those bits reset they will be
+spoiled. The lower four bits are in the mask set, which means that the
+lower four bits in the accumulator will remain.
+
+I really hope you can see this, because this is important. You should also
+write the masks in hexadecimal or even better in binary in your source,
+because it makes the code easier to read (in this case, $0F or %00001111).
+
+XOR
+
+XOR is an exclusive OR. The difference between OR is that if both bits are
+set, the answer bit will be reset! Example:
+
+Input:  A - 186
+        E - 92
+
+Instr:  XOR E
+
+Output: A - 230
+
+    186  = 10111010
+     92  = 01011100
+    -----------------
+           11100110 = 230
+
+In other words, if the specified operands bit is set, then you change that
+bit in the accumulator! Since you only change the bits, you doesn't really
+lose the value! For example, if you make two XOR E in a row, the
+accumulator will have the original value again. This may be good for
+encoding for example, because can always know which value you had before
+the XOR if you know the specified operand.
+
+This can also be used for removing bits. Since OR is used to set a bit, XOR
+can be used to remove bits. To do that you must first OR the accumulator
+then XOR it like this:
+
+Input:  A - 186
+        E - 92
+
+Instr:  OR E followed by XOR E
+
+Output: A - 162
+
+    186  = 10111010
+     92  = 01011100
+    -----------------   (first the OR)
+           11111110 = 254
+           01011100
+    -----------------   (then the XOR)
+           10100010 = 162
+
+This could also be done with a combination of AND and XOR but then the mask
+must be in the A reg, because first you should XOR the mask with $FF to
+change all bits and then you XOR that with the operand you want to remove
+bits from. This takes one byte more though, but may be more useful if you
+have the mask in the accumulator.
+
+Hmm, I just found out that you don't need to use XOR $FF... the instruction
+CPL does the same thing and only takes one byte... what the f... :-)
+
+---------------------------------------------------------------------------
+
+All shift instructions
+
+There are three shift instructions, SLA, SRA and SRL. They all have one
+operand (a 8 bit registers) which the result also is stored in and they all
+shift the bits to either the left (SLA) or the right (SRA and SRL) and the
+bit that disappear is stored in the Carry Flag. SLA and SRL will put a 0 at
+the empty position while SRA will not change the value in bit 7. To make it
+easier to understand here are some "pictures":
+
+SLA (Shift left arithmeticly)
+
+   C <- | 7 <---- 0 | <- 0
+          the operand
+
+This is a common way to multiply something with 2, 4, 8 and so on. Note:
+you should NEVER use SLA A since the same thing could be done with ADD A,A
+and the latter is one byte shorter.
+
+SRA (Shift right arithmeticly)
+
+     | 7 ----> 0 | -> C
+      the operand
+
+This shift is good when you know that the operand may be a negative number,
+since that is indicated by bit 7. This shift won't change bit 7 which may
+be good. For example, 10100011 will become 11010001 and with the Carry Flag
+set after a SRA.
+
+SRL (Shift right logically)
+
+  0 -> | 7 ----> 0 | -> C
+        the operand
+
+And this shift diveds the operand with two and stores the remainder in the
+Carry Flag.
+
+---------------------------------------------------------------------------
+
+All rotate instructions
+
+There are 10 different rotating instructions, although I won't explain two
+of them (RLD and RRD) since they are almost only good when dealing with BCD
+numbers, which I may explain in a later lesson. I've never used them, and
+the reason for it is that it's slow (BCD is a way to store big numbers and
+a way to handle floating point operations) and not really necessary in game
+programming.
+
+Anyway, what's the difference between rotating and shifting? In the
+shifting routines you saw that a 0 was being put at the end/beginning
+(except SRA). That's shifting. Rotating will put the Carry Flag in that
+position instead! Now, why so many more instructions then? Well, some
+instructions are almost the same and there are both 8 bit rotating and 9
+bit rotating (through the carry). Here are the instructions one by one:
+
+RL and RLA (Rotate left through carry)
+
+These instructions do the same, except that with RL you specify an operand
+and with RLA the operand is A. So, RL A and RLA are the same thing? Yes,
+except for the flags. RL changes the Zero flag according to the result (set
+if operand becomes 0, else reset) but RLA doesn't touch the Zero flag. That
+isn't so important because when rotating you often don't care about the
+flags. Also, RLA saves one byte and is one cycle faster. According to
+"Programming the Z80" RLA is provided for compatibility with another CPU
+(8080).
+
+Another nice ASCII picture follows...
+
+  C <- | 7 <---- 0 | <- C
+        the operand
+
+Both C:s are stands for the Carry Flag, and they're not overwritten by each
+other in some way. This is 9 bit rotation also as you may see.
+
+RLC and RLCA (Rotate left with branch carry)
+
+Same thing here, the only difference is that RLCA doesn't change the Zero
+flag and it's a byte shorter. This is just a 8 bit rotation though as you
+see of the picture below:
+
+  C <- | 7 <---- 0 | <- b7
+        the operand
+
+b7 is the seventh bit of the operand, it's just hard to draw nice small
+ASCII pictures :-)
+
+RR and RRA (Rotate right through carry)
+
+Works like RL and RLA except for a direction change. No more explanation
+needed I guess.
+
+  C -> | 7 ----> 0 | -> C
+        the operand
+
+RRC and RRCA (Rotate right with branch carry)
+
+And this is an 8 bit rotation to the right and it stores the bit that was
+rotated around in the carry just like RLC and RLCA...
+
+  b0 -> | 7 ----> 0 | -> C
+          the operand
+
+---------------------------------------------------------------------------
+
+Shifting and rotating 16 bit registers
+
+Since all shift and rotate instructions only work with 8 bit register, you
+have to combine them to get it to work with 16 bit registers. I will just
+give a few examples since you probably can figure out how to do it by your
+own when you've seen the technique.
+
+ Problem      Solution   Comment
+                         Since multiplying with two is the same as adding
+ Shifting HL             something with itself, so why not? Just one byte
+ left          ADD HL,HL long also. This only works with HL since you're
+                         not allowed to have any other 16 bit register as
+                         the first operand.
+                         First we shift the LSB left one step and put b7
+                         in the carry, which will become b0 in the D
+ Shifting DE             register with RL. If you want to redo this two
+ left         SLA E RL D more times (multiply by 8) there is a smarter way
+                         which will be explained in another lesson (it's
+                         really simple though).
+ Shifting BC             Same thing as the above except that you first
+ right        SRL B RR C start with the MSB since it's a right shift
+ Rotate HL
+ right                   A 17 bit rotation is easy as you see. Works like
+ through       RR H RR L C -> H -> L -> C.
+ carry
+
+It's more complicated to make a 16 bit rotation since then you must first
+make a shift, then a rotate and then check if the Carry is set and if so
+change b0 (or b7 depending on which direction you're rotating) in the
+register you first shifted. Since you don't know how to change individual
+bytes yet (yeah, you can OR but then only with the A register) we better
+learn that...
+
+---------------------------------------------------------------------------
+
+All single bit manipulating instructions
+
+With individual bits you can either set them (SET), reset them (RES) or
+test them (BIT). This is useful when you only want to change/test one bit
+in a register that isn't the accumulator. All these instructions have two
+operands: the bit you will change/test (0-7) and the register. Very sadly,
+you MUST know which bit you want to test, you can't for example write
+something like SET A,B which could mean "set bit A in B" but that isn't
+allowed.
+
+I don't know if I have to draw some ugly pictures really, since it's pretty
+obvious how it works. SET sets a bit, RES resets a bit and BIT tests a bit.
+You must know that BIT copies the bit into the Zero flag, so if the bit is
+1 (set) the Zero flag will be set (Zero = flag set = 1) even though the bit
+is 1...
+
+Now we can write a short routine that rotates a 16 bit register:
+
+RRHL:      ; Rotate HL right (16 bit rotation)
+  srl h
+  rr l
+  ret nc
+  set 7,h
+  ret
+
+Don't know if I've said it before, but you can use a condition after RET
+also as you see in the example. This one exits the routine (which is called
+with CALL_(RRHL)) if the carry flag isn't set, because if it isn't no bit
+is supposed to be set.
+
+---------------------------------------------------------------------------
+
+Small, useful instructions you should know
+
+Here are some small instructions that I've skipped that you might want to
+know. All instruction are just takes one byte also.
+
+ InstructionComment
+            This instruction sets the carry flag. May be useful to use
+            before a rotate or to indicate that something went wrong
+     SCF    before you make a return from a subroutine or something. To
+            clear the carry flag, use one of the logical operators. OR A
+            is often used.
+            This instruction "complements the carry flag" which I think
+     CCF    means that the Carry flag is inverted, ie if it was set it
+            becomes reset and vice versa. Can't find any real use for it
+            anyway.
+
+     CPL    Complement accumulator. Changes all bits in the accumulator
+            (same as XOR 255), but doesn't change the C and Z flags.
+            Negatates the accumulator. If A=5 it becomes -5 ($FB). Good to
+     NEG    use when subtracting sometimes because then you can change the
+            orders of the registers (B-A can be coded as A-B followed by a
+            NEG to save one byte).
+                             The ZShell School
+
+Lesson #5
+
+Welcome to maybe to most interesting (and definately most wanted) lesson in
+the ZShell scholl! Now you'll learn what the stack are, and maybe more
+imporant, graphics! Quick graphics!
+
+CONTENTS
+
+   * The stack
+   * PUSH and POP
+   * The video memory
+   * Plotting pixels
+   * Putting images
+   * Sprites
+   * Other graphic routines
+
+---------------------------------------------------------------------------
+
+STACK
+
+The stack is one of the most important things you must know when
+programming. Think of the stack as a deck of cards. When you put a card on
+the deck, it will be the top card. Then you put another card, then another.
+When you remove the cards, you remove them backwards, the last card first
+and so on. The stack works the same way, you put (push) words (addresses or
+register pairs) on the stack and then remove (pop) them backwards. That's
+called LIFO, Last In First Out.
+
+The Z80 uses a 16 bit register to know where the stack top is, and that
+register is called SP. You should NOT change that register with Inc, Dec or
+something else if you don't know what you're doing!
+
+---------------------------------------------------------------------------
+
+PUSH AND POP
+
+As you may have guessed, push and pop is used to push things on the stack
+and then take them off. When you push something, the stack counter will
+decrease with 2 (the stack "grows" down, from higher addresses to lower,
+but you usually don't have to bother about that) and then the register pair
+is loaded into the stack. When you pop, the register pair is first lifted
+of the stack, and then SP increases with 2.
+
+You can push (and pop) all register pairs: BC, DE, HL and AF. When you pop
+AF, remember that all flags may be changed. You can't push an immediate
+value. If you want, you'll have to load a register pair with the value and
+then push it. Perhaps it's worth noting that when you push something, the
+contents of the registers will still be the same; they won't be erased or
+something. Also, if you push de, you can pop it back as hl (you don't have
+to pop it back to the same register where you got it from).
+
+Actually, the stack is also updated when you call and return from
+subroutines. The PC (program counter which points at the current
+instruction being executed) is pushed to the stack and the calling address
+is loaded into PC. When returning, PC is popped from the stack.
+
+So, when is this useful? It's almost always used when you call subroutines.
+For example, you have an often used value stored in HL. You have to call a
+subroutine that you know will destroy HL (with destroy I mean that HL will
+be changed to another value, which you perhaps don't know). Instead of
+first saving HL in a memory location and then loading it back after the
+subroutine you can push HL before calling and directly after the calling
+pop it back. Of course, it's often better to use the pushes and pops inside
+the subroutine. All registers you know will be changed are often pushed in
+the beginning of a subroutine and then popped at the end, in reverse order!
+Don't forget - last in first out. Of course you shouldn't pop back a
+register whos contents you're intersted in. If you call a routine to get a
+value that will be stored in B, you should not push and pop bc since then B
+would have the same value as you had before you called the routine.
+
+If you want to only push one 8 bit register, you still have to push it's
+"friend". Therefore, be aware that if you want to store away D with pushing
+and popping, remember that E will also be changed back to what it was
+before. In those cases (if you don't want that to happen you should try
+first to change register (try to store the information in E in another
+register if you can) or else you have to store it in a temporary variable.
+
+Before executing a program, you should keep track of your pushes and pops,
+since they are responsible for 99% of all calculator crashes! For example,
+if you push HL and then forget to pop it back, the next RET instruction
+will cause a jump to HL, which can be anywhere in the ROM/RAM and the
+calculator will crash. That's also a way to jump to the location stored in
+HL, but then you should use JP (HL), which does the same thing.
+
+Push and pop doesn't change any flags, so you can use them between a
+compare and a relative jump depending on a condition, which is often very
+useful. I should also add that you can almost always use SP when you can
+use BC or DE.
+
+Now I think you know everything about the stack. I don't know exactly how
+much you can push (after a while SP will point to someplace in the RAM
+where variables are stored, which will corrupt the memory). If anyone
+figures that out (can't be so hard I guess), I would be interested in
+knowing.
+
+---------------------------------------------------------------------------
+
+THE VIDEO MEMORY
+
+The video memory is stored last in the RAM memory on the TI-85, at address
+$FC00 - $FFFF. A quick counting tells us $400 bytes = 1024 bytes. Lets see,
+the display is 128x64 = 8192 byte. And you can store 8 pixels in one byte
+(since the pixels are either white or black; 0 or 1; and we fit 8 bits in
+one byte) which gives us 8192/8 = 1024. No problem with that.
+
+The top left corner is at $FC00. One row fits in 16 byte = $10, so that
+would make it easy. Row 0 starts at $FC00, row 1 at $FC10, row 2 at $FC20
+and so on. A simple formula would tell us where in the graph mem we would
+change if we want to change one pixel: $FC00 + y * $10 + x DIV 8.. But we
+also have to know where in the byte, which bit, we should change! The bits
+are numbered 0-7, and bit 0 is the rightmost column in the byte. An ascii
+picture gives you an overview.
+
+                0        1        2        3        4
+     $FC0x |7......0|7......0|7......0|7......0|7......0|
+     $FC1x |7......0|7......0|7......0|7......0|7......0|
+     $FC2x |7......0|7......0|7......0|7......0|7......0|
+
+We could very easily write a routine that determinates which bit and which
+address we should change (try it, it's good practice), but there exist
+already such a routine in the ROM, so why reinvent the wheel? It's fast
+(you can make a faster one, but it's not worth it), but it has one stupid
+"feature": the origin is at the bottom left corner, not the top left. Now
+that's easy to change, just take y=63-y and that's done with. Before using
+the routine (called FIND_PIXEL) you also have to swap ROM page to ROM page
+4. You only have to do that once in the program (in the beginning) and it
+looks like this:
+
+     ld a,4
+     out (5),a
+
+Put these two rows in the beginning of the program if you use FIND_PIXEL.
+Now you should ask what input values FIND_PIXEL uses and what registers it
+will change. You store the x location in B and the y register in C before
+calling FIND_PIXEL (and it's a ROM_CALL, because it's on different places
+in the ROM depending on your ROM version) and it'll returin the address in
+HL (but you have to add $FC00 to it) and the bit^2 in A. It's good that the
+bit is raised to 2, because if you want to set bit A, you can't SET A,(HL)
+because the first value must be known! Instead, you use logical operators.
+
+---------------------------------------------------------------------------
+
+PLOTTING PIXELS
+
+Here are four routines for putting a pixel, removing a pixel, changing a
+pixel, and checking to see if a pixel is lit.
+
+     PutPixel: ; Puts a pixel at B,C
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      or (hl)
+      ld (hl),a
+      ret
+
+     RemovePixel: ; Removes a pixel at B,C
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      cpl
+      and (hl)
+      ld (hl),a
+      ret
+
+     ChangePixel: ; Changes the pixel at B,C
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      xor (hl)
+      ld (hl),a
+      ret
+
+     TestPixel: ; Tests the pixel at B,C. If the Z flag is set, no pixel, else a pixel is lit
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      and (hl)
+      ret
+
+All these routines will destroy A, DE and HL, so you should push and pop
+these if you don't want too loose those values. These routines also shows
+you that all logical operators are useful.
+
+All routines starts with with three identical rows, which make HL point to
+the right address and A will be the byte you should "do something with". In
+PutPixel, we OR A with (HL) and then we put the result (which will be
+stored in A) back in (HL), since it's in the video location we want the
+change made. When removing, we changes all bits in A with CPL, and then we
+mask out the bit to remove. Since A in the beginning only have one bit set
+(I really hope you get that), A will know have 7 bits set, and the bit that
+isn't set is the one that will disappear, since AND requires both bits to
+be set.
+
+The third example is simple, XOR changes the pixel. Since seven bits are
+unset, those seven location won't change, and the one bit that is set will
+make a change. The fourth example masks out the tested bit, and if A is
+zero, there were no pixel and the zero flag will be set (AND sets the zero
+flag if the result is 0).
+
+It's very important that you understand this section to 100%, else you'll
+get in big trouble later on. Try rereading it if you don't understand, and
+experiment by yourself and try to change some instructions and understand
+what the result should be. If you're still confused, you should mail me.
+
+---------------------------------------------------------------------------
+
+PUT IMAGES
+
+Now when you know how to put pixels, you could also put images. But putting
+them pixel by pixel is a stupid way to do it. First, if you use FIND_PIXEL
+for every pixel, it will be slow and it's really simple to do it another
+way.
+
+Now I'll show you a simple way to put images that you'll just use as
+background. As you've seen of how the graphic memory works, it's a lot
+easier to make aligned pictures, that is, you change all bits in one byte.
+That's the reason why many games have the same GUI with sprites that are 8
+pixels wide. That's because you don't have to bother about bits, and it's
+much faster too.
+
+The image putting routing below always starts on first bit (bit 7, since
+bit 7 is the leftmost bit in a byte) since that makes it much easier. You
+just copy 8 pixels at the same time from the data at the end of the program
+straight into the videomem. Simple! Then you go to the next byte and do the
+same until the whole picture is created.
+
+This is how I do it. Comments below.
+
+     PutImage:    ; Puts the image stored at (HL).  { 28 bytes }
+      ld e,(hl)
+      inc hl
+      ld d,(hl)
+      inc hl
+      ld b,(hl)
+      inc hl
+      ld c,(hl)
+      inc hl
+     PI_NewRow:
+      push bc
+      push de
+     PI_NewCol:
+      ld a,(hl)
+      inc hl
+      ld (de),a
+      inc de
+      djnz PI_NewCol
+      pop de
+      ld bc,16
+      ex de,hl
+      add hl,bc
+      ex de,hl
+      pop bc
+      dec c
+      jr nz,PI_NewRow
+      ret
+
+And here is how the image is stored in the end of the program:
+
+
+     Image:
+      .dw $FC24
+      .db 2,16
+      .db %00000111,%11100000
+      .db %00011000,%00011000
+      .db %00100000,%00000100
+      .db %01000000,%00000010
+      .db %01000000,%00000010
+      .db %10000000,%00000001
+      .db %10000001,%10000001
+      .db %10000010,%01000001
+      .db %10000010,%01000001
+      .db %10000001,%10000001
+      .db %10000000,%00000001
+      .db %01000000,%00000010
+      .db %01000000,%00000010
+      .db %00100000,%00000100
+      .db %00011000,%00011000
+      .db %00000111,%11100000
+
+Let us first look at how the image is stored. First we have defined a word
+(.dw) with the address. Since these kind of pictures won't move we can
+calculate the address in the head so we don't have to waste unnecessary
+bytes in the program to do that. If you want it to move, you could change
+the routine in the beginning by using a FIND_PIXEL.
+
+On the second row, I've defined first the x width in bytes, that is, how
+many bytes wide it is, not how many bits!. The second byte is the y width,
+which is the number of rows. After that the image is stored. I've used %
+(that means that the value is in binary) so you can see how the sprite will
+look like easier.
+
+Now let us look at the PutImage routine. The first 8 rows loads DE with the
+address (note that E is first read, then D. The reason for that is that the
+LSB is stored first when you define a word, or store a word for that
+matter), and then loads B with the x size in bytes and C with the y size.
+Then we push BC because we will return here again, and then we want B to be
+the same and we push DE so we can pop it back at the end of routine and add
+16 (16 = exactly one row down) to it later.
+
+After the label NewCol we just load A with the first byte of the image (HL
+is after four increases in the beginning now pointing at the image itself)
+and then we store it at (DE), which is the address in the video memory.
+See, we changes 8 pixels at once, without caring about the bits! They'll
+just fall into place! We also increase HL so it points to the next byte in
+the image and DE so it points to the next byte in the video memory. Then we
+repeat NewCol B times (B was the x size, which is the number of times we
+want it to be repeated).
+
+When one row has been put on the screen, we pop DE to get the address where
+it was on the beginning of the line, because then we can easily get to the
+next row by adding 16 to DE. If we don't push and pop DE in that way, we
+have to add DE with 16-xsize, and to calculate that takes a few more bytes.
+But how do we add to DE? Only HL is allowed in 16 bit addition. It's time
+for a new, very useful instruction, when you deal with 16 bit registers, EX
+DE,HL. It's really simple, it swaps the contents of DE and HL. This
+instruction is special, because it doesn't work on any other common
+registers (it works on some other register, more about that in a later
+lesson).
+
+Anyway, we just change DE with HL, then add 16 to HL, and then change back.
+A easy way to do it. Note that we have to load BC with 16, because you
+can't add with an immediate value. Luckily, the contents of BC doesn't
+matter for the moment, so we don't have to push it. As you see, we pop it
+back the next instruction, and then BC will contain the x size and y size
+once again. Now we decrease the y size, and if it's not zero, we'll jump
+back and start with a new row. This time when we push BC, the y size will
+be one less, which is exaclty what we wanted.
+
+Puh... that was a long explanation of how to put an image... Now we're
+getting to how to put non aligned sprites (that is, we put sprites, images,
+between two video memory bytes).
+
+---------------------------------------------------------------------------
+
+SPRITES
+
+There already exists one good sprite routine for this, NASR. And it's the
+WARP version you should use, because 2.1 gives awful spaces to the left and
+to the right of the sprite if it doesn't cover a whole byte. But NASR is
+big, 171 bytes + 6 bytes if you want to push and pop BC, DE and HL because
+they're destroyed in the routine. I haven't really studied the source to
+NASR, but I'm pretty sure that NASR is only good if you have big sprites,
+like 32x32 or something. Most often, you don't have so big sprites. 8x8 or
+6x6 is most common I think, so I wanted to test my simple, but fast, sprite
+routine with NASRWARP, and look at the result!
+
+                         Routine         6x6      8x8
+                   NASRWARP              473      375
+                   PutSprite             1036     674
+                           Spriteputs per second
+
+PutSprite (I haven't given my routine any name) is about twice as fast as
+NASR! I didn't believe it first when I tested (hey, >1000 sprites per
+second on a Z80!?). You also see that smaller sprites are more faster with
+PutSprite than with NASR. And PutSprite is only 67 bytes big, including
+pushing and popping three register pairs!
+
+There is one sad thing though, and that is that PutSprite can only handly
+sprites with a width of 8 pixels. That shouldn't be a problem, since most
+sprites are. I could change that (I'll do it another time) but then it may
+be a bit slower, though still not much, but NASR would probably be faster
+on bigger sprites, because it uses a totally another algorithm for the
+putting.
+
+Here is the routine. I'll explain below on how it works, but not
+instruction for instruction.
+
+     PutSprite: ; Puts a sprite stored at (HL) at B,C
+      push bc
+      push de
+      ld a,63
+      sub c
+      ld c,a
+      push hl
+      push hl
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      ex de,hl
+      pop hl
+      ld b,(hl)
+      inc hl
+      ld c,(hl)
+      inc hl
+      push hl
+      pop ix
+      ex de,hl
+     PS_NewRow:
+      push bc
+      ld d,(ix)
+      inc ix
+      push af
+      push hl
+     PS_NewCol:
+      rl d
+      ld e,a
+      jr nc,PS_NoPixel
+      or (hl)
+      ld (hl),a
+      jr PS_NextPixel
+     PS_NoPixel:
+      cpl
+      and (hl)
+      ld (hl),a
+     PS_NextPixel:
+      ld a,e
+      rrca
+      jr nc,PS_SameByte
+      inc hl
+     PS_SameByte:
+      djnz PS_NewCol
+      pop hl
+      pop af
+      ld de,16
+      add hl,de
+      pop bc
+      dec c
+      jr nz,PS_NewRow
+      pop hl
+      pop de
+      pop bc
+      ret
+
+The sprite is stored like this:
+
+     .db 6,6 ; x- and y-width in pixels
+     .db %110011
+     .db %100001
+     .db %000000
+     .db %000000
+     .db %100001
+     .db %110011
+
+Note that PutSprite reverses the y value, so (0,0) will be the top left
+corner.
+
+In short, it first locates the top left address of the sprite, then puts
+the sprite pixel by pixel. In the beginning of each row, D is loaded with
+the 8 pixels of the sprite, and for each column repeat, D is rotated to the
+left which pushes out the leftmost pixel in the carry flag. If the carry
+flag then is set, an ordinay PutPixel will be made, else a RemovePixel will
+be made.
+
+The problem with making this routines is that you have so few registers to
+work with. As you see, a new registers, IX, is used. More about that
+register later, but it works as HL. In the routine, HL points to the
+videomem, DE to the spirte, A is the bit to be put/removed and BC contains
+the x and y width. You also have to minimize pushes and pops because it's
+faster to store a 8 bit register in another 8 bit register and then fetch
+it back instead of pushing and then popping it back, but you can't always
+do that.
+
+You could also change this routine so it ORs the sprite on the screen. If a
+pixel on the sprite is 0, the pixel in the videomemory won't be removed, it
+will be the same as before. To do that change, change jr nc,PS_NoPixel to
+jr nc,PS_NextPixel and erase the three rows after PS_NoPixel. The routine
+will be even faster now.
+
+You can also XOR the sprite on the screen. That's a good way to remove the
+sprite. If you first put out the sprite at one location with XORing, and
+then put it at the same place again, you'll remove the sprite! That's a
+cool way to create fast animation, but it will flicker slightly. A better
+way to avoid flickering is to store everything you draw in the graph memory
+(NOT the video memory) and then move the whole graphmem to the videomem.
+That will slow the game down, but as you saw, PutSprite isn't a routine
+that'll slow down the game... How to do that (temporary storage in graph
+mem and then copy it over to the video mem) will be discussed in a later
+lesson.
+
+---------------------------------------------------------------------------
+
+OTHER GRAPHIC ROUTINES
+
+Not much to say here, except that there is a good line drawing routine at
+www.ticalc.org which uses Bresenhams line algorithm. It can probably be
+made faster (currently is uses FIND_PIXEL for every pixel to plot), but
+it's enough most of the time. It isn't either optimized for horizontal or
+vertical lines, which are very simple to draw. Routines for quick straight
+lines will be shown in the next lesson. This one is growing to big :-)
+                                 Lesson #6
+
+Welcome to lesson #6 of the online ZShell school! Now we've arrived to
+grayscale graphics, but first you must learn some other things...
+
+CONTENTS
+
+   * Opcodes
+   * Alias and Macros
+   * More registers
+   * String instructions
+   * Grayscale graphics
+
+----------------------------------------------------------------------------
+
+OPCODES
+
+It's about time that you should know more than just program. You should
+also know why things happens, and how it happens. For example, a computer
+(and a calculator) understands machine code, 0 and 1. That's what the
+assembler does, it translates the assembly language into machine code. The
+difference between assembly languages and high level languages is that each
+assembly instruction has it's own opcode, one or more bytes in a row that
+does exactly what you've told it. In Pascal or C++ for example, every
+instruction is usually changed into many opcodes. Many of those opcodes are
+usually unnecessary or could be done in a smarter way. For example if you
+do a short for loop in a ZShell program, you can use the B register and the
+djnz instruction, which is made for that purpose. If you did a for-loop in
+Pascal or C++, it would use a variable, a memory location, to store the
+counter. Each time the loop was repeated it would load that value into a
+register, increase it with one, store the variable, check if the limit is
+reached and then repeat if not end of loop Guess why assembly language is
+faster...
+
+On a Z80, the processor used by the TI-85 if you have forgotten, each
+instruction (opcode) takes between 1 and 4 bytes. Small instructions are,
+of course, generally executed faster, but there are 2 byte instructions
+that are executed faster than 1 byte instruction (it depends on what the
+instruction does). It's quite easy to guess how long each instructions is,
+which is useful when optimizing your code. Each time you load a byte into a
+8-bit register, the size is two bytes; one byte to tell the processor that
+you should load an immediate value into a 8 bit register, and one byte
+where that value is stored. 16-bit registers takes three bytes. Generally,
+all instructions that has one byte takes two bytes, and the instructions
+using words (both as immediate values and addresses) takes three bytes.
+Other instructions, such as loading register A with E, takes one byte. All
+bit-manipulating instructions except the logical instructions (and, or,
+xor, not) takes two bytes though. One prefix ($CB) and then the byte that
+tells what to do.
+
+Now you know some more about how instructions really look like, which will
+help in the future...
+
+----------------------------------------------------------------------------
+
+ALIAS AND MACROS
+
+Aliases and Macros are used by the compiler and has nothing to do with
+assembly languages actually, but they're used quite often since it makes
+the source much easier to read. In TI-85.H there are lots of aliases and
+macros (actually, there are only aliases and macros in it, plus comments).
+
+You could probably guess what an alias is. If you type
+
+ Three = 3
+
+the compiler will substitute Three with 3 in the whole source code (when
+compiling, it won't change the file itself). All "variables" in a program
+you define in the beginning are just aliases. You could typ those addresses
+in the source code if you like that, but it's much easier to read if you
+make aliases... Also, if you want to change an address, and have that
+address located in many different places in the program, it would have been
+smarter to make an alias of it. Then you would only have to change the
+aliases, not every time in the source where the address occured.
+
+Macros are similiar to aliases, and also similiar to subroutines sort of.
+To make a macro in Table Assembler (if you use another assembler, CAZ for
+example, you probably do it another way; read the documentation) you can
+type like this:
+
+ #DEFINE PushAll   push af \ push bc \ push de \ push hl
+
+If you now type PushAll in your code, the compiler will replace it with
+those four instructions (must be separated with a backslash). You can also
+give parameters which is useful: (the parameters must be numbers, or
+aliases, not registers or addresses)
+
+ #DEFINE GotoXY(xy)  push hl \ ld hl,xy \ ld ($800C,hl) \ pop hl
+
+Some examples on macros you use in almost every program are
+ROM_CALL(index), CALL_(addr), JUMP_(addr). Just check ti-85.h and you'll
+see. The parameter in the ROM_CALL macro is an aliases by the way.
+ROM_CALL(D_ZT_STR) could be replaced with ROM_CALL(3), but it just makes
+the source harder to understand.
+
+Creating your own macros is often useful, but remember that if you make a
+big macro and use if often, it may make the source big... in the GotoXY
+example above, the push hl \ pop hl part may be unnecessary if there were
+no important things in the HL register. Macros should generally be small!
+
+----------------------------------------------------------------------------
+
+MORE REGISTERS!
+
+If you've programmed for a while you've probably quite often thought:
+"Damn, I'm out of registers again!" It's a fact that the Z80 has few
+registers, especially compared to the 68k processor which the TI-92 use...
+There are actually, some more register you could use, though they have
+limitations. Here they are:
+
+The index registers IX and IY
+
+These registers are handy. The IY register is used by interrupts and rom
+calls, and should not be changed unless you've disabled the interrupts (see
+below). The IX register though is free to use anytime! It works almost
+exactly like the HL register. When you can use the HL register, you can use
+the IX register! There is one drawback though, the instructions become one
+or two bytes longer, depending on the use. If you use IX as a dataregister
+in an instruction, the instruction becomse one byte longer. That byte is a
+prefix ($DD) which tells the processor that the next instruction will have
+IX in it, not HL! This is necessary, because the opcode for an instruction
+which uses IX is the same as for using HL. It's only the prefix that is the
+difference.
+
+When you use the IX register as an addressregister, a pointer, it becomse
+two bytes longer, the prefix and a shift byte. That shift byte is useful
+sometimes, though most often you don't use it (but the instruction gets two
+bytes longer anyway). The shift value is a signed byte and therefore has
+the limitation -128..127.
+
+Here are some examples:
+
+ ld ix,$1234     ; The instructions is one byte longer than ld hl,$1234
+ ld (ix+5),62    ; Loads the byte 62 in the memory location IX+5. If
+                 ; this instruction was executed right after the previos
+                 ; one, it would mean at $1239
+
+If you don't use the shift byte, just (ix), you may still have to put it
+there, (ix+0). I think you must do this on the CAZ assembler, but you don't
+have to add that if you use TASM.
+
+If you want to use the IY register, it works the same way. The only
+difference is that the prefix is $FD instead of $DD. Remember to disable
+the interrupts (see below)!
+
+When you use the IX register (or IY) you can't use the HL register in the
+same instructions (neither just H or L). For example, add ix,hl wouldn't
+work, but add ix,ix works fine.
+
+Maybe you've thought why the index registers aren't divided into two 8 bit
+register, as HL. The answer is they are, there are just no instructions to
+access those, or at least those instructions are not documented and not
+supported by assemblers directly. Of course, if you type the opcodes for
+the instructions it works just fine! First you should know what these 8 bit
+registers are called. I don't know if this is the "real" name, but IXh, IXl
+and IYh, IYl is used (h=higher byte, l=lower byte). The opcodes are quite
+simple... if the assembler doesn't handle those instructions, type this:
+
+ .db $DD \ ld a,h        ; If  you want to ld a,IXh
+ .db $FD \ ld l,e        ; If you want to ld IYl,e
+ .db $DD \ ld l,(hl)     ; This should be equal to ld IXl,(IX)
+
+The last one I'm not sure about, but it should work that way... try it
+yourself.
+
+The "not-so-often-used" R and I registers
+
+These registers are very seldom use, because they are very limited. The
+only way to "communicate" with them is through the accumulator, so the only
+allowed instructions are:
+
+ ld a,r
+ ld r,a
+ ld a,i
+ ld i,a
+
+What do they do? The R register is called the "Memory Refresh" registers
+and is updated after every instructions (added with two I think), thus
+making this register more or less a random register. The only real use for
+it is in random generators, though it's not a good random generator...
+First you'll have to shift it one step to the right (since it will only
+contain even numbers if you don't change it with ld a,r) and then you'll
+have to mask away the bits you don't want. If you want a random number
+between 0 and 15 (the range must be a power of two for good generation, see
+below), you do like this:
+
+ ld a,r  ; Loads the accumulator with the "random" register
+ srl a   ; Shift it logically (put a 0 at the highest bit) one step
+         ; to the right
+ and 15  ; Masks off the unnecessary bits
+
+This works fine if you don't use if often. If you want 100 random numbers
+and use this routine the randomize will be bad (if you randomize all
+numbers at once)! It will be even worse if the range isn't a power of two.
+Let us say we want a number between 0-6. How would you do? You can type and
+6 (figure this one out if you're unsure about binary and masking) because
+then you would get a strange result (only 0, 2, 4 and 6 would occur). The
+best way is to do like this:
+
+Random:
+ ld a,r
+ srl a
+ and 7          ; between 0-7
+ jr z,Random    ; If it's 0, rerandom
+
+This works, and we'll get a random number between 1-7 (decrease with one to
+get between 0-6). The problem is the frequency... one of the numbers will
+appear 2/8 of the time, the others 1/8. Why? Because every time the routine
+have to rerandomize it means that the R register ends with 4 zeros (the
+last bit that was shifted away plus the three masked bits). The newly
+randomized numbers will then always be the same (should be 3 or 4 I think)
+because the number of instructions are always the same. This is the reason
+why one piece appears more frequently in ZTetris than the others...
+
+How to fix this!?!? Well, you could make a random lookup table of 56 bytes
+and use the R registers in another way. If you really want to know, you
+could message me. It still won't be good, but much better. Another way
+which may work is to use the HALT instruction. More about that instruction
+another time.
+
+Back to the I register... this one is unimportant most of the time. It's
+only useful when you program interrupt handler and stuff like that. It
+holds the higher byte of the address which should be called when an
+interrups occurs and you're in interupt mode 2. If you don't understand
+what I'm talking about, don't bother... you don't need to know right now.
+It'll be better explained in another lesson.
+
+You can use it though as a temporary register if the interrupt mode isn't
+set to 2. The interrup mode is usually set to 1, but when using grayscale
+graphics it's set to 2, so then the calc would crash if you changed the I
+register (same thing happens if Game Wizard or any other memory resident
+program is run)... Since you can only change it through the A register,
+it's often not worth that use though. One last thing also, you don't have
+to reset the register if you change it. It's not used in the ROM memory.
+The TI-85 was never meant to use the I register or interrupt mode 2. More
+about that in the lesson about interrupts.
+
+The shadow registers
+
+Now something cool... I think many will be surprised to know that there are
+7 more 8 bit registers available to use! These registers are called the
+shadow registers and are a copy of the common registers, A, BC, DE and HL.
+Their names are similiar also, you add an ' after the register name: A',
+BC', DE' and HL'. The drawback is quite big though, you can never access
+those register through any instruction at all actually... There are
+instructions, however, that will exchange the ordinary registers with the
+shadow register. Those instructions are:
+
+ ex af,af'    ; Exchange AF with AF' (F' = shadow flag register)
+ exx          ; Exchange BC, DE and HL with BC', DE' and HL'
+
+When using these instructions you must have disabled the interrupts,
+because they're used by the ROM. You don't have to restore them to what
+they were before (no push/pop needed). To disable interrupts (and enable
+them again) you use two short instructions:
+
+ di     ; Disable interrupts
+ ei     ; Enable interrups
+
+Another useful exchange instruction
+
+I think I've missed a useful instruction before. Here it is:
+
+ ex de,hl    ; Exchanges the contents in HL and DE
+
+It will only work on those two registers, and you must type ex de,hl not ex
+hl,de (even though they would do the same thing). The instruction is useful
+for example when you want to load DE and HL with two address like this:
+
+ ld hl,Addr1
+ ld bc,(PROGRAM_ADDR)
+ add hl,de             ; HL points to Addr1
+ ex de,hl              ; Now DE points to Addr 1
+ ld hl,Addr2
+ add hl,de             ; HL points to Addr 2
+
+Addr1: dc.b "Address 1",0 Addr2: dc.b "Address 2",0
+
+This is the shortest way and fastest way in bytes to do that.
+
+There are three more exchange instructions, but they all have to do with
+the stack pointer, and are of less use. More about those in an upcoming
+appendix.
+
+----------------------------------------------------------------------------
+
+STRING INSTRUCTIONS
+
+Now some very useful instructions which I've probably waited too long with
+to explain. Have you never wanted to copy many bytes from one place to
+another? In a simple way? For example copy the video memory to the graph
+memory or something. Then you should use LDIR (or LDDR)! First LDI and
+LDD...
+
+LDI is an instructions that does many things at once, you could say. It
+does this:
+
+ ld (de),(hl)   ; This instruction isn't even allowed...
+ inc de
+ inc hl
+ dec bc
+
+It copes one byte from HL to DE (where they point) and increase both
+pointers. LDD does the same except that both pointers are decreased. Both
+instructions also decrease BC with one.
+
+The LDIR (LDDR) instructions repeats the LDI (LDD) instruction until BC
+becomes 0! If you want to copy 100 bytes from one place to another, just
+set HL to the source and DE to the pointer and BC to 100 and run LDIR, and
+you're done! Here's how to copy the video memory to the graph memory:
+
+ ld hl,$FC00   ; I always type $FC00 instead of the alias VIDEO_MEM
+ ld de,$8641   ; GRAPH_MEM
+ ld bc,1024    ; 1024 bytes to copy. It's $400 and equal to 128 x 64 / 8
+ ldir
+
+Most often you use LDIR but sometimes LDDR is necessary.
+
+There are also some other string instructions (that's what they're called)
+which will be explained in another lesson.
+
+----------------------------------------------------------------------------
+
+GRAYSCALE GRAPHICS
+
+Finally... I guess many have waited for this part. First of I should
+explain how grayscale graphics works. It's not something to do with
+hardware if anyone though that. What you do is that you have two layers,
+two video memories. One video memory is the original one (at $FC00) and the
+other one is 1024 allocated bytes. To make it grayscale, those pages are
+flipped very fast, in 200 Hz. 2/3 of the time the video memory at $FC00 is
+shown and 1/3 of the time the other video memory is shown. If a pixel is
+set on both layers, it is shown the whole time (3/3) and becomes black. If
+it's only set on the first layer ($FC00) it's visible 2/3 of the time and
+looks like darkgray. Only on the second layer, 1/3 of the time (lighgray)
+and if it's never visible, well, then it's white.
+
+That's how it works. Here's how to use it in your very own program. It
+requires that you use Rob Taylors excellent graylib.h file.
+
+#include ti-85.h
+
+.org 0
+.db "Grayscale test",0
+
+ CALL_(GrayScaleOn)    ; Call a routine in graylib.h which activates
+                       ; grayscale graphics
+ ret c                 ; The carry flag will be set if to little memory.
+                       ; Return to ZShell if that happens.
+ xor a                 ; Same as ld a,0
+ CALL_(FillScreen)     ; Call a routine filling the screen with color A
+ inc a                 ; Increase A to 1
+ CALL_(FillScreen)     ; Fill screen, and so on
+ inc a
+ CALL_(FillScreen)
+ inc a
+ CALL_(FillScreen)
+ CALL_(GrayScaleOff)   ; Turn grayscale off
+ ret                   ; Return to ZShell
+
+FillScreen:        ; This routine fills the screen with color A and waits
+                   ; for a keypressed before return
+ push af           ; Store the A register on the stack
+ ld hl,$FC00       ; Load HL with the pointer to the first layer
+ srl a             ; Shift A one step to the right.
+ jr z,Lay1White    ; If it becomes zero (happens when A = 0 or A = 1), skip
+ ld a,$FF          ; Set A to $FF
+Lay1White:         ; Now A is either $00 (if A<2) or $FF (A>=2)
+ CALL_(FillLayer)  ; Fills 1024 bytes at HL with A
+ pop af            ; Restore A from stack
+ push af           ; And push it again
+ ld hl,(Page2Addr) ; Page2Addr holds the address to the second layer.
+                   ; Load HL with it
+ and $01           ; Mask A with $01
+ jr z,Lay2White    ; If zero (happens when A = 0 or A = 2), then skip
+ ld a,$FF          ; Set all bits in A
+Lay2White:         ; Now A is either $00 (if A=0 or A=2) or $FF (A=1 or A=3)
+ CALL_(FillLayer)  ; Fill the second layer with A
+WaitKey:           ; Repeat label
+ call GET_KEY      ; Get last key pressed
+ or a              ; Check if zero
+ jr z,WaitKey      ; If no key pressed, then wait until key has been pressed
+ pop af            ; Restore A
+ ret               ; Return
+
+FillLayer:         ; This routine fills 1024 bytes at HL with A
+ ld d,a            ; The A reg will be used, so store it somewhere else
+ ld bc,1024        ; There are 1024 bytes to be filled
+RepFill:
+ ld (hl),d         ; Load (HL) with the former A (now D)
+ inc hl            ; Point to the next byte to fill
+ dec bc            ; And decrease the counter
+ ld a,b            ; To check if a 16 bit register is zero, these rows
+ or c              ; are the fastest way (though they ruin the A reg)
+ jr nz,RepFill     ; If it wasn't zero, repeat the filling
+ ret               ; Return
+
+#include graylib.h ; Including Rob Taylors graylib routines.
+                   ; Check the source to it!
+.end
+
+This simple program display all four colors, one at a time, on the screen
+and lets the user press a key after each screen.
+
+I assume you want more grayscale routines, such as sprite routines and line
+routines. They'll appear in another lesson, maybe the next!
+
+That was all for now I think.... Hope you've learned something at least...
+Happy programming!!
+                                 Lesson #7
+
+Welcome to lesson #7 of the online ZShell school! At this stage you should
+know most of the instructions the Z80 processor can handle, and a summary
+of all instructions would be quite handy, don't you think? I made a summary
+over ALL Z80 instructions which can be found here. This also means that in
+this lesson and in future lessons few new instructions will be teached
+seperately. Instead, a lot of useful routines are presented, and if new
+instructions occur in the routine, it is explained then. In this lesson
+you'll find a grayscale sprite routine and two different input routines.
+
+CONTENTS
+
+   * More about grayscale graphics
+   * Input routine
+   * Introduction to ports
+   * Read multiple keys
+
+----------------------------------------------------------------------------
+
+MORE ABOUT GRAYSCALE GRAPHICS
+
+The previous lesson was just an introduction to grayscale, explaining how
+it worked. In this lesson some useful routines are presented. It should be
+very easy to understand if you understood what I meant about layers and two
+video memories in the previous lesson. If not, you should reread that
+section.
+
+We start with something simple: a putpixel routine, lets call it PutPixelG.
+Input arguments should be coordinates and the color of the pixel; 0 being
+white and 3 black. The routine should check on which layers the pixel
+should be put. If the pixel is black it should be put at both layers.
+Here's the code, with comments:
+
+PutPixelG:            ; B,C = x,y coordinates   D = color (0-white, 3-black)
+ ld a,63              ; Convert the y coordinate so
+ sub c                ; y=0 is the top row, not the bottom row
+ ld c,a               ; (FIND_PIXEL) works that way
+ ROM_CALL(FIND_PIXEL) ; Get the offset to the pixel to be put
+ push hl              ; Store the offset on the stack
+ ld e,a               ; Store the value of bit to change
+ ld bc,$FC00          ; Address to layer 1
+ add hl,bc            ; Add it with the offset to get the location of the pixel
+ or (hl)              ; Put the pixel, even if it should be removed later
+ bit 1,d              ; Check if D=2 or D=3 (then bit 1 is set)
+ jr nz,PPG1           ; If the bit is set, don't remove the pixel!
+ xor e                ; The pixel should be removed. This does it.
+PPG1:
+ ld (hl),a            ; Make the update in the video memory
+ pop hl               ; Restore the pixeloffset
+ ld a,e               ; Plus the bit value
+ ld bc,(Page2Addr)    ; Page2Addr holds the address to the 2nd layer
+ add hl,bc            ; Add it with the offset to get the pixellocation on the 2nd layer
+ or (hl)              ; Put the pixel
+ bit 0,d              ; Check if D=1 or D=3 (then bit 0 is set)
+ jr nz,PPG2           ; Skip the removing part if bit 0 is set
+ xor e                ; Remove the pixel
+PPG2:
+ ld (hl),a            ; Update the second layer
+ ret                  ; End of routine
+
+When the routine returns to where it was called, all registers are changed.
+If you don't like this, put in pushes and pops at the beginning and the end
+of the routine. Also, don't forget ld a,4 \ out (5),a at the beginning of
+the program! Else the program will crash when FIND_PIXEL is executed.
+
+The routine uses quite a lot of logical operators and bit instructions. I
+also think I missed some instructions in lesson #4 (the one about bits and
+logical operators) , one of them used in the routine above: BIT. BIT checks
+if a certain bit is set in an 8 bit register (the bit is actually copied to
+the zero flag). If the bit is set, the zero flag is cleared. If it's not
+set, the zero flag is set. Similiar instructions are SET and RES. Both have
+the same arguments as the BIT instructions, but SET sets a bit in an 8 bit
+register and RES removes the bit. One sad thing about these instructions
+are that the bit must be a constant. You can't use a register for the first
+argument. Example: BIT A,B isn't possible. If the instruction did exist,
+some routines could be optimized in both speed and size. Read more about
+those instructions in the Z80 Instruction Summary.
+
+Back to the routine above... there is a little trap in it. If you want to
+put a pixel in color (darkgray), a pixel should be lit at the first layer.
+But it's very important to clear the bit at the second layer! If it was set
+before calling the routine, you would end up with a black pixel instead.
+The routine above actually first always puts the pixel, then removes it if
+it should be removed. The instruction used to put a pixel is OR and to
+remove it I used XOR. You could remove the pixel with the AND instruction
+also, but it would require more bytes (and it wouldn't be faster) to write
+such a routine.
+
+Note also that you can use this routine to remove pixels, although you
+could make a routine that only removed pixels (would be slightly faster).
+If you want fast graphic routines, you shouldn't use a putpixel routine
+every time you want to put a pixel (I'm thinking of line routines and
+sprite routines) because it would be slow since you must call FIND_PIXEL
+every time which is very unnecessary.
+
+Grayscale sprite routine
+
+One very easy way to do a grayscale sprite routine is to use an ordinary
+PutSprite routine twice and just change the address to the layer... that's
+what I'm going to do in this section. I'm going to use my own PutSprite
+routine (found here), but you should be able to do the modification quite
+easily on any sprite routine.
+
+PutSpriteG:           ; HL = pointer to sprite, B,C = x,y coordinates
+ push bc
+ push de
+ push hl
+ ld d,(hl)            ; D = xsize of sprite
+ inc hl
+ ld e,(hl)            ; E = ysize of sprite
+ inc hl
+ push de              ; Store the sprite dimensions on the stack
+ push de              ; twice...
+ push de              ; many times :-)
+ pop ix               ; IX = DE
+ ld de,$FC00          ; Address to layer 1
+ CALL_(PutSprite)     ; Put the sprite
+ pop ix               ; Restore the sprite dimension
+ pop de
+ ld d,0
+ add hl,de            ; Increase HL with the number of rows in the sprites
+ ld de,(Page2Addr)    ; Load DE with the address to layer 2
+ CALL_(PutSprite)     ; And put that layer
+ pop hl
+ pop de
+ pop bc
+ ret
+
+You must also change this section in the PutSprite routine:
+
+ ld de,$FC00    ; Remove this row!
+ add hl,de
+ ex de,hl
+ pop hl
+ ld b,(hl)      ; Change these four rows
+ inc hl         ; |
+ ld c,(hl)      ; |
+ inc hl         ; |
+
+into
+
+ add hl,de
+ ex de,hl
+ pop hl
+ push ix
+ pop bc
+
+If you want to use the PutSprite routine to put ordinary black&white
+sprites, you must change the input registers so DE points to the video
+memory ($FC00) and IX are the x and y dimensions of the sprite. HL should
+also point to the spritedata, not the coordinates. It's easier though make
+another small routine that fixes this:
+
+PutSpriteBW:
+ push bc
+ push de
+ push hl
+ ld d,(hl)
+ inc hl
+ ld e,(hl)
+ inc hl
+ push de
+ pop ix
+ ld de,$FC00
+ CALL_(PutSprite)
+ pop hl
+ pop de
+ pop bc
+ ret
+
+If you for some reason want both black&white and grayscale sprites in the
+same program you should use the routines above. PutSpriteBW works exactly
+the same way as the unmodified version of PutSprite. Both PutSpriteG and
+PutSpriteBW uses the modified version of PutSprite. I made a file
+containing those three routines with how-to-use instructions. Press here to
+get it.
+
+You must also know how to store grayscale sprites. To get it to work in my
+grayscale sprite routine, and in all other grayscale sprite routines
+available, you must store the layers after each other! It's therefore hard
+to see what the sprite really is if you just look at the .db:s. When
+drawing the sprite, draw it on a piece of paper (or a drawing program)
+first, then divide the layers.
+
+Example:
+
+Sprite:
+ .db 8,8
+ .db %11111111
+ .db %11111111
+ .db %00000000
+ .db %00000000
+ .db %00000000
+ .db %00000000
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %11111111
+ .db %00000000
+ .db %00000000
+ .db %00000000
+ .db %00000000
+
+The sprite looks like four horitonzal rows with the colors black, light
+gray, white, and last darkgray. The first 8 rows (or 6 rows if the ysize is
+6) contains the first layer and the last 8 rows the second layer. A black
+pixel should have a pixel set on both layers, a white on none.
+
+That was all about grayscale for this time. If you want a grayscale line
+routine for example, try change the b&w line routine the way I changed the
+PutSprite routine above.
+
+----------------------------------------------------------------------------
+
+INPUT ROUTINE
+
+Input routines are very seldom used in ZShell applications so far. One
+reason is that in most applications it hasn't been necessary. But the most
+important reason is probably because input routines aren't that easy to
+write. It's much easier (and takes less memory) to write a routine where
+you change the letters with the arrowkeys.
+
+How can an input routine be hard? Well, you have to read each char
+seperately, and if you want a backspace feature it becomes even harder. But
+adding a blinking cursor after the last char is MUCH easier. How can that
+be!? Well, the blinking cursor is cheating really... the ROM does
+everything for you. You just have to turn the cursor on with one simple
+instruction and turn it off when done. It's not THAT easy, but almost.
+
+Before showing the routine a new set of instructions must be explained:
+CPI, CPIR, CPD and CPDR. It's the same kind of instructions as LDIR and
+those, and the difference between them is the same.
+
+CPI compares the A register with the byte at (HL). After that HL is
+increased and BC is decreased. The Zero flag is set if A=(HL), else it's
+cleared. CPIR repeats CPI until either the Zero flag is set or BC becomes
+0. CPD and CPDR does the same thing except that HL is decreased instead of
+increased.
+
+These instructions are extremly helpful if you want to check where in an
+array a certain value is stored. For example, let A=5, BC=10 and HL point
+to an one-dimensional array. Then you make a CPIR. If after the instruction
+the Zero flag is NOT set, none of the 10 bytes in the array was equal to 5.
+If the Zero flag was set and BC has become 7, the 2nd (10-7-1) position in
+the array is equal to 5. The reason it's the 2nd position (not the third)
+is that BC is decrease even if A = (HL).
+
+How can this be used in an input routine? If you check the TI-85.H file you
+see that the keycodes to the alphabet are in very disorder: A = $2E, B =
+$26, C = $1E, ... ok, there is a pattern, but to convert it to ascii chars
+makes the routine bigger than if you use CPIR.
+
+As you saw in the example above, BC becomes backwards. If BC=0 (and the
+Zero flag is set) it's the last byte in the array that was equal to A. If
+the array contained the alphabet in alphabetic order and the A register
+contained the keycode to Z, BC would be 0. Then you had to do a subtraction
+with 90 (the ascii code for Z) followed by a NEG instruction. We could save
+one byte by reversing the alphabet. Instead of subtracting and negatating,
+only one addition is needed (with 65, ascii code for A).
+
+Now you should understand the input routine. The rows with an explanation
+starting with a star (*) can be removed if you don't want a blinking
+cursor. Read the explanation before the routine so you know how to use it
+and some traps. The letters you enter will be in textmode (menustyle is
+MUCH harder since the size of the letters are different). Backspace (left
+arrow) is also supported.
+
+; Input routine  - made by Jimmy Mårdell 97-03-05
+;
+; Reads a sentence entered from the keyboard. Only uppercase letters
+; and space are allowed. Left arrowkey = backspace.
+;
+; When calling, HL should point to where the string should be stored
+; and A should hold the maximum length of the string. Be sure there
+; are enough space (A+1) to store the nullterminated string at HL!
+; ($800C) should hold the screen position where the string starts.
+;
+; This input routine will also have a flashing cursor. If you don't like
+; it, remove all rows where the explanation starts with a *.
+;
+; IMPORTANT: The input must NOT wrap to a new row! Then it will not work
+; properly. The last char on a row should not be used either (if cursorcol=0
+; when calling, the maximum char length is 20). If you have a cursor, the
+; two last chars should not be used (max length 19 if the screen location
+; starts to the far left).
+;
+; The routine requires one temporary variable, noLet.
+
+Input:
+ push bc
+ push de
+ push hl
+ set 2,(iy+12)         ; * Turn cursor blinking on (interrupts must be enabled)
+ ld (noLet),a          ; Store the maximum lenght of the string
+ ld e,0                ; E = numbers of letters written so far
+WaK:
+ ld a,32
+ ld ($800E),a          ; * Set "character under cursor" to space
+ push hl               ; * Save HL since GET_KEY destroys it's content
+ call GET_KEY
+ cp $02                ; $02 = left key
+ jr z,BackSpace
+ cp $09                ; $09 = enter
+ jr z,NameDone
+ cp $11                ; $11 = space
+ jr nz,CheckLetter
+ ld a,32               ; Space is ascii char 32
+ pop hl
+ jr PutLetter          ; Put the letter on screen and in memory
+CheckLetter:
+ ld hl,Letters
+ ld bc,(PROGRAM_ADDR)
+ add hl,bc             ; HL -> letter table
+ ld bc,26              ; 26 letters to check
+ cpir                  ; Compare A with each letter until a match is found
+ ld d,c                ; Then C = the letter. Store in D
+ pop hl                ; HL -> current position in string
+ jr nz,WaK             ; If not valid keystroke, wait for new key
+ ld a,65               ; 65 = ascii char for A
+ add a,d               ; A now holds the ascii char for the letter pressed
+PutLetter:
+ ld c,a
+ ld a,(noLet)          ; A = max letters
+ cp e                  ; Check if max size is reached
+ jr z,WaK              ; If so, wait for a new key
+ ld (hl),c             ; If not, store the key entered
+ inc hl                ; Point to the next byte in the string
+ inc e                 ; And increase the letter counter
+ ld a,c
+ ROM_CALL(TX_CHARPUT)  ; Show the chars pressed on the screen
+ jr WaK                ; And jump back and wait for a new key
+BackSpace:
+ pop hl                ; HL -> current position in string
+ ld a,e
+ or a                  ; Check if string size = 0
+ jr z,WaK              ; If so, backspace is impossible. Check for new key.
+ res 2,(iy+12)         ; * Stopp cursor blinking
+ dec e                 ; Decrease string size
+ dec hl                ; And string pointer
+ push hl
+ ld hl,$800D           ; HL -> x cursor position
+ dec (hl)              ; Decrease it
+ ld a,32               ; Overwrite the last letter with a space
+ ROM_CALL(TX_CHARPUT)  ; Put the space over the chars
+ ROM_CALL(TX_CHARPUT)  ; * And over the blinking cursor
+ dec (hl)              ; * Decrease the x coordinate twice
+ dec (hl)              ;
+ pop hl
+ set 2,(iy+12)         ; * Stopp cursor blinking
+ jr WaK                ; Wait for a key
+NameDone:
+ pop hl                ; HL -> current position in string
+ ld (hl),0             ; Put a terminating zero at the end of the string
+ res 2,(iy+12)         ; * Stopp cursor blinking
+ pop hl
+ pop de
+ pop bc
+ ret
+
+; The keycodes of the letters A-Z stored backways
+
+Letters:
+ .db $19,$21,$0A,$12,$1A,$22,$0B,$13,$1B,$23,$2B
+ .db $0C,$14,$1C,$24,$2C,$0D,$15,$1D,$25,$2D,$0E
+ .db $16,$1E,$26,$2E
+
+Press here to get the routine above as plain text file. I've also made a
+small program to test it (inputtst.asm).
+
+Another useful inputroutine is when you want to enter numbers. I've also
+made a routine that does this. Press here to get it. A test program is also
+included (which lets you enter two number and the result is displayed).
+
+----------------------------------------------------------------------------
+
+INTRODUCTION TO PORTS
+
+If there were no such things as ports, a microprocessor would just do
+invisible calculation. Ports communicate between the processor and hardware
+stuff such as the keyboard and the linkport. Assembly is low level
+language, but programming with ports is really low level. To read a key in
+ZShell, you most often use GET_KEY. But how does GET_KEY work? It reads a
+byte in the RAM (probably the one stored at $8006 - LAST_KEY or $8000 -
+KEY_0). That byte read is the key scancode. But how did it get there? To
+understand that you must know a bit of what interrupts are. At a frequence
+of about 200 Hz (depends on the batteries) certain routines are called in
+the ROM. These routines (interrupthandlers) are called whatever the
+processor is doing; in the middle of a calculation, waiting for the user to
+press a key, or running a ZShell game - the only exception are if the
+interrupts have been disabled. The interupthandlers are quite small though,
+and they never disturb the program in any way (no change in registers or
+flags or anything). But they do change some things in the RAM memory -
+among them the address where GET_KEY gets the key scancode from. One
+interrupt handler reads from a port which key is currently pressed down and
+converts that information into a scancode which is stores in the RAM
+memory, ready for GET_KEY to pick up.
+
+On the TI-85 there are 8 ports, numbered from 0-7. Some are unused, some
+have known functions and some are unknown. You can both send and receive
+stuff from ports though some ports are read only and some are write only.
+Port 1 is used by the keyboard and port 7 by the linkport.
+
+The instructions used to communicate through ports are mainly OUT and IN.
+OUT sends a byte trough a port and IN receives a byte from a port. The
+syntax for OUT is either
+
+out (n),A
+
+where n is the port and A is the accumulator, or
+
+out (C),r
+
+which sends an 8 bit register r through the port stored in register C. The
+syntax for IN is the same, except that the arguments are swapped (the
+destination register comes first, then the port).
+
+Some other instructions connected to ports are OUTI, OUTD, OTIR, OTDR, INI,
+IND, INIR and INDR. All of them works as the other string instructions, ie
+they can send or receive many bytes at once. When programming the TI-85
+though, they seem very useless since ports aren't used often.
+
+----------------------------------------------------------------------------
+
+MULTIPLE KEYS
+
+Now that you know what ports are, you may wonder how you can use them in
+your programs. More important maybe, is why? To communicate with the
+linkport is one reason of course, but quite often you also want to use port
+1 to read whichs keys are held down. Why? Because GET_KEY has one, big,
+disadvantage: it can't read multiple keys. If you hold down more than one
+key, it acts as if no key has been pressed down (I think). In this section
+I will explain how you to use port 1. It will require that you have
+understood lesson #4 because when working with ports, it's at "bit level".
+
+It's kind of hard to explain in detail exactly why you should do this and
+that, so try to live with it :-). To check if some keys are held down, you
+should first send a mask to port 1 and after that receive a byte from port
+1 telling which keys are held down, according to the mask.
+
+The keys on the TI-85 are made up by an 2-dimensional array shown below
+
+   Bit |   0       1       2       3       4       5        6       7
+ -----------------------------------------------------------------------
+   $FE | Down  | Left  | Right |  Up   |Unused | Unused|Unused |Unused |
+ M $FD | Enter |   +   |   -   |   *   |   /   |   ^   | Clear |Unused |
+ A $FB |  (-)  |   3   |   6   |   9   |   )   |  Tan  |Custom |Unused |
+ S $F7 |   .   |   2   |   5   |   8   |   (   |  Cos  | Prgm  |  Del  |
+ K $EF |   0   |   1   |   4   |   7   |  EE   |  Sin  | Stat  | x-Var |
+   $DF |Unused | Sto-> |   ,   |  xý   |  Ln   |  Log  | Graph | Alpha |
+   $BF |  F5   |  F4   |  F3   |  F2   |  F1   |  2nd  | Exit  | More  |
+ -----------------------------------------------------------------------
+
+You should read the table like this: If you want to know if Cos is pressed
+down at the moment, you should first send the mask $F7 through port 1, then
+receive a byte and check if bit 5 is cleared. If it's cleared, then Cos is
+held down. Code:
+
+ld a,$F7
+out (1),a
+in a,(1)
+bit 5,a
+jr z,Cos_Is_Held_Down
+
+How does the mask work? What happens if I use other masks than the ones in
+the table? If you convert any of the masks above into binary, you'll find
+that all bits except one are set. For example, $F7 = %11110111. Bit 3 is
+cleared, which means that the returned value is an indicator for the third
+row (with row 0 as the first row). If you send a mask with more than one
+bit cleared, for example $F3 = %11110011, the returned byte would be an
+indicator for both row 2 and 3. If we found that bit 5 on the returned byte
+is cleared, it means that either Cos or Tan is pressed, there is no way of
+knowing which (both may be pressed also of course). That means it's often
+pretty dumb to send such a mask.
+
+There are only seven rows in the table, meaning one of the bits isn't used
+(the most significant bit). The last bit in the mask is therefore not
+important (doesn't mean anything) and there is no difference if you use the
+mask $F7 or $77 ($77 = %01110111).
+
+The reason the table looks the way it looks is how the keys are wired to
+each other. One consequence of this is that if you hold down three keys so
+they form three corners in a rectangle it will result in that the fourth
+key in the rectangle will act as if pressed down. For example, if you press
+down EE, Ln and Stat and send the mask $DF, you'll find that the resulting
+byte will have both bit 4 and 6 are cleared. There is no way around this
+(if you don't want to rewire the keys somehow...) so don't choose key
+combinations that may cause this!
+
+You may also have noticed that the ON key isn't in the table above. That's
+because the ON key works a bit different - when you press down ON an
+interrupt occur (even if the interrupts are disabled). There is a way to
+check if the ON key is pressed down though. If the third bit of a received
+byte from port 3 is cleared, then ON is held down:
+
+in a,(3)
+bit 3,a
+jr z,ON_Is_Held_Down
+
+One important thing when using port is that ports only detects keys
+currently held down. If you manage to press down and release a key between
+two port checks, that press will go unnoticed, so be sure to check the keys
+quite often so you don't have to hold down the key half a second before
+it's noticed. 200 times per second is maybe not necessar, but at least 10
+times/second, else the game control will not be perfect.
+
+I've made a program so you can check if the table above is correct. It
+shows the table above, except that if a key is NOT held down, a black
+square is shown in it's place, else it's empty. You can also experiment
+with pressing down three keys so they form the cornors of a rectangle, and
+then you'll see that the fourth key is indicated as held down. Press here
+to get the source.
+
+When using multikeys, it's most often the arrows keys you're interested in.
+Diagonal movement is often good. The other keys (such as Exit, 2nd) can
+often be checked with either GET_KEY or reading from the RAM memory. If
+not, you have to make to seperate checks. One alternative is sending the
+mask $BD through the port. The drawback with this is that the keys F2-F5
+can be used as arrowskeys :-)
+
+Here's an example code:
+
+MainLoop:
+ ld a,$FE          ; Check the arrow keys
+ out (1),a
+ in a,(1)
+ bit 0,a
+ CALL_Z(MoveDown)  ; If you don't use call, don't forget to jump back to the line coming below!
+ bit 1,a
+ CALL_Z(MoveLeft)  ; Also remember pushing the A register if you change it in the call!
+ bit 2,a
+ CALL_Z(MoveRight)
+ bit 3,a
+ CALL_Z(MoveUp)
+ ld a,$BF          ; Now check if F1-F5, 2nd, Exit or More is pressed
+ out (1),a
+ in a,(1)
+ bit 5,a
+ CALL_Z(Fire)
+ bit 6,a
+ jr nz,MainLoop
+ call GET_KEY      ; Clear the keybuffer
+ ret
+
+When you check keys through the port, the key buffer is not cleared. The
+interrupt handler will still store the last key pressed down, and GET_KEY
+will find the last key pressed even if you did your keyscans through ports.
+If you exit the program with Exit, you'll end up in TI-OS because when
+returning to ZShell, the Exit key will still be in the keybuffer. To avoid
+that, clear the keybuffer by a simple call GET_KEY (since the size of the
+buffer is just one single byte).
+
+That was the end of this lesson! Happy ZShell coding!

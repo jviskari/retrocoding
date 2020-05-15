@@ -1,0 +1,57 @@
+
+
+
+TI-85 Assembler Programming - Loops using "if" statements
+
+
+
+
+
+
+TI-85 Assembler Programming - Loops using "if" statements
+
+In programming, loops are incredibly useful things. If you are using a high-level language, creating a loop is easy: you just have to do something like "while num = 7 do ..." and the compiler will take care of the rest. Unfortunately, there is no compiler is assembly language, so we have to set up the loops ourselves. 
+
+
+One method of making a loop is the same way that is used in old-style BASIC, everyone's favorite not-so-high-level language. It looks something like this:
+
+10 A = A + 1
+20 IF A != B THEN GOTO 10
+30 ... 
+
+The loop simply executes instruction 10 until the if statement is false, at which point execution continues to the rest of the program. Assembly loops are exactly the same, except we don't have simple if statements or simple goto's. 
+
+
+Using the information about assembly if's in the last lesson, it is easy to translate the BASIC loop into assembly:
+
+Loop:
+     INC  A
+     CP   B
+     JR   NZ, Loop
+     ...       
+
+
+
+This type of loop is most commonly used as a while or repeat loop - while no key has been pressed, while the player isn't dead, and so on. Creating a for loop using if statements is more complex, because you have to take care of the counter variable inside the loop. A simpler way to create a for loop is by using the DJNZ instruction, which combines a counter, CP, and JR into one instruction. It is described in a future lesson. First, you are going to learn how to read keypresses and then write a real program 
+
+
+
+On to the next lesson: Key Input
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 2-4-96 by Greg Parker. Last update: never
+
+ 
+ 
+
+
+
+

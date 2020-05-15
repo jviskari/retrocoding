@@ -1,0 +1,58 @@
+
+
+
+TI-85 Assembler Programming - Loops using DJNZ
+
+
+
+
+
+
+TI-85 Assembler Programming - Loops using DJNZ
+
+The DJNZ instruction is the simplest way to create a for loop in assembler. It combines a counter variable, CP, and JR into one instruction. It only works with one specific loop, but it does that loop very well.
+
+
+DJNZ stands for "decrement, jump if not zero." It uses as its counter the B register. It first decrements B. Then, it checks if B is zero. If it is not, then the program jumps to the given label. Otherwise, the program continues straight ahead. 
+
+
+Here is an example of how to use it to make a loop:
+
+     ; create a for loop that will iterate 5 times
+
+     LD   B, 5   ; set B's starting value
+Loop:
+     INC A       ; do loop stuff
+     DJNZ Loop   
+     ...         ; the rest of the program 
+
+It's really quite simple. First, store the number of times the loop is to execute in B. Then label the beginning of the loop. The DJNZ instruction comes at the end of the loop. In between comes whatever actions the loop is supposed to execute - in this case, incrementing A. No other registers are affected, unlike the INC - CP - JR method which modifies the value of A.  
+
+
+There are a couple of bugs to watch for here. First of all, make sure you initialize B at the top. I know that sounds like a stupid thing not to do, but it is a suprisingly untraceable bug. Also, in the body of the loop, it is perfectly legal to change the value of B. There are times where this is useful, like adding one to B to keep the loop going longer, but usually it is a bug. You especially have to watch for subprograms called from the loop which modify B. When you learn the PUSH and POP instructions later you will be able to preserve the value of B whether it is changed in the loop or not. 
+
+
+The next lesson will teach you basic graphics by plotting single pixels.
+
+
+
+On to the next lesson:  Plotting pixels.
+
+
+Back to the lesson menu    
+
+
+
+Problems? Suggestions? Hate mail?
+Send it to Greg Parker jparker@best.com
+
+
+
+This page created 2-4-96 by Greg Parker. Last update: never
+
+ 
+    
+
+
+
+

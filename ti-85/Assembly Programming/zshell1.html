@@ -1,0 +1,304 @@
+<HTML>
+
+<HEAD>
+<TITLE>The ZShell school - Lesson #1</TITLE>
+</HEAD>
+
+<!--
+
+  This homepage was written in a plain texteditor
+
+-->
+
+<BODY BGCOLOR="#000000" TEXT="CC4400" LINK="#FFC000" VLINK="#806000" ALINK="#FF00FF">
+
+<CENTER>
+
+<A HREF="index.html">   <IMG BORDER=0 SRC="buttons/home.gif" ALT="Home"></A>
+<A HREF="aboutme.html"> <IMG BORDER=0 SRC="buttons/aboutme.gif" ALT="About me"></A>
+<A HREF="pc.html">      <IMG BORDER=0 SRC="buttons/pc.gif" ALT="PC"></A>
+<A HREF="ticalcs.html"> <IMG BORDER=0 SRC="buttons/ticalcs.gif" ALT="TI-Calcs"></A>
+<A HREF="music.html">   <IMG BORDER=0 SRC="buttons/music.gif" ALT="Music"></A>
+<A HREF="guestb.html">  <IMG BORDER=0 SRC="buttons/guestb.gif" ALT="Guestbook"></A>
+<A HREF="news.html">    <IMG BORDER=0 SRC="buttons/news.gif" ALT="News"></A>
+
+<BR>
+<IMG ALIGN=TOP SRC="pics/smyrnlgo.gif"><BR>
+<A HREF="zshell.html"><IMG BORDER=0 ALIGN=TOP SRC="pics/lzshell.gif"></A>
+</CENTER>
+
+<TABLE ALIGN=CENTER BORDER=0 WIDTH=540><TR><TD>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>ESSON</FONT></FONT>
+<FONT SIZE=5>#1</FONT>
+</FONT><BR>
+Welcome to the first lesson of the ZShell School! This first lesson
+may be a bit boring, but it's really necessary to know how the calculator
+works and a bit about the RAM memory, so you know what you do when you
+program. In the end of the lesson we'll make a classic "Hello World!"
+program.</P>
+
+<P><UL>
+<LI><A HREF="#binary">Binary & hex</A>
+<LI><A HREF="#memory">The memory</A>
+<LI><A HREF="#program">Your first program</A>
+<LI><A HREF="#compile">Compiling</A>
+</UL></P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="binary"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>B<FONT SIZE=4>INARY</FONT></FONT>
+<FONT SIZE=5>& H<FONT SIZE=4>EX</FONT></FONT>
+</FONT><BR>
+
+I will now explain a very important part when you're programming a lowlevel
+language. You who know this stuff may skip this section.</P>
+
+<P>Our own number system has the base 10, and that's because we humans
+have 10 fingers. Computers (and calculators) don't have fingers, they have
+electricity. To make it easy, there are two conditions, on and off, or
+0 and 1. That is a <I>bit</I>. Since it's a bit unpractical to work with
+the base 2, we put together 8 bits and then we got a <I>byte</I> (ex 01101011).
+A byte range between 0 and 255 (there are 2^8 = 256 different ways to combinate
+8 bits). 16 bits are called a <I>word</I> (0-65535). Less common is a <I>nibble</I>
+which range between 0 and 15 (4 bits) and octal (0-7 and 3 bits). </P>
+
+
+<P>What is <I>hexadecimal</I>? In the hexadecimal representation, a group
+of four bits (nibble) is encoded as one hexadecimal digit. Hexadecimal
+digits are represented by the symbols from 0 to 9, and by the letters A
+(10), B (11) ... F (15). A byte is represented by two hexdigits (ex D3).</P>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=4>Convert between decimal - hexadecimal - binary</FONT>
+</FONT><BR>
+
+One way is to use the calculator of course, but it's often faster to do it
+in your head. It's very easy to convert between hex and binary. Remember
+that a hexadecimal number consist of two groups of four bits. Just take
+one group at a time. </P>
+
+<UL>
+<PRE>| 0100 | 1100 | -> 4C</PRE>
+
+<PRE>D5 -> | 1101 | 0101 |</PRE>
+</UL>
+
+<P>Binary to decimal is simple math. Just go from right to left and take
+bit <I>n</I> * 2^<I>n</I>. The bits in a byte are numbered 0-7, right to
+left. Each bit is worth 1, 2, 4, 8 and so on. </P>
+
+<UL><PRE>
+10010101 = 1*2^0 + 0*2^1 + 1*2^2 + ... + 1*2^7 =
+         = 1 + 4 + 16 + 128 = 149
+</PRE></UL>
+
+<P>To convert from decimal to binary is also easy. One way is to divide
+the decimal number with two, and keep the remainder and so on. </P>
+
+<UL><PRE>
+173/2 = 86, remainder 1,
+ 86/2 = 43, remainder 0,
+ 43/2 = 21, remainder 1,
+ 21/2 = 10, remainder 1,
+ 10/2 =  5, remainder 0,
+  5/2 =  2, remainder 1,
+  2/2 =  1, remainder 0,
+  1/2 =  0, remainder 1.
+
+Collect the remainders backwards and you get 10101101
+</PRE></UL>
+
+<P>When you want to go between hex and decimal (the most common convertation)
+you can first convert to binary and then convert it to decimal/hexadecimal.
+Choose your own way, because you will do it often. </P>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=4>Negative numbers</FONT>
+</FONT><BR>
+
+I won't write so much here because it's really simple. You only need
+know a little about two compliment and you know the rest, because the compiler
+will do it automatically when you compile your assemly program. You need
+to know what happens to some length though. </P>
+
+<P>What you need to know is this: -1 = 255, -2 = 254. You should understand
+the rest then :-) If you want to add 5 with -3 for example, this is what
+will happen:
+<UL><PRE>
+ 5       = 00000101
+-3 = 253 = 11111101
+           --------
+          100000010
+</PRE></UL>
+</P>
+
+<P>Since a byte only can store 8 bits, the first 1 will disappear and 00000010
+is left = 2 which is the correct result! (The bit doesn't really disappear,
+it will be stored in the Carry Flag. More about that in the next lesson)
+</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="memory"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>T<FONT SIZE=4>HE</FONT></FONT>
+<FONT SIZE=5>M<FONT SIZE=4>EMORY</FONT></FONT>
+</FONT><BR>
+
+The TI-85 uses a 8-bit Z80 processor. Since it's a 8-bit processor,
+instructions that only take one byte are generally faster executed than
+longer instructions. A Z80 can &quot;reach&quot; 64k (1k = 1024 byte. 64k
+= 65536 byte) byte in the memory, so there are some limitations. (even
+worse than Bill Gates 640k...) </P>
+
+<P>The first 32k contains the ROM (The ROM is actually 128k, but only 32k
+is accessable at one time) and the second 32k contains the RAM. You don't
+have 32k to play with though, because about 4,5k is reserved for different
+things (cursor positions, graph mem, text mem, menu pointers and a lot
+more). Another difficulty is that all variables are moving around in the
+memory when you create new vars or just change the Ans variable, so when
+you want to access something from your program, you have to know where
+the program is at the moment... Luckily, ZShell takes care of that part
+so we don't have to bother (almost). </P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="program"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>Y<FONT SIZE=4>OUR</FONT></FONT>
+<FONT SIZE=5>F<FONT SIZE=4>IRST</FONT></FONT>
+<FONT SIZE=5>P<FONT SIZE=4>ROGRAM</FONT></FONT>
+</FONT><BR>
+
+If you haven't tried before, this will be your first program. And of
+course it must be a classic &quot;Hello World!&quot; program! The source
+code will follow below, and then I'll explain what each row does. I think
+it's easiest that way. In the next lesson, I'll explain a bit more about
+what each instructions really do.
+<FONT COLOR="#888888"><UL><PRE>
+#include "ti-85.h"
+
+ .org 0
+ .db "My first program!",0
+
+ ROM_CALL(CLEARLCD)
+ ld hl,0
+ ld (CURSOR_ROW),hl
+ ld hl,Text
+ ld de,(PROGRAM_ADDR)
+ add hl,de
+ ROM_CALL(D_ZT_STR)
+WaitKey:
+ call GET_KEY
+ cp K_EXIT
+ jr nz,WaitKey
+ ret
+
+Text:
+ .db "Hello World!",0
+
+.end
+</PRE></UL></FONT>
+</P>
+
+<P>The first line includes the <FONT COLOR="#FF8000">TI-85.H</FONT> file which
+contains a lot of alias (I write those aliases with capital letters). Without
+it the code will be much harder to understand. Most aliases is just an alias
+for a memory address or a byte.</P>
+
+<P>All programs begin with <FONT COLOR="#FF8000">.org 0</FONT>. It has to do with
+that you program will move around in the memory while it's on the calc. To make it
+simple, the compiler will assume that you program begins at offset 0 (but it really
+doesn't) but when you want to access variables, you add the offset of the
+program (which ZShell knows) and it will be correct.</P>
+
+<P>The second line is just a description of the program. It will be displayed
+in ZShell. It must end with ,0 so ZShell will know where the string ends
+(strings ended with ,0 is called zero-terminated strings).</P>
+
+<P>Then the program starts. The <FONT COLOR="#FF8000">ROM_CALL</FONT> is just an alias
+which is included in the <FONT COLOR="#FF8000">TI-85.H</FONT> file, and what really
+happens is that it jumps into a place in the ROM where the screen is cleared. In that
+way, we don't need to write our own code to clear the LCD.</P>
+
+<P>The next two rows moves the cursor to the top left cornor of the screen,
+and the three rows after that loads the text string at the bottom program
+into hl (or more exactly, hl points to the string). Here we have an example
+that we need to know where in the memory the string is stored. ZShell stores
+the location of our program in the memory (<FONT COLOR="#FF8000">PROGRAM_ADDR</FONT>
+is just an alias of that memory location) so we just add those two offsets.</P>
+
+<P>Then we display the string with another <FONT COLOR="#FF8000">ROM_CALL</FONT>
+and at the end we wait for the user to press the Exit key.</P>
+
+<P>This was just a quick description of how the program worked, and if
+you didn't understand it all, don't worry.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="compile"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>C<FONT SIZE=4>OMPILING</FONT></FONT>
+</FONT><BR>
+
+Compiling is a procedure that transform your source code into an executable
+file. In this case, it's a .85S file which can be executed on your TI-85
+using ZShell.</P>
+
+<P>You need a couple of programs. First, you need <A HREF="http://www.ticalc.org/pub/dos/asm/tasm301.zip">TASM
+3.0.1</A> (not Turbo Assembler) and you also need <FONT COLOR="#FF8000">STRING85</FONT>
+which you should have since it's included in the ZShell package. Then you
+need a link program, but you probably already have one. If you don't, you
+should go to <A HREF="http://www.ticalc.org" target="_top">www.ticalc.org</A> and get
+one. There are different link programs depending on which kind of link and
+computer you have. Of course you also need <A HREF="http://www.ticalc.org/pub/85/asm/shell/zshell.zip">ZShell
+4.0</A>, else it will definately not work :-).</P>
+
+<P>When you compile the program, you must have the file <FONT COLOR="#FF8000">TASM80.TAB</FONT>
+(included in the tasm zip file) in the same directory. You compile the code with
+this line:</P>
+
+<FONT COLOR="#888888"><UL>
+<PRE>tasm -80 -q -g3 -r12 -i myfile.asm</PRE>
+</UL></FONT>
+
+<P>where myfile.asm is your source (of course you should replace <I>myfile</I>
+with the name of the program). If your code is big (>1000 lines),
+it will take a while because tasm is slow. If you get errors it will show...
+After you've done that you have to rename a file before using string85:</P>
+
+<FONT COLOR="#888888"><UL>
+<PRE>rename myfile.obj myfile
+string85 myfile</PRE>
+</UL></FONT>
+
+<P>You should now have a file called <I>myfile.85s</I> which can be sent
+to the TI-85 using a linkprogram. Typing all this every time you want
+to compile your program takes some time though, so it's recommended
+that you use a batch file for this. Check out the <A HREF="zshell.html#how">Compiling</A>
+section at the <A HREF="zshell.html">ZShell School mainpage</A>.</P>
+
+<P>There is one thing you should know when you use TASM: You <I>must</I>
+make at least one space from the left margin if the row in the source contains
+an instructions, and all label <I>may not</I> contain any spaces. Else
+you get a lot of errors when compiling.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P><I>Return to the <A HREF="zshell.html">ZShell School mainpage</A></I></P>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

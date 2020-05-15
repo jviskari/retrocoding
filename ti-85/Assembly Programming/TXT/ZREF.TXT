@@ -1,0 +1,723 @@
+The common registers are called A, B, C, D, E, H and L (There are other
+registers, though they aren't important right now). Pretty easy? They are
+8-bits registers, which means that you'll fit a byte in them. Now, how do
+you do if you want to store a word for example? You "simply" put the
+registers together two and two. There are three register pairs, called BC,
+DE and HL. As you probably can figure out, the BC register uses both the B
+and C register. Important also is that you can't combine the registers in
+another way, ie registers such as BD, HA and so isn't possible. Also
+important is that if you store something in the B register, it will be
+destoryed when storing something later in the BC register, because they are
+the same (sort of).
+ One of those places
+are the text memory, which starts at address $80FD. There you'll fit 8x21
+(the text screen size) = 168 bytes. The reason you can use the text memory
+as storage is that when writing something to the screen, you write it
+directly to the LCD memory, not via the text memory as I think the ROM
+does. You don't have to understand this really, you just need to know that
+you're able to store things in the text memory. Other places to store
+things in is the second text memory (168 byte, starts at $8A6B) and the
+graph memory (1024 byte, starts at $8641). You can't use the whole graph
+memory when using Rob Taylors grayscale routine though, because then the
+calc will crash. First you should use the text memory, then the second one
+and last the graph mem. Of course, if you need to store big arrays, it's
+perhaps necessary to use the graph mem.
+
+
+You should understand the beginning. The reason why we store $0000 in
+($800C) is because that ($800C) holds the current cursor position. Since
+you store a word, both ($800C) and ($800D) will be 0. That's good since
+($800C) contains the x-pos and ($800D) contains the y-pos. 0,0 is the top
+left corner on the screen.
+
+             Z80 instr        ZShell instr         Explanation
+
+                                               A relative jump to arg
+        jr condition,arg   jr condition,arg    if condition is true.
+                                               An absolute jump to arg
+        jp condition,arg   JUMP_condition(arg) if condition is true.
+                                               A subroutine call to arg
+        call condition,arg CALL_condition(arg) if condition is true.
+
+THE VIDEO MEMORY
+
+The video memory is stored last in the RAM memory on the TI-85, at address
+$FC00 - $FFFF. A quick counting tells us $400 bytes = 1024 bytes. Lets see,
+the display is 128x64 = 8192 byte. And you can store 8 pixels in one byte
+(since the pixels are either white or black; 0 or 1; and we fit 8 bits in
+one byte) which gives us 8192/8 = 1024. No problem with that.
+
+The top left corner is at $FC00. One row fits in 16 byte = $10, so that
+would make it easy. Row 0 starts at $FC00, row 1 at $FC10, row 2 at $FC20
+and so on. A simple formula would tell us where in the graph mem we would
+change if we want to change one pixel: $FC00 + y * $10 + x DIV 8.. But we
+also have to know where in the byte, which bit, we should change! The bits
+are numbered 0-7, and bit 0 is the rightmost column in the byte. An ascii
+picture gives you an overview.
+
+                0        1        2        3        4
+     $FC0x |7......0|7......0|7......0|7......0|7......0|
+     $FC1x |7......0|7......0|7......0|7......0|7......0|
+     $FC2x |7......0|7......0|7......0|7......0|7......0|
+
+We could very easily write a routine that determinates which bit and which
+address we should change (try it, it's good practice), but there exist
+already such a routine in the ROM, so why reinvent the wheel? It's fast
+(you can make a faster one, but it's not worth it), but it has one stupid
+"feature": the origin is at the bottom left corner, not the top left. Now
+that's easy to change, just take y=63-y and that's done with. Before using
+the routine (called FIND_PIXEL) you also have to swap ROM page to ROM page
+4. You only have to do that once in the program (in the beginning) and it
+looks like this:
+
+     ld a,4
+     out (5),a
+
+Put these two rows in the beginning of the program if you use FIND_PIXEL.
+Now you should ask what input values FIND_PIXEL uses and what registers it
+will change. You store the x location in B and the y register in C before
+calling FIND_PIXEL (and it's a ROM_CALL, because it's on different places
+in the ROM depending on your ROM version) and it'll returin the address in
+HL (but you have to add $FC00 to it) and the bit^2 in A. It's good that the
+bit is raised to 2, because if you want to set bit A, you can't SET A,(HL)
+because the first value must be known! Instead, you use logical operators.
+
+---------------------------------------------------------------------------
+
+PLOTTING PIXELS
+
+Here are four routines for putting a pixel, removing a pixel, changing a
+pixel, and checking to see if a pixel is lit.
+
+     PutPixel: ; Puts a pixel at B,C
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      or (hl)
+      ld (hl),a
+      ret
+
+     RemovePixel: ; Removes a pixel at B,C
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      cpl
+      and (hl)
+      ld (hl),a
+      ret
+
+     ChangePixel: ; Changes the pixel at B,C
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      xor (hl)
+      ld (hl),a
+      ret
+
+     TestPixel: ; Tests the pixel at B,C. If the Z flag is set, no pixel, else a pixel is lit
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      and (hl)
+      ret
+
+All these routines will destroy A, DE and HL, so you should push and pop
+these if you don't want too loose those values. These routines also shows
+you that all logical operators are useful.
+
+All routines starts with with three identical rows, which make HL point to
+the right address and A will be the byte you should "do something with". In
+PutPixel, we OR A with (HL) and then we put the result (which will be
+stored in A) back in (HL), since it's in the video location we want the
+change made. When removing, we changes all bits in A with CPL, and then we
+mask out the bit to remove. Since A in the beginning only have one bit set
+(I really hope you get that), A will know have 7 bits set, and the bit that
+isn't set is the one that will disappear, since AND requires both bits to
+be set.
+
+The third example is simple, XOR changes the pixel. Since seven bits are
+unset, those seven location won't change, and the one bit that is set will
+make a change. The fourth example masks out the tested bit, and if A is
+zero, there were no pixel and the zero flag will be set (AND sets the zero
+flag if the result is 0).
+
+It's very important that you understand this section to 100%, else you'll
+get in big trouble later on. Try rereading it if you don't understand, and
+experiment by yourself and try to change some instructions and understand
+what the result should be. If you're still confused, you should mail me.
+
+---------------------------------------------------------------------------
+
+PUT IMAGES
+
+Now when you know how to put pixels, you could also put images. But putting
+them pixel by pixel is a stupid way to do it. First, if you use FIND_PIXEL
+for every pixel, it will be slow and it's really simple to do it another
+way.
+
+Now I'll show you a simple way to put images that you'll just use as
+background. As you've seen of how the graphic memory works, it's a lot
+easier to make aligned pictures, that is, you change all bits in one byte.
+That's the reason why many games have the same GUI with sprites that are 8
+pixels wide. That's because you don't have to bother about bits, and it's
+much faster too.
+
+The image putting routing below always starts on first bit (bit 7, since
+bit 7 is the leftmost bit in a byte) since that makes it much easier. You
+just copy 8 pixels at the same time from the data at the end of the program
+straight into the videomem. Simple! Then you go to the next byte and do the
+same until the whole picture is created.
+
+This is how I do it. Comments below.
+
+     PutImage:    ; Puts the image stored at (HL).  { 28 bytes }
+      ld e,(hl)
+      inc hl
+      ld d,(hl)
+      inc hl
+      ld b,(hl)
+      inc hl
+      ld c,(hl)
+      inc hl
+     PI_NewRow:
+      push bc
+      push de
+     PI_NewCol:
+      ld a,(hl)
+      inc hl
+      ld (de),a
+      inc de
+      djnz PI_NewCol
+      pop de
+      ld bc,16
+      ex de,hl
+      add hl,bc
+      ex de,hl
+      pop bc
+      dec c
+      jr nz,PI_NewRow
+      ret
+
+And here is how the image is stored in the end of the program:
+
+
+     Image:
+      .dw $FC24
+      .db 2,16
+      .db %00000111,%11100000
+      .db %00011000,%00011000
+      .db %00100000,%00000100
+      .db %01000000,%00000010
+      .db %01000000,%00000010
+      .db %10000000,%00000001
+      .db %10000001,%10000001
+      .db %10000010,%01000001
+      .db %10000010,%01000001
+      .db %10000001,%10000001
+      .db %10000000,%00000001
+      .db %01000000,%00000010
+      .db %01000000,%00000010
+      .db %00100000,%00000100
+      .db %00011000,%00011000
+      .db %00000111,%11100000
+
+Let us first look at how the image is stored. First we have defined a word
+(.dw) with the address. Since these kind of pictures won't move we can
+calculate the address in the head so we don't have to waste unnecessary
+bytes in the program to do that. If you want it to move, you could change
+the routine in the beginning by using a FIND_PIXEL.
+
+On the second row, I've defined first the x width in bytes, that is, how
+many bytes wide it is, not how many bits!. The second byte is the y width,
+which is the number of rows. After that the image is stored. I've used %
+(that means that the value is in binary) so you can see how the sprite will
+look like easier.
+
+Now let us look at the PutImage routine. The first 8 rows loads DE with the
+address (note that E is first read, then D. The reason for that is that the
+LSB is stored first when you define a word, or store a word for that
+matter), and then loads B with the x size in bytes and C with the y size.
+Then we push BC because we will return here again, and then we want B to be
+the same and we push DE so we can pop it back at the end of routine and add
+16 (16 = exactly one row down) to it later.
+
+After the label NewCol we just load A with the first byte of the image (HL
+is after four increases in the beginning now pointing at the image itself)
+and then we store it at (DE), which is the address in the video memory.
+See, we changes 8 pixels at once, without caring about the bits! They'll
+just fall into place! We also increase HL so it points to the next byte in
+the image and DE so it points to the next byte in the video memory. Then we
+repeat NewCol B times (B was the x size, which is the number of times we
+want it to be repeated).
+
+When one row has been put on the screen, we pop DE to get the address where
+it was on the beginning of the line, because then we can easily get to the
+next row by adding 16 to DE. If we don't push and pop DE in that way, we
+have to add DE with 16-xsize, and to calculate that takes a few more bytes.
+But how do we add to DE? Only HL is allowed in 16 bit addition. It's time
+for a new, very useful instruction, when you deal with 16 bit registers, EX
+DE,HL. It's really simple, it swaps the contents of DE and HL. This
+instruction is special, because it doesn't work on any other common
+registers (it works on some other register, more about that in a later
+lesson).
+
+Anyway, we just change DE with HL, then add 16 to HL, and then change back.
+A easy way to do it. Note that we have to load BC with 16, because you
+can't add with an immediate value. Luckily, the contents of BC doesn't
+matter for the moment, so we don't have to push it. As you see, we pop it
+back the next instruction, and then BC will contain the x size and y size
+once again. Now we decrease the y size, and if it's not zero, we'll jump
+back and start with a new row. This time when we push BC, the y size will
+be one less, which is exaclty what we wanted.
+
+Puh... that was a long explanation of how to put an image... Now we're
+getting to how to put non aligned sprites (that is, we put sprites, images,
+between two video memory bytes).
+
+---------------------------------------------------------------------------
+
+SPRITES
+
+There already exists one good sprite routine for this, NASR. And it's the
+WARP version you should use, because 2.1 gives awful spaces to the left and
+to the right of the sprite if it doesn't cover a whole byte. But NASR is
+big, 171 bytes + 6 bytes if you want to push and pop BC, DE and HL because
+they're destroyed in the routine. I haven't really studied the source to
+NASR, but I'm pretty sure that NASR is only good if you have big sprites,
+like 32x32 or something. Most often, you don't have so big sprites. 8x8 or
+6x6 is most common I think, so I wanted to test my simple, but fast, sprite
+routine with NASRWARP, and look at the result!
+
+                         Routine         6x6      8x8
+                   NASRWARP              473      375
+                   PutSprite             1036     674
+                           Spriteputs per second
+
+PutSprite (I haven't given my routine any name) is about twice as fast as
+NASR! I didn't believe it first when I tested (hey, >1000 sprites per
+second on a Z80!?). You also see that smaller sprites are more faster with
+PutSprite than with NASR. And PutSprite is only 67 bytes big, including
+pushing and popping three register pairs!
+
+There is one sad thing though, and that is that PutSprite can only handly
+sprites with a width of 8 pixels. That shouldn't be a problem, since most
+sprites are. I could change that (I'll do it another time) but then it may
+be a bit slower, though still not much, but NASR would probably be faster
+on bigger sprites, because it uses a totally another algorithm for the
+putting.
+
+Here is the routine. I'll explain below on how it works, but not
+instruction for instruction.
+
+     PutSprite: ; Puts a sprite stored at (HL) at B,C
+      push bc
+      push de
+      ld a,63
+      sub c
+      ld c,a
+      push hl
+      push hl
+      ROM_CALL(FIND_PIXEL)
+      ld de,$FC00
+      add hl,de
+      ex de,hl
+      pop hl
+      ld b,(hl)
+      inc hl
+      ld c,(hl)
+      inc hl
+      push hl
+      pop ix
+      ex de,hl
+     PS_NewRow:
+      push bc
+      ld d,(ix)
+      inc ix
+      push af
+      push hl
+     PS_NewCol:
+      rl d
+      ld e,a
+      jr nc,PS_NoPixel
+      or (hl)
+      ld (hl),a
+      jr PS_NextPixel
+     PS_NoPixel:
+      cpl
+      and (hl)
+      ld (hl),a
+     PS_NextPixel:
+      ld a,e
+      rrca
+      jr nc,PS_SameByte
+      inc hl
+     PS_SameByte:
+      djnz PS_NewCol
+      pop hl
+      pop af
+      ld de,16
+      add hl,de
+      pop bc
+      dec c
+      jr nz,PS_NewRow
+      pop hl
+      pop de
+      pop bc
+      ret
+
+The sprite is stored like this:
+
+     .db 6,6 ; x- and y-width in pixels
+     .db %110011
+     .db %100001
+     .db %000000
+     .db %000000
+     .db %100001
+     .db %110011
+
+Note that PutSprite reverses the y value, so (0,0) will be the top left
+corner.
+
+In short, it first locates the top left address of the sprite, then puts
+the sprite pixel by pixel. In the beginning of each row, D is loaded with
+the 8 pixels of the sprite, and for each column repeat, D is rotated to the
+left which pushes out the leftmost pixel in the carry flag. If the carry
+flag then is set, an ordinay PutPixel will be made, else a RemovePixel will
+be made.
+
+The problem with making this routines is that you have so few registers to
+work with. As you see, a new registers, IX, is used. More about that
+register later, but it works as HL. In the routine, HL points to the
+videomem, DE to the spirte, A is the bit to be put/removed and BC contains
+the x and y width. You also have to minimize pushes and pops because it's
+faster to store a 8 bit register in another 8 bit register and then fetch
+it back instead of pushing and then popping it back, but you can't always
+do that.
+
+You could also change this routine so it ORs the sprite on the screen. If a
+pixel on the sprite is 0, the pixel in the videomemory won't be removed, it
+will be the same as before. To do that change, change jr nc,PS_NoPixel to
+jr nc,PS_NextPixel and erase the three rows after PS_NoPixel. The routine
+will be even faster now.
+
+You can also XOR the sprite on the screen. That's a good way to remove the
+sprite. If you first put out the sprite at one location with XORing, and
+then put it at the same place again, you'll remove the sprite! That's a
+cool way to create fast animation, but it will flicker slightly. A better
+way to avoid flickering is to store everything you draw in the graph memory
+(NOT the video memory) and then move the whole graphmem to the videomem.
+That will slow the game down, but as you saw, PutSprite isn't a routine
+that'll slow down the game... How to do that (temporary storage in graph
+mem and then copy it over to the video mem) will be discussed in a later
+lesson.
+
+
+The index registers IX and IY
+
+These registers are handy. The IY register is used by interrupts and rom
+calls, and should not be changed unless you've disabled the interrupts (see
+below). The IX register though is free to use anytime! It works almost
+exactly like the HL register. When you can use the HL register, you can use
+the IX register! There is one drawback though, the instructions become one
+or two bytes longer, depending on the use. If you use IX as a dataregister
+in an instruction, the instruction becomse one byte longer. That byte is a
+prefix ($DD) which tells the processor that the next instruction will have
+IX in it, not HL! This is necessary, because the opcode for an instruction
+which uses IX is the same as for using HL. It's only the prefix that is the
+difference.
+
+When you use the IX register as an addressregister, a pointer, it becomse
+two bytes longer, the prefix and a shift byte. That shift byte is useful
+sometimes, though most often you don't use it (but the instruction gets two
+bytes longer anyway). The shift value is a signed byte and therefore has
+the limitation -128..127.
+
+Here are some examples:
+
+ ld ix,$1234     ; The instructions is one byte longer than ld hl,$1234
+ ld (ix+5),62    ; Loads the byte 62 in the memory location IX+5. If
+                 ; this instruction was executed right after the previos
+                 ; one, it would mean at $1239
+
+If you don't use the shift byte, just (ix), you may still have to put it
+there, (ix+0). I think you must do this on the CAZ assembler, but you don't
+have to add that if you use TASM.
+
+If you want to use the IY register, it works the same way. The only
+difference is that the prefix is $FD instead of $DD. Remember to disable
+the interrupts (see below)!
+
+When you use the IX register (or IY) you can't use the HL register in the
+same instructions (neither just H or L). For example, add ix,hl wouldn't
+work, but add ix,ix works fine.
+
+Maybe you've thought why the index registers aren't divided into two 8 bit
+register, as HL. The answer is they are, there are just no instructions to
+access those, or at least those instructions are not documented and not
+supported by assemblers directly. Of course, if you type the opcodes for
+the instructions it works just fine! First you should know what these 8 bit
+registers are called. I don't know if this is the "real" name, but IXh, IXl
+and IYh, IYl is used (h=higher byte, l=lower byte). The opcodes are quite
+simple... if the assembler doesn't handle those instructions, type this:
+
+ .db $DD \ ld a,h        ; If  you want to ld a,IXh
+ .db $FD \ ld l,e        ; If you want to ld IYl,e
+ .db $DD \ ld l,(hl)     ; This should be equal to ld IXl,(IX)
+
+The last one I'm not sure about, but it should work that way... try it
+yourself.
+
+The "not-so-often-used" R and I registers
+
+These registers are very seldom use, because they are very limited. The
+only way to "communicate" with them is through the accumulator, so the only
+allowed instructions are:
+
+ ld a,r
+ ld r,a
+ ld a,i
+ ld i,a
+
+What do they do? The R register is called the "Memory Refresh" registers
+and is updated after every instructions (added with two I think), thus
+making this register more or less a random register. The only real use for
+it is in random generators, though it's not a good random generator...
+First you'll have to shift it one step to the right (since it will only
+contain even numbers if you don't change it with ld a,r) and then you'll
+have to mask away the bits you don't want. If you want a random number
+between 0 and 15 (the range must be a power of two for good generation, see
+below), you do like this:
+
+ ld a,r  ; Loads the accumulator with the "random" register
+ srl a   ; Shift it logically (put a 0 at the highest bit) one step
+         ; to the right
+ and 15  ; Masks off the unnecessary bits
+
+This works fine if you don't use if often. If you want 100 random numbers
+and use this routine the randomize will be bad (if you randomize all
+numbers at once)! It will be even worse if the range isn't a power of two.
+Let us say we want a number between 0-6. How would you do? You can type and
+6 (figure this one out if you're unsure about binary and masking) because
+then you would get a strange result (only 0, 2, 4 and 6 would occur). The
+best way is to do like this:
+
+Random:
+ ld a,r
+ srl a
+ and 7          ; between 0-7
+ jr z,Random    ; If it's 0, rerandom
+
+This works, and we'll get a random number between 1-7 (decrease with one to
+get between 0-6). The problem is the frequency... one of the numbers will
+appear 2/8 of the time, the others 1/8. Why? Because every time the routine
+have to rerandomize it means that the R register ends with 4 zeros (the
+last bit that was shifted away plus the three masked bits). The newly
+randomized numbers will then always be the same (should be 3 or 4 I think)
+because the number of instructions are always the same. This is the reason
+why one piece appears more frequently in ZTetris than the others...
+
+How to fix this!?!? Well, you could make a random lookup table of 56 bytes
+and use the R registers in another way. If you really want to know, you
+could message me. It still won't be good, but much better. Another way
+which may work is to use the HALT instruction. More about that instruction
+another time.
+
+Back to the I register... this one is unimportant most of the time. It's
+only useful when you program interrupt handler and stuff like that. It
+holds the higher byte of the address which should be called when an
+interrups occurs and you're in interupt mode 2. If you don't understand
+what I'm talking about, don't bother... you don't need to know right now.
+It'll be better explained in another lesson.
+
+You can use it though as a temporary register if the interrupt mode isn't
+set to 2. The interrup mode is usually set to 1, but when using grayscale
+graphics it's set to 2, so then the calc would crash if you changed the I
+register (same thing happens if Game Wizard or any other memory resident
+program is run)... Since you can only change it through the A register,
+it's often not worth that use though. One last thing also, you don't have
+to reset the register if you change it. It's not used in the ROM memory.
+The TI-85 was never meant to use the I register or interrupt mode 2. More
+about that in the lesson about interrupts.
+
+The shadow registers
+
+Now something cool... I think many will be surprised to know that there are
+7 more 8 bit registers available to use! These registers are called the
+shadow registers and are a copy of the common registers, A, BC, DE and HL.
+Their names are similiar also, you add an ' after the register name: A',
+BC', DE' and HL'. The drawback is quite big though, you can never access
+those register through any instruction at all actually... There are
+instructions, however, that will exchange the ordinary registers with the
+shadow register. Those instructions are:
+
+ ex af,af'    ; Exchange AF with AF' (F' = shadow flag register)
+ exx          ; Exchange BC, DE and HL with BC', DE' and HL'
+
+When using these instructions you must have disabled the interrupts,
+because they're used by the ROM. You don't have to restore them to what
+they were before (no push/pop needed). To disable interrupts (and enable
+them again) you use two short instructions:
+
+ di     ; Disable interrupts
+ ei     ; Enable interrups
+
+Another useful exchange instruction
+
+I think I've missed a useful instruction before. Here it is:
+
+ ex de,hl    ; Exchanges the contents in HL and DE
+
+It will only work on those two registers, and you must type ex de,hl not ex
+hl,de (even though they would do the same thing). The instruction is useful
+for example when you want to load DE and HL with two address like this:
+
+ ld hl,Addr1
+ ld bc,(PROGRAM_ADDR)
+ add hl,de             ; HL points to Addr1
+ ex de,hl              ; Now DE points to Addr 1
+ ld hl,Addr2
+ add hl,de             ; HL points to Addr 2
+
+Addr1: dc.b "Address 1",0 Addr2: dc.b "Address 2",0
+
+This is the shortest way and fastest way in bytes to do that.
+
+There are three more exchange instructions, but they all have to do with
+the stack pointer, and are of less use. More about those in an upcoming
+appendix.
+
+----------------------------------------------------------------------------
+
+STRING INSTRUCTIONS
+
+Now some very useful instructions which I've probably waited too long with
+to explain. Have you never wanted to copy many bytes from one place to
+another? In a simple way? For example copy the video memory to the graph
+memory or something. Then you should use LDIR (or LDDR)! First LDI and
+LDD...
+
+LDI is an instructions that does many things at once, you could say. It
+does this:
+
+ ld (de),(hl)   ; This instruction isn't even allowed...
+ inc de
+ inc hl
+ dec bc
+
+It copes one byte from HL to DE (where they point) and increase both
+pointers. LDD does the same except that both pointers are decreased. Both
+instructions also decrease BC with one.
+
+The LDIR (LDDR) instructions repeats the LDI (LDD) instruction until BC
+becomes 0! If you want to copy 100 bytes from one place to another, just
+set HL to the source and DE to the pointer and BC to 100 and run LDIR, and
+you're done! Here's how to copy the video memory to the graph memory:
+
+ ld hl,$FC00   ; I always type $FC00 instead of the alias VIDEO_MEM
+ ld de,$8641   ; GRAPH_MEM
+ ld bc,1024    ; 1024 bytes to copy. It's $400 and equal to 128 x 64 / 8
+ ldir
+
+Most often you use LDIR but sometimes LDDR is necessary.
+
+There are also some other string instructions (that's what they're called)
+which will be explained in another lesson.
+mask $BD through the port. The drawback with this is that the keys F2-F5
+can be used as arrowskeys :-)
+
+Here's an example code:
+
+MainLoop:
+ ld a,$FE          ; Check the arrow keys
+ out (1),a
+ in a,(1)
+ bit 0,a
+ CALL_Z(MoveDown)  ; If you don't use call, don't forget to jump back to the line coming below!
+ bit 1,a
+ CALL_Z(MoveLeft)  ; Also remember pushing the A register if you change it in the call!
+ bit 2,a
+ CALL_Z(MoveRight)
+ bit 3,a
+ CALL_Z(MoveUp)
+ ld a,$BF          ; Now check if F1-F5, 2nd, Exit or More is pressed
+ out (1),a
+ in a,(1)
+ bit 5,a
+ CALL_Z(Fire)
+ bit 6,a
+ jr nz,MainLoop
+ call GET_KEY      ; Clear the keybuffer
+ ret
+ 
+ Hex codes:              Decimal codes:
+
+ ---------------------- ----------------------
+|  35  34  33  32  31  |  53  52  51  50  49  |
+|                      |                      |              
+|                04    |                04    |
+|                      |                      |              
+|  36  37  38  02  03  |  54  55  56  02  03  |
+|                      |                      |              
+|  30  28  20    01    |  48  40  32    01    |
+|                      |                      |              
+|  2F  27  1F  17  0F  |  47  39  31  23  15  |
+|                      |                      |              
+|  2E  26  1E  16  0E  |  46  38  30  22  14  |
+|                      |                      |              
+|  2D  25  1D  15  0D  |  45  37  29  21  13  |
+|                      |                      |              
+|  2C  24  1C  14  0C  |  44  36  28  20  12  |
+|                      |                      |              
+|  2B  23  1B  13  0B  |  43  35  27  19  11  |
+|                      |                      |              
+|  2A  22  1A  12  0A  |  42  34  26  18  10  |	
+|                      |                      |              
+|  xx  21  19  11  09  |  xx  33  25  17  09  |
+ ---------------------- ----------------------
+
+Keys of interest:
+
+up    = $04 = 04
+down  = $01 = 01
+left  = $02 = 02
+right = $03 = 03
+
+enter = $09 = 09
+2nd   = $36 = 54
+exit  = $37 = 55
+more  = $38 = 56
+
+on    = no key code is returned
+
+X marks a legal source/dest combination
+
+         Source
+Dest   imm mem A B C D E H L (BC) (DE) (HL) (IX) (IY) BC DE HL IX IY SP
+      ------------------------------------------------------------------
+mem  |  .   .  X . . . . . .  .    .    .    .    .   X  X  X  X  X  X
+     | 
+A    |  X   X  . X X X X X X  X    X    X    X    X   .  .  .  .  .  .
+B    |  X   .  X . X X X X X  .    .    X    X    X   .  .  .  .  .  .
+C    |  X   .  X X . X X X X  .    .    X    X    X   .  .  .  .  .  .
+D    |  X   .  X X X . X X X  .    .    X    X    X   .  .  .  .  .  .
+E    |  X   .  X X X X . X X  .    .    X    X    X   .  .  .  .  .  .
+H    |  X   .  X X X X X . X  .    .    X    X    X   .  .  .  .  .  .
+L    |  X   .  X X X X X X .  .    .    X    X    X   .  .  .  .  .  .
+     | 
+(BC) |  .   .  X . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+(DE) |  .   .  X . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+(HL) |  X   .  X X X X X X X  .    .    .    .    .   .  .  .  .  .  .
+(IX) |  X   .  X X X X X X X  .    .    .    .    .   .  .  .  .  .  .
+(IY) |  X   .  X X X X X X X  .    .    .    .    .   .  .  .  .  .  .
+     | 
+BC   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+DE   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+HL   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+IX   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+IY   |  X   X  . . . . . . .  .    .    .    .    .   .  .  .  .  .  .
+     | 
+SP   |  X   X  . . . . . . .  .    .    .    .    .   .  .  X  X  X  .
+
+imm  = immediate data such as $80DF
+mem  = memory address such as ($80DF)
+(BC) = using the value in BC as a memory address

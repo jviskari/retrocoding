@@ -1,0 +1,520 @@
+<HTML>
+
+<HEAD>
+<TITLE>The ZShell school - Lesson #6</TITLE>
+</HEAD>
+
+<!--
+
+  This homepage was written in a plain texteditor
+
+-->
+
+<BODY BGCOLOR="#000000" TEXT="CC4400" LINK="#FFC000" VLINK="#806000" ALINK="#FF00FF">
+
+<CENTER>
+
+<A HREF="index.html">   <IMG BORDER=0 SRC="buttons/home.gif" ALT="Home"></A>
+<A HREF="aboutme.html"> <IMG BORDER=0 SRC="buttons/aboutme.gif" ALT="About me"></A>
+<A HREF="pc.html">      <IMG BORDER=0 SRC="buttons/pc.gif" ALT="PC"></A>
+<A HREF="ticalcs.html"> <IMG BORDER=0 SRC="buttons/ticalcs.gif" ALT="TI-Calcs"></A>
+<A HREF="music.html">   <IMG BORDER=0 SRC="buttons/music.gif" ALT="Music"></A>
+<A HREF="guestb.html">  <IMG BORDER=0 SRC="buttons/guestb.gif" ALT="Guestbook"></A>
+<A HREF="news.html">    <IMG BORDER=0 SRC="buttons/news.gif" ALT="News"></A>
+
+<BR>
+<IMG ALIGN=TOP SRC="pics/smyrnlgo.gif"><BR>
+<A HREF="zshell.html"><IMG BORDER=0 ALIGN=TOP SRC="pics/lzshell.gif"></A>
+</CENTER>
+
+<TABLE ALIGN=CENTER BORDER=0 WIDTH=540><TR><TD>
+
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>L<FONT SIZE=4>ESSON</FONT></FONT>
+<FONT SIZE=5>#6</FONT>
+</FONT><BR>
+</P>
+
+<P>Welcome to lesson #6 of the online ZShell school! Now we've arrived to
+grayscale graphics, but first you must learn some other things...</P>
+
+<UL>
+<LI><A HREF="#opcodes">Opcodes</A>
+<LI><A HREF="#alias">Alias and Macros</A>
+<LI><A HREF="#moreregs">More registers</A>
+<LI><A HREF="#string">String instructions</A>
+<LI><A HREF="#grayscale">Grayscale graphics</A>
+</UL>
+
+<BR>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<A NAME="opcodes"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>O</FONT><FONT SIZE=4>PCODES</FONT>
+</FONT>
+</P>
+
+<P>It's about time that you should know more than just program. You should also
+know why things happens, and how it happens. For example, a computer (and a
+calculator) understands machine code, 0 and 1. That's what the assembler does,
+it translates the assembly language into machine code. The difference between
+assembly languages and high level languages is that each assembly instruction
+has it's own opcode, one or more bytes in a row that does exactly what you've
+told it. In Pascal or C++ for example, every instruction is usually changed
+into many opcodes. Many of those opcodes are usually unnecessary or could be
+done in a smarter way. For example if you do a short for loop in a ZShell
+program, you can use the B register and the djnz instruction, which is made
+for that purpose. If you did a for-loop in Pascal or C++, it would use a
+variable, a memory location, to store the counter. Each time the loop was
+repeated it would load that value into a register, increase it with one, store
+the variable, check if the limit is reached and then repeat if not end of loop
+Guess why assembly language is faster...</P>
+
+<P>On a Z80, the processor used by the TI-85 if you have forgotten, each
+instruction (opcode) takes between 1 and 4 bytes. Small instructions are, of
+course, generally executed faster, but there are 2 byte instructions that are
+executed faster than 1 byte instruction (it depends on what the instruction
+does). It's quite easy to guess how long each instructions is, which is useful
+when optimizing your code. Each time you load a byte into a 8-bit register,
+the size is two bytes; one byte to tell the processor that you should load an
+immediate value into a 8 bit register, and one byte where that value is stored.
+16-bit registers takes three bytes. Generally, all instructions that has one
+byte takes two bytes, and the instructions using words (both as immediate
+values and addresses) takes three bytes. Other instructions, such as loading
+register A with E, takes one byte. All bit-manipulating instructions except the
+logical instructions (and, or, xor, not) takes two bytes though. One prefix
+($CB) and then the byte that tells what to do.</P>
+
+<P>Now you know some more about how instructions really look like, which will help
+in the future...</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="alias"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>A</FONT><FONT SIZE=4>LIAS</FONT>
+<FONT SIZE=5>A</FONT><FONT SIZE=4>ND</FONT>
+<FONT SIZE=5>M</FONT><FONT SIZE=4>ACROS</FONT>
+</FONT>
+</P>
+
+<P>Aliases and Macros are used by the compiler and has nothing to do with
+assembly languages actually, but they're used quite often since it makes the
+source much easier to read. In TI-85.H there are lots of aliases and macros
+(actually, there are only aliases and macros in it, plus comments).</P>
+
+<P>You could probably guess what an alias is. If you type</P>
+
+<FONT COLOR="#808080"><PRE> Three = 3</PRE></FONT>
+
+<P>the compiler will substitute Three with 3 in the whole source code (when
+compiling, it won't change the file itself). All "variables" in a program you
+define in the beginning are just aliases. You could type those addresses in the
+source code if you like that, but it's much easier to read if you make
+aliases... Also, if you want to change an address, and have that address
+located in many different places in the program, it would have been smarter to
+make an alias of it. Then you would only have to change the aliases, not every
+time in the source where the address occured.</P>
+
+<P>Macros are similiar to aliases, and also similiar to subroutines sort of. To
+make a macro in Table Assembler (if you use another assembler, CAZ for example,
+you probably do it another way; read the documentation) you can type like this:</P>
+
+<FONT COLOR="#808080"><PRE> #DEFINE PushAll   push af \ push bc \ push de \ push hl</PRE></FONT>
+
+<P>If you now type PushAll in your code, the compiler will replace it with
+those four instructions (must be separated with a backslash). You can also
+give parameters which is useful: (the parameters must be numbers, or aliases,
+not registers or addresses)</P>
+
+<FONT COLOR="#808080"><PRE> #DEFINE GotoXY(xy)  push hl \ ld hl,xy \ ld ($800C,hl) \ pop hl</PRE></FONT>
+
+<P>Some examples on macros you use in almost every program are ROM_CALL(index),
+CALL_(addr), JUMP_(addr). Just check ti-85.h and you'll see. The parameter in
+the ROM_CALL macro is an aliases by the way. ROM_CALL(D_ZT_STR) could be replaced
+with ROM_CALL(3), but it just makes the source harder to understand.</P>
+
+<P>Creating your own macros is often useful, but remember that if you make a big
+macro and use if often, it may make the source big... in the GotoXY example
+above, the push hl \ pop hl part may be unnecessary if there were no important
+things in the HL register. Macros should generally be small!</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="moreregs"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>M</FONT><FONT SIZE=4>ORE</FONT>
+<FONT SIZE=5>R</FONT><FONT SIZE=4>EGISTERS!</FONT>
+</FONT>
+</P>
+
+<P>If you've programmed for a while you've probably quite often thought: "Damn,
+I'm out of registers again!" It's a fact that the Z80 has few registers,
+especially compared to the 68k processor which the TI-92 use... There are
+actually, some more register you could use, though they have limitations. Here
+they are:</P>
+
+<FONT COLOR="#FF8000"><H3>The index registers IX and IY</H3></FONT>
+
+<P>These registers are handy. The IY register is used by interrupts and rom
+calls, and should not be changed unless you've disabled the interrupts (see
+below). The IX register though is free to use anytime! It works almost exactly
+like the HL register. When you can use the HL register, you can use the IX
+register! There is one drawback though, the instructions become one or two bytes
+longer, depending on the use. If you use IX as a dataregister in an instruction,
+the instruction becomse one byte longer. That byte is a prefix ($DD) which tells
+the processor that the next instruction will have IX in it, not HL! This is
+necessary, because the opcode for an instruction which uses IX is the same as
+for using HL. It's only the prefix that is the difference.</P>
+
+<P>When you use the IX register as an addressregister, a pointer, it becomse two
+bytes longer, the prefix and a shift byte. That shift byte is useful sometimes,
+though most often you don't use it (but the instruction gets two bytes longer
+anyway). The shift value is a signed byte and therefore has the limitation
+-128..127.</P>
+
+<P>Here are some examples:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ld ix,$1234     ; IX=$1234 - one byte longer than ld hl,$1234
+ ld (ix+5),62    ; Loads the byte 62 in the memory location IX+5.
+                 ; If this instruction was executed right after
+                 ; the previous one, it would mean at $1239
+</PRE></FONT>
+
+<P>If you don't use the shift byte, just (ix), you may still have to put it there,
+(ix+0). I think you must do this on the CAZ assembler, but you don't have to
+add that if you use TASM.</P>
+
+<P>If you want to use the IY register, it works the same way. The only difference
+is that the prefix is $FD instead of $DD. Remember to disable the interrupts
+(see below)!</P>
+
+<P>When you use the IX register (or IY) you can't use the HL register in the
+same instructions (neither just H or L). For example, add ix,hl wouldn't work,
+but add ix,ix works fine.</P>
+
+<P>Maybe you've thought why the index registers aren't divided into two 8 bit
+register, as HL. The answer is they are, there are just no instructions to
+access those, or at least those instructions are not documented and not
+supported by assemblers directly. Of course, if you type the opcodes for the
+instructions it works just fine! First you should know what these 8 bit registers
+are called. I don't know if this is the "real" name, but IXh, IXl and IYh, IYl
+is used (h=higher byte, l=lower byte). The opcodes are quite simple... if the
+assembler doesn't handle those instructions, type this:</P>
+
+<FONT COLOR="#808080"><PRE>
+ .db $DD \ ld a,h        ; If  you want to ld a,IXh
+ .db $FD \ ld l,e        ; If you want to ld IYl,e
+ .db $DD \ ld l,(hl)     ; This should be equal to ld IXl,(IX)
+</PRE></FONT>
+
+<P>The last one I'm not sure about, but it should work that way... try it
+yourself.</P>
+
+<FONT COLOR="#FF8000"><H3>The "not-so-often-used" R and I registers</H3></FONT>
+
+<P>These registers are very seldom use, because they are very limited. The only
+way to "communicate" with them is through the accumulator, so the only allowed
+instructions are:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ld a,r
+ ld r,a
+ ld a,i
+ ld i,a
+</PRE></FONT>
+
+<P>What do they do? The R register is called the "Memory Refresh" registers
+and is updated after every instructions (added with one), thus making
+this register more or less a random register. The only real use for it is in
+random generators, though it's not a good random generator... If you want a
+random number between 0 and 15 (the range must be a power of two for good
+generation, see below), you do like this:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ld a,r  ; Loads the accumulator with the "random" register
+ and 15  ; Masks off the unnecessary bits
+</PRE></FONT>
+
+<P>This works fine if you don't use if often. If you want 100 random numbers and
+use this routine the randomize will be bad (if you randomize all numbers at once)!
+It will be even worse if the range isn't a power of two. Let us say we want a
+number between 0-6. How would you do? You can't type and 6 (figure this one out
+if you're unsure about binary and masking) because then you would get a strange
+result (only 0, 2, 4 and 6 would occur). The best way is to do like this:</P>
+
+<FONT COLOR="#808080"><PRE>
+Random:
+ ld a,r
+ and 7          ; between 0-7
+ jr z,Random    ; If it's 0, rerandom
+</PRE></FONT>
+
+<P>This works, and we'll get a random number between 1-7 (decrease with one to
+get between 0-6). The problem is the frequency... one of the numbers will appear
+2/8 of the time, the others 1/8. Why? Because every time the routine have to
+rerandomize it means that the R register ends with 4 zeros (the last bit that
+was shifted away plus the three masked bits). The newly randomized numbers will
+then always be the same (should be 3 or 4 I think) because the number of
+instructions are always the same.</P>
+
+<P>How to fix this!?!? In ZTetris, the following simple random routine is used:</P>
+
+<FONT COLOR="#808080"><PRE>
+Random:
+ ld b,a
+ ld a,r
+ add a,a
+ ld hl,0
+ ld d,h
+ ld e,a
+RMul:
+ add hl,de
+ djnz RMul
+ ld a,h
+</PRE></FONT>
+
+<P>The routine use the A register as input and generates a random number between
+0 and A-1 using the A register as output as well. In short, the routine does
+the following: A = A*(R/128). The R register is always a value between 0-127
+(the upper bit is always cleared) so the result can't reach A (since the answer
+is truncated) and if R is 0 the result becomes 0.</P>
+
+<P>Back to the I register... this one is unimportant most of the time. It's only
+useful when you program interrupt handler and stuff like that. It holds the
+higher byte of the address which should be called when an interrups occurs and
+you're in interupt mode 2. If you don't understand what I'm talking about, don't
+bother... you don't need to know right now. It'll be better explained in another
+lesson.</P>
+
+<P>You can use it though as a temporary register if the interrupt mode isn't set
+to 2. The interrup mode is usually set to 1, but when using grayscale graphics
+it's set to 2, so then the calc would crash if you changed the I register (same
+thing happens if Game Wizard or any other memory resident program is run)...
+Since you can only change it through the A register, it's often not worth that
+use though. One last thing also, you don't have to reset the register if you
+change it. It's not used in the ROM memory. The TI-85 was never meant to use
+the I register or interrupt mode 2. More about that in the lesson about
+interrupts.</P>
+
+<FONT COLOR="#FF8000"><H3>The shadow registers</H3></FONT>
+
+<P>Now something cool... I think many will be surprised to know that there are
+7 more 8 bit registers available to use! These registers are called the shadow
+registers and are a copy of the common registers, A, BC, DE and HL. Their names
+are similiar also, you add an ' after the register name: A', BC', DE' and HL'.
+The drawback is quite big though, you can never access those register through
+any instruction at all actually... There are instructions, however, that will
+exchange the ordinary registers with the shadow register. Those instructions
+are:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ex af,af'    ; Exchange AF with AF' (F' = shadow flag register)
+ exx          ; Exchange BC, DE and HL with BC', DE' and HL'
+</PRE></FONT>
+
+<P>When using these instructions you must have disabled the interrupts, because
+they're used by the ROM. You don't have to restore them to what they were before
+(no push/pop needed). To disable interrupts (and enable them again) you use two
+short instructions:</P>
+
+<FONT COLOR="#808080"><PRE>
+ di     ; Disable interrupts
+ ei     ; Enable interrups
+</PRE></FONT>
+
+<H4>Another useful exchange instruction</H4>
+
+<P>I think I've missed a useful instruction before. Here it is:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ex de,hl    ; Exchanges the contents in HL and DE
+</PRE></FONT>
+
+<P>It will only work on those two registers, and you must type ex de,hl not ex
+hl,de (even though they would do the same thing). The instruction is useful
+for example when you want to load DE and HL with two address like this:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ld hl,Addr1
+ ld bc,(PROGRAM_ADDR)
+ add hl,bc             ; HL points to Addr1
+ ex de,hl              ; Now DE points to Addr 1
+ ld hl,Addr2
+ add hl,bc             ; HL points to Addr 2
+
+Addr1:
+ dc.b "Address 1",0
+Addr2:
+ dc.b "Address 2",0
+
+</PRE></FONT>
+
+<P>This is the shortest way and fastest way in bytes to do that. Also, this is
+an exception from the rule "whenever you can use HL you can use IX/IY" - you can't type</P>
+
+<FONT COLOR="#808080"><PRE>
+ ex de,ix
+</PRE></FONT>
+
+<P>There are three more exchange instructions, but they all have to do with
+the stack pointer, and are (usually) of less use. More about those in an upcoming appendix.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="string"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>S</FONT><FONT SIZE=4>TRING</FONT>
+<FONT SIZE=5>I</FONT><FONT SIZE=4>NSTRUCTIONS</FONT>
+</FONT>
+</P>
+
+<P>Now some very useful instructions which I've probably waited too long with
+to explain. Have you never wanted to copy many bytes from one place to another?
+In a simple way? For example copy the video memory to the graph memory or
+something. Then you should use LDIR (or LDDR)! First LDI and LDD...</P>
+
+<P>LDI is an instructions that does many things at once, you could say. It does
+this:</P>
+
+<FONT COLOR="#808080"><PRE>
+ push af
+ ld a,(hl)
+ ld (de),a 
+ pop af
+ inc de
+ inc hl
+ dec bc
+</PRE></FONT>
+
+<P>It copes one byte from HL to DE (where they point) and increase both
+pointers. LDD does the same except that both pointers are decreased. Both
+instructions also decrease BC with one.</P>
+
+<P>The LDIR (LDDR) instructions repeats the LDI (LDD) instruction until BC
+becomes 0! If you want to copy 100 bytes from one place to another, just set
+HL to the source and DE to the pointer and BC to 100 and run LDIR, and you're
+done! Here's how to copy the video memory to the graph memory:</P>
+
+<FONT COLOR="#808080"><PRE>
+ ld hl,VIDEO_MEM
+ ld de,GRAPH_MEM
+ ld bc,1024    ; 1024 bytes to copy ($400)
+ ldir
+</PRE></FONT>
+
+<P>Most often you use LDIR but sometimes LDDR is necessary.</P>
+
+<P>There are also some other string instructions (that's what they're called)
+which will be explained in another lesson.</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+<A NAME="grayscale"></A>
+<P>
+<FONT COLOR="#FF8000">
+<FONT SIZE=5>G</FONT><FONT SIZE=4>RAYSCALE</FONT>
+<FONT SIZE=5>G</FONT><FONT SIZE=4>RAPHICS</FONT>
+</FONT>
+</P>
+
+<P>Finally... I guess many have waited for this part. First I should explain
+how grayscale graphics works. It's not something to do with hardware if anyone
+though that. What you do is that you have two layers, two video memories. One
+video memory is the original one (at $FC00) and the other one is 1024 allocated
+bytes. To make it grayscale, those pages are flipped very fast, in 200 Hz. 2/3
+of the time the video memory at $FC00 is shown and 1/3 of the time the other
+video memory is shown. If a pixel is set on both layers, it is shown the whole
+time (3/3) and becomes black. If it's only set on the first layer ($FC00) it's
+visible 2/3 of the time and looks like darkgray. Only on the second layer, 1/3
+of the time (lighgray) and if it's never visible, well, then it's white.</P>
+
+<P>That's how it works. Here's how to use it in your very own program. It
+requires that you use Rob Taylors excellent <A HREF="zsfiles/graylib.h">graylib.h</A>
+file.</P>
+
+<FONT COLOR="#808080"><PRE>
+#include ti-85.h
+
+.org 0
+.db "Grayscale test",0
+
+ CALL_(GrayScaleOn)    ; Call a routine in graylib.h which
+                       ; activates grayscale graphics
+ ret c                 ; The carry will be set if to little memory. 
+                       ; Return to ZShell if that happens.
+ xor a                 ; Same as ld a,0
+ CALL_(FillScreen)     ; Fill the screen with color A
+ inc a                 ; Increase A to 1
+ CALL_(FillScreen)     ; Fill screen, and so on
+ inc a
+ CALL_(FillScreen)
+ inc a
+ CALL_(FillScreen)
+ CALL_(GrayScaleOff)   ; Turn grayscale off
+ ret                   ; Return to ZShell
+
+FillScreen:        ; This routine fills the screen with color A
+                   ; and waits for a keypressed before return
+ push af           ; Store the A register on the stack
+ ld hl,VIDEO_MEM   ; Load HL with the pointer to the first layer
+ srl a             ; Shift A one step to the right.
+ jr z,Lay1White    ; If it becomes zero (A=0 or A=1), skip
+ ld a,$FF          ; Set A to $FF
+Lay1White:         ; Now A is either $00 (if A<2) or $FF (A>=2)
+ CALL_(FillLayer)  ; Fills 1024 bytes at HL with A
+ pop af            ; Restore A from stack
+ push af           ; And push it again
+ ld hl,(Page2Addr) ; Page2Addr=address to the second layer. 
+                   ; Load HL with it
+ and $01           ; Mask A with $01
+ jr z,Lay2White    ; If zero (A=0 or A=2), then skip
+ ld a,$FF          ; Set all bits in A
+Lay2White:         ; Now A is either $00 (even A) or $FF (odd A)
+ CALL_(FillLayer)  ; Fill the second layer with A
+WaitKey:           ; Repeat label
+ call GET_KEY      ; Get last key pressed
+ or a              ; Check if zero
+ jr z,WaitKey      ; If no key pressed, repeat
+ pop af            ; Restore A
+ ret               ; Return
+
+FillLayer:         ; This routine fills 1024 bytes at HL with A
+ ld d,a            ; Backup the A register
+ ld bc,1024        ; There are 1024 bytes to be filled
+RepFill:
+ ld (hl),d         ; Load (HL) with the former A (now D)
+ inc hl            ; Point to the next byte to fill
+ dec bc            ; And decrease the counter
+ ld a,b            ; To check if a 16 bit register is zero, this is
+ or c              ; the fastest way (though they ruin the A reg)
+ jr nz,RepFill     ; If it wasn't zero, repeat the filling
+ ret               ; Return
+
+#include graylib.h ; Including Rob Taylors graylib routines. 
+                   ; Check the source to it!
+.end
+</PRE></FONT>
+
+
+<P>This simple program display all four colors, one at a time, on the screen
+and lets the user press a key after each screen.</P>
+
+<P>I assume you want more grayscale routines, such as sprite routines and line
+routines. They'll appear in another lesson, maybe the next!</P>
+
+<P>That was all for now I think.... Hope you've learned something at least...
+Happy programming!!</P>
+
+<P ALIGN=CENTER><IMG SRC="pics/hr.gif"></P>
+
+<P><I>Return to the <A HREF="zshell.html">ZShell school</A></I></P>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>
