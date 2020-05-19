@@ -1,0 +1,92 @@
+
+                      - THE OUTLAW TRIAD DEMO-SERIES -
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş PART II şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+                           Written by : Vulture/OT
+                           Code in    : Pascal/Asm
+                           Topic      : 3d starfield
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Introduction şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ Welcome to the Outlaw Triad demo-series! In these series we will be talking
+ about programming demo-effects in either pascal or assembler. Theory behind
+ the effects shall be discussed while a full sourcecode is also provided.
+ In this second release of the Outlaw Triad demo-series we will discuss how
+ to create a 3d starfield in 100% assembler. This is a wellknown effect in
+ the demo-scene and is used in many demos. It's a great background routine
+ for various effects so let's see how one creates such a starfield. Enjoy!
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Theory şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ A 3d point consists of X,Y,Z values. However, your screen is a 2d
+ plane. This means you must do a 3d to 2d conversion. You can do that
+ with these formulas:
+
+   ScreenX := ((X * 256) / Z) + 160
+   ScreenY := ((Y * 256) / Z) + 100
+
+ I assume ScreenX and ScreenY don't need any futher explanation.
+ Now, setup X to be a random value between -160..160. Your Y value should be
+ setup between -100..100. I choose Z to be 256 at start. When decreasing the
+ Z value, the stars will come towards you. Obviously, when you increase Z,
+ stars will fly away from you. You add 160 and 100 to center the point on
+ the screen. Ok, if the star Z value is 0 (or below), then abort the star
+ and create a new one. Also do this when the star is not in VGA range.
+ In my code I did these steps:
+
+ - Check Z (and do appropiate action)
+ - Delete old star
+ - Calculate Screen X
+ - Range check X
+ - Calculate Screen Y
+ - Range check Y
+ - Calculate final vga-position (y*320+x)
+ - Plot star
+ - Save vgaposition (for deletion)
+ - Decrease (or increase) Z
+
+ Do this for all stars and that's it! You've got a cool 3d starfield!
+
+ The little trick in this source is the Random routine. When I first started
+ coding assembler, I examined an example of 3d stars by Draeden of VLA.
+ His example used a chart with the random values pre-calculated in it. This
+ is a nice solution but the disadvantage is that you will always see the same
+ stars because you work with the same random values constantly. That's not
+ too good. So, when I finally got my own random routine, I decided to write
+ my own little 3d starfield. The starting seed value is obtained from the
+ system clock, just like using the Randomize command in Pascal.
+
+ Of course you can do various little tricks with 3d starfields. For example,
+ you could rotate all stars so they fly in another direction. What I'm trying
+ to say is that a simple basic 3d starfield ain't nothing special. So go and
+ make something cool using 3d starfields. Try implementing this in other
+ resolutions (like 320*400). Be creative!
+
+ Ok, this is all for now. Happy coding!
+
+        - Vulture / Outlaw Triad -
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Distro Sites şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ Call our distros to get all our releases.
+
+  BlueNose        World HQ     +31 (0)345-619401
+  FireHouse       Distrosite   +31 (0)528-274176         More distros wanted!
+  The Force       Distrosite   +31 (0)36-5346967
+  MagicWare       Italian HQ   +39  6-52355532
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Contact şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ Want to contact Outlaw Triad for some reason? You can reach us at our
+ distrosites in Holland. Or if you have e-mail access, mail us:
+
+   Vulture  (coder/pr)     comma400@tem.nhl.nl
+
+ Our internet homepage:
+
+   http://www.tem.nhl.nl/~comma400/vulture.html
+
+ These internet adresses should be valid at least till june 1996.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ

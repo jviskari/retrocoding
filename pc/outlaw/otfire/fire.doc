@@ -1,0 +1,97 @@
+
+                      - THE OUTLAW TRIAD DEMO-SERIES -
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş PART I şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+                           Written by : Vulture/OT
+                           Code in    : Pascal/Asm
+                           Topic      : Fire effect
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Introduction şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ Welcome to the Outlaw Triad demo-series! In these series we will be talking
+ about programming demo-effects in either pascal or assembler. Theory behind
+ the effects shall be discussed while a full sourcecode is also provided.
+ These series are the sequals to the VGA-VUL# releases in which a few demo
+ effects were handled and are meant for the beginner and intermediate coder.
+ From now on all demo tutorials from Outlaw Triad will be released in these
+ series. We from Outlaw Triad know there are already large amounts of demo
+ trainers available (best of which seem to be the ones by Denthor/Asphyxia)
+ but we experienced that it can be helpfull to read more than one document
+ on the same subject. Enjoy these series!
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Theory şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ In this very first release I will cover a wellknown effect... FIRE!
+ This is actually a simple routine, in theory. The only math is takes
+ are some simple calculations to avarage certain values. Here we go:
+
+ We will be using an unchained vgascreen with resolution 320*200*256.
+ This will speed up our routine by a factor of 4 because we can plot
+ 4 pixels at a time due to vga-hardware. Now you need to setup a nice
+ palette for use in our fire. E.g from dark red to bright yellow.
+
+ Ok, we will also be using a 100 scanlines for our fire. This way, you
+ will have another 100 scanlines left to do other things with.
+ Create an array large enough to hold this data. We then flip the data to
+ the vga. Why use an array? Because vga-memory is a lot slower than normal
+ memory! In this case it is faster to update data in pc-memory and then
+ flip it to the vga. This can also avoid flickering.
+ Now, on the last row, put random values between 0 and 255 (or whatever
+ colorrange you want. I used 0..85). Then create a fire effect like this:
+
+ Start with the first pixel (actually 4 pixels) on the second row. Then
+ take the 3 pixels above, the 3 pixels below and the 2 pixels besides that
+ pixel. Divide by 3+3+2=8 to avarage these values. If the found value is not
+ zero, decrease it by 1 to fade the fire to black. The fire on the bottom
+ will then be brighter than the fire at the top which will make a good fire
+ routine. Store the found value in the pixel ABOVE the current pixel. This
+ will make the flames go up. Then point to the next pixel on the line and do
+ the same. Do this for all lines. When finished, wait for a vertical retrace,
+ flip the data to the vga screen and start over. That's it!
+ In steps:
+
+   - set bottom line with random values
+   - start avaraging from second line
+   - do all lines
+   - wait for vertical retrace
+   - flip to vga
+
+ One thing left to say... As the bottom line is rather ugly with it's
+ random values scattered on it, we hide the last few lines on the second
+ page in display memory. Offscreen memory can be handy indeed! ;-)
+
+ So you see, it's not that hard to understand. What can be hard is to realy
+ code it. Take a look at the source to see how it can be done. The code here
+ is in assembler because that is the real democode language to use, IMHO.
+ There are many fire trainers available, so if you don't understand it, go
+ study some more of them. Btw, thanks must go to all who have release fire
+ code before I did (I learned from tutors too, you know ;-) ).
+
+ Ok, this is all for now. Happy coding!
+
+       - Vulture / Outlaw Triad
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Distro Sites şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ Call our distros to get all our releases.
+
+  BlueNose    World HQ     +31 (0)345-619401
+  FireHouse   Distrosite   +31 (0)528-274176         More distros wanted!
+  The Force   Distrosite   +31 (0)36-5346967
+  MagicWare   Italian HQ   +39  6-52355532
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄş Contact şÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ Want to contact Outlaw Triad for some reason? You can reach us at our
+ distrosites in Holland. Or if you have e-mail access, mail us:
+
+   Vulture  (coder/pr)     comma400@tem.nhl.nl
+
+ Our internet homepage:
+
+   httm://www.tem.nhl.nl/~comma400/vulture.html
+
+ These internet adresses should be valid at least till june 1996.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
